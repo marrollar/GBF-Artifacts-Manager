@@ -5,14 +5,16 @@ import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
 import { Element, Weapon, Artifacts } from "./types"
 import { ActiveFilters } from "./filtering/filterConfig"
 
+const __default_filter: ActiveFilters = {
+    search: "",
+    element: null,
+    weapon: null
+
+}
+
 export default function ViewerHome() {
     const { jsonData } = useArtifactsJson();
-    // const [elementFilter, setElementFilter] = useState(Element.NONE);
-    const [filters, setFilters] = useState<ActiveFilters>({
-        search: "",
-        element: null,
-        weapon: null
-    });
+    const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
 
     function updateFilter<K extends keyof ActiveFilters>(
         key: K,
@@ -97,7 +99,12 @@ export default function ViewerHome() {
             <div className="drawer-side">
                 <label htmlFor="filter-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                 <ul className="bg-base-200 min-h-full w-80 p-4">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-4">
+                        {/* Clear Filters button */}
+                        <div className="flex items-center justify-center">
+                            <button className="btn hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
+                        </div>
+                        {/* Elements filter */}
                         <div className="flex items-center justify-center gap-2">
                             {
                                 Object.entries(Element).map(([key, value]) => (
@@ -107,11 +114,12 @@ export default function ViewerHome() {
                                 ))
                             }
                         </div>
-                        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                        {/* Weapons filter */}
+                        <div className="flex flex-wrap items-center justify-center gap-2">
                             {
                                 Object.entries(Weapon).map(([key, value]) => (
                                     <button className={`btn p-0 w-1/5 hover:bg-neutral-500 ${filters.weapon === value ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
-                                        <img key={key} className="w-full h-auto" src={`/Label_Weapon_${value}.png`} alt="Button"/>
+                                        <img key={key} className="w-full h-auto" src={`/Label_Weapon_${value}.png`} alt="Button" />
                                     </button>
                                 ))
                             }
