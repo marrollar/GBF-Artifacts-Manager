@@ -3,10 +3,33 @@ import Image from "next/image"
 import { useState } from "react"
 import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
 import { Element, Artifacts } from "./types"
+import { ActiveFilters } from "./filtering/filterConfig"
 
 export default function ViewerHome() {
     const { jsonData } = useArtifactsJson();
-    const [elementFilter, setElementFilter] = useState(Element.NONE);
+    // const [elementFilter, setElementFilter] = useState(Element.NONE);
+    const [filters, setFilters] = useState<ActiveFilters>({
+        search: "",
+        element: null,
+        weapon: null
+    });
+
+    function updateFilter<K extends keyof ActiveFilters>(
+        key: K,
+        value: ActiveFilters[K]
+    ) {
+        console.log(key, value, filters[key])
+        if (key === "element" || key === "weapon") {
+            if (value === filters[key]) {
+                setFilters(prev => ({ ...prev, [key]: null }))
+            } else {
+                setFilters(prev => ({ ...prev, [key]: value }))
+            }
+        } else {
+            setFilters(prev => ({ ...prev, [key]: value }))
+        }
+
+    }
 
     if (!jsonData) {
         return <p className="text-red-500 mt-2">Loading...or json data not found.</p>
@@ -68,7 +91,7 @@ export default function ViewerHome() {
                     </label>
                 </div>
                 <div className="p-4">
-                    {elementFilter}
+                    {filters.element}
                 </div>
             </div>
             <div className="drawer-side">
@@ -76,26 +99,23 @@ export default function ViewerHome() {
                 <ul className="bg-base-200 min-h-full w-80 p-4">
                     <div className="flex flex-col">
                         <div className="flex items-center justify-center gap-2">
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.FIRE)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.FIRE?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.FIRE)}>
                                 <Image src="/Icon_Element_Fire.png" alt="Button" width={30} height={30} />
                             </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.WATER)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.WATER?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.WATER)}>
                                 <Image src="/Icon_Element_Water.png" alt="Button" width={30} height={30} />
                             </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.EARTH)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.EARTH?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.EARTH)}>
                                 <Image src="/Icon_Element_Earth.png" alt="Button" width={30} height={30} />
                             </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.WIND)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.WIND?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.WIND)}>
                                 <Image src="/Icon_Element_Wind.png" alt="Button" width={30} height={30} />
                             </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.LIGHT)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.LIGHT?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.LIGHT)}>
                                 <Image src="/Icon_Element_Light.png" alt="Button" width={30} height={30} />
                             </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.DARK)}>
+                            <button className={`btn p-0 hover:bg-neutral-500 ${filters.element===Element.DARK?"bg-accent" :""}`} onClick={() => updateFilter("element", Element.DARK)}>
                                 <Image src="/Icon_Element_Dark.png" alt="Button" width={30} height={30} />
-                            </button>
-                            <button className="btn p-0" onClick={() => setElementFilter(Element.NONE)}>
-                                <Image src="/Icon_Element_Plain.png" alt="Button" width={30} height={30} />
                             </button>
                         </div>
                     </div>

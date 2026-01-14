@@ -1,7 +1,7 @@
 'use client'
 
 import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext";
-import type { Artifacts, Elements, FilterOpts } from "@/app/viewer/page"
+import type { Artifacts } from "../types";
 
 type Args = {
     artifacts: Artifacts,
