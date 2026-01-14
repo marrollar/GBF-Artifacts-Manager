@@ -5,20 +5,20 @@ export enum Element {
     WIND = "Wind",
     LIGHT = "Light",
     DARK = "Dark",
-    NONE = "None"
+    // NONE = "None"
 }
 
 export enum Weapon {
-    Sabre = "Sabre",
-    Dagger = "Dagger",
-    Spear = "Spear",
-    Axe = "Axe",
-    Staff = "Staff",
-    Gun = "Gun",
-    Melee = "Melee",
-    Bow = "Bow",
-    Harp = "Harp",
-    Katana = "Katana"
+    SABRE = "Sabre",
+    DAGGER = "Dagger",
+    SPEAR = "Spear",
+    AXE = "Axe",
+    STAFF = "Staff",
+    GUN = "Gun",
+    MELEE = "Melee",
+    BOW = "Bow",
+    HARP = "Harp",
+    KATANA = "Katana"
 }
 
 export type SkillInfo = {
