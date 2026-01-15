@@ -1,9 +1,11 @@
 'use client'
+import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
 import Image from "next/image"
 import { useState } from "react"
-import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
-import { Element, Weapon, Artifacts } from "./types"
+import { useDebouncedCallback } from "use-debounce"
+import ArtifactsList from "./components/ArtifactsList"
 import { ActiveFilters } from "./filtering/filterConfig"
+import { Artifacts, Element, Weapon } from "./types"
 
 const __default_filter: ActiveFilters = {
     search: "",
@@ -30,8 +32,11 @@ export default function ViewerHome() {
         } else {
             setFilters(prev => ({ ...prev, [key]: value }))
         }
-
     }
+
+    const handleSearch = useDebouncedCallback((term) => {
+        setFilters(prev => ({ ...prev, ["search"]: term }))
+    }, 300) // TODO Consider if debouncing is necessary
 
     if (!jsonData) {
         return <p className="text-red-500 mt-2">Loading...or json data not found.</p>
@@ -93,7 +98,7 @@ export default function ViewerHome() {
                     </label>
                 </div>
                 <div className="p-4">
-                    {Object.values(filters)}
+                    <ArtifactsList artifacts={artifacts} filterOpts={filters} />
                 </div>
             </div>
             <div className="drawer-side">
@@ -104,12 +109,18 @@ export default function ViewerHome() {
                         <div className="flex items-center justify-center">
                             <button className="btn hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
                         </div>
+
+                        {/* Search bar */}
+                        <label className="input">
+                            <input type="search" placeholder="Search" onChange={(e) => { handleSearch(e.target.value) }}></input>
+                        </label>
+
                         {/* Elements filter */}
                         <div className="flex items-center justify-center gap-2">
                             {
                                 Object.entries(Element).map(([key, value]) => (
-                                    <button className={`btn p-0 hover:bg-neutral-500 ${filters.element === value ? "bg-accent" : ""}`} onClick={() => updateFilter("element", value)}>
-                                        <Image key={key} src={`/Icon_Element_${value}.png`} alt="Button" width={30} height={30} />
+                                    <button key={key} className={`btn p-0 hover:bg-neutral-500 ${filters.element === value ? "bg-accent" : ""}`} onClick={() => updateFilter("element", value)}>
+                                        <Image src={`/Icon_Element_${value}.png`} alt="Button" width={30} height={30} />
                                     </button>
                                 ))
                             }
@@ -118,8 +129,8 @@ export default function ViewerHome() {
                         <div className="flex flex-wrap items-center justify-center gap-2">
                             {
                                 Object.entries(Weapon).map(([key, value]) => (
-                                    <button className={`btn p-0 w-1/5 hover:bg-neutral-500 ${filters.weapon === value ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
-                                        <img key={key} className="w-full h-auto" src={`/Label_Weapon_${value}.png`} alt="Button" />
+                                    <button key={key} className={`btn p-0 w-1/5 hover:bg-neutral-500 ${filters.weapon === value ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
+                                        <img className="w-full h-auto" src={`/Label_Weapon_${value}.png`} alt="Button" />
                                     </button>
                                 ))
                             }

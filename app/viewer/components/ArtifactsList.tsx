@@ -1,13 +1,17 @@
 'use client'
 
-import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext";
+import type { ActiveFilters } from "../filtering/filterConfig";
 import type { Artifacts } from "../types";
 
 type Args = {
     artifacts: Artifacts,
-    filterOpts: FilterOpts
+    filterOpts: ActiveFilters
 }
 
 export default function ArtifactsList({ artifacts, filterOpts }: Args) {
-    
+    return (
+        <>
+            {Object.values(filterOpts)}
+        </>
+    )
 }
