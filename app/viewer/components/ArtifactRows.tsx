@@ -1,15 +1,15 @@
 
-export function NameRow({ children }: { children: React.ReactNode }) {
+export function NameRow({ last = false, children }: { last?: boolean, children: React.ReactNode }) {
     return (
-        <div className="row-span-2 line-clamp-2 overflow-scroll p-2 border-b border-b-amber-50/30 border-r border-r-amber-50/30">
+        <div className={`h-full flex pl-2 pt-[10px] line-clamp-2 overflow-scroll ${last ? "" : "border-r"} border-amber-50/30 `}>
             {children}
         </div>
     )
 }
 
-export function ValueRow({ children }: { children: React.ReactNode }) {
+export function ValueRow({ last = false, children }: { last?: boolean, children: React.ReactNode }) {
     return (
-        <div className="row-span-1 row-start-3 p-2 border-r border-r-amber-50/30 text-yellow-300">
+        <div className={`h-full flex pl-2 pb-2 items-center ${last ? "" : "border-r"} border-b border-amber-50/30 text-yellow-300`}>
             {children}
         </div>
     )

@@ -80,71 +80,44 @@ function WeaponBlock({ weapon, artifacts }: { weapon: string, artifacts: [string
         <div>
             <img src={`/Label_Weapon_${weapon}.png`} />
             <div className="flex flex-col ml-2 mt-2">
-                {/* <div className="grid grid-cols-9 gap-4"> */}
-                {
-                    artifacts.map((artifact) => {
-                        return (
-                            <div key={artifact[0]} className="flex min-w-0 gap-4">
-                                <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
-                                <div className="grid grid-cols-4 grid-rows-3 border border-collapse">
+                <div className="h-full grid grid-cols-4 auto-rows-fr grid-flow-col ">
+                    {
+                        artifacts.map((artifact) => {
+                            return (
+                                <div key={artifact[0]} className="col-span-full grid grid-rows-[2fr_1fr] grid-cols-[50px_1fr_1fr_1fr_1fr] h-20 items-center">
+                                    <img src={`/Label_Weapon_${weapon}.png`} />
                                     <NameRow>
                                         {artifact[1].s1.name}
                                     </NameRow>
-                                    <ValueRow>
-                                        {artifact[1].s1.value}
-                                    </ValueRow>
                                     <NameRow>
                                         {artifact[1].s2.name}
                                     </NameRow>
-                                    <ValueRow>
-                                        {artifact[1].s2.value}
-                                    </ValueRow>
                                     <NameRow>
                                         {artifact[1].s3.name}
                                     </NameRow>
+                                    <NameRow last={true}>
+                                        {artifact[1].s4.name}
+                                    </NameRow>
+                                    <div className="justify-self-center align-self-center pb-[12px]">
+                                        <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+                                    </div>
+                                    <ValueRow>
+                                        {artifact[1].s1.value}
+                                    </ValueRow>
+                                    <ValueRow>
+                                        {artifact[1].s2.value}
+                                    </ValueRow>
                                     <ValueRow>
                                         {artifact[1].s3.value}
                                     </ValueRow>
-                                    <NameRow>
-                                        {artifact[1].s4.name}
-                                    </NameRow>
-                                    <ValueRow>
+                                    <ValueRow last={true}>
                                         {artifact[1].s4.value}
-                                    </ValueRow>
+                                    </ValueRow >
                                 </div>
-                            </div>
-
-                            // <div key={artifact[0]} className="flex gap-2">
-                            //     <input type="checkbox" className="flex-none checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
-                            //     <NameRow>
-                            //         {artifact[1].s1.name}
-                            //     </div>
-                            //     <ValueRow>
-                            //         {artifact[1].s1.value}
-                            //     </div>
-                            //     <NameRow>
-                            //         {artifact[1].s2.name}
-                            //     </div>
-                            //     <ValueRow>
-                            //         {artifact[1].s2.value}
-                            //     </div>
-                            //     <NameRow>
-                            //         {artifact[1].s3.name}
-                            //     </div>
-                            //     <ValueRow>
-                            //         {artifact[1].s3.value}
-                            //     </div>
-                            //     <NameRow>
-                            //         {artifact[1].s4.name}
-                            //     </div>
-                            //     <ValueRow>
-                            //         {artifact[1].s4.value}
-                            //     </div>
-                            // </div>
-
-                        )
-                    })
-                }
+                            )
+                        })
+                    }
+                </div>
             </div>
         </div>
 
