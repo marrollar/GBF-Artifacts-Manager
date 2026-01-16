@@ -140,7 +140,7 @@ export default function ViewerHome() {
                     <div className="self-center font-bold">
                         Skill Group 1 Filters
                     </div>
-                    <div className="grid grid-cols-4 gap-1">
+                    <div className="flex flex-wrap gap-1">
                         <GroupFilterButton>
                             ATK
                         </GroupFilterButton>
@@ -240,7 +240,7 @@ export default function ViewerHome() {
                             </GroupFilterButton>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1 mt-1">
+                    <div className="flex flex-wrap gap-1 mt-1">
                         <GroupFilterButton>
                             TA while above 50% HP
                         </GroupFilterButton>
@@ -270,47 +270,71 @@ export default function ViewerHome() {
                     <div className="self-center font-bold">
                         Skill Group 3 Filters
                     </div>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-wrap gap-1">
                         <GroupFilterButton>
-                            Battle Start: DMG Mitigation with value of x
+                            <div className="text-left">
+                                Battle Start: <br /> DMG Mitigation with value of x
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Battle Start: Gain x random buff(s)
+                            <div className="text-left">
+                                Battle Start: <br /> Gain x random buff(s)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Battle Start: 20% HP Cut, x% DMG Cap after 3 turns
+                            <div className="text-left">
+                                Battle Start: <br />20% HP Cut, x% DMG Cap after 3 turns
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On KO: All allies gain x random buff(s)
+                            <div className="text-left">
+                                On KO: <br /> All allies gain x random buff(s)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On Swap to Main: x% DMG Amp
+                            <div className="text-left">
+                                On Swap to Main: <br /> x% DMG Amp
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On foe 50% HP: Restore equipper's HP by x
+                            <div className="text-left">
+                                On foe 50% HP: <br /> Restore equipper's HP by x
+                            </div>
                         </GroupFilterButton>
 
                         <GroupFilterButton>
-                            On casting 1st-slot skill: Cut 1st-slot skill cd by 1, cut x% HP
+                            <div className="text-left">
+                                On casting 1st-slot skill: <br /> Cut 1st-slot skill cd by 1, cut x% HP
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On using debuff skill: Apply x% DMG Taken Amplified (2 hits)
+                            <div className="text-left">
+                                On using debuff skill: <br /> Apply x% DMG Taken Amplified (2 hits)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On using healing skill: Ally in the next position gains x% Bonus DMG (1 time)
+                            <div className="text-left">
+                                On using healing skill: <br /> Ally in the next position gains x% Bonus DMG (1 time)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Each 10 skills used: Gain 1% DMG Cap Up (Stackable / Max 5%)
+                            <div className="text-left">
+                                Each 10 skills used: <br /> Gain 1% DMG Cap Up (Stackable / Max 5%)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            On using skill w/ 10 or more cd: Gain x% DMG Amp
+                            <div className="text-left">
+                                On using skill w/ 10 or more cd: <br /> Gain x% DMG Amp
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
                             Cut linked skill cds by 1 after using a linked skill x times
                         </GroupFilterButton>
 
                         <GroupFilterButton>
-                            At EoT: Gain Supplemental DMG based on amount of charge bar spent that turn
+                            <div className="text-left">
+                                At EoT: Gain Supplemental DMG based on amount of charge bar spent that turn
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
                             At Eot: If equipper didn't attack, gain random buff(s)
@@ -329,16 +353,22 @@ export default function ViewerHome() {
                             Chance to gain Flurry (6-hit / 1 time) before attacking
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Gain 20% Bonus DMG (1 time) after being targeted by foes' attacks x time(s)
+                            <div className="text-left">
+                                Gain 20% Bonus DMG (1 time) after being targeted by foes' attacks x time(s)
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
                             Gain Flurry (3-hit / 1 time) after hitting a foe x times
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Plain DMG to a foe at EoT based on how much HP the equipper lost that turn
+                            <div className="text-left">
+                                Plain DMG to a foe at EoT based on how much HP the equipper lost that turn
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            Gain Supplemental Skill DMG (Stackable / Max: 50,000) after dealing this amount of skill DMG
+                            <div className="text-left">
+                                Gain Supplemental Skill DMG (Stackable / Max: 50,000) after dealing this amount of skill DMG
+                            </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
                             On Single attacks: Gain x random buff(s)
@@ -347,7 +377,9 @@ export default function ViewerHome() {
                             On using a green or blue potion: Boost FC bar by x
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            When a foe has 3 or fewer buffs at turn start: Gain x% Armored
+                            <div className="text-left">
+                                When a foe has 3 or fewer buffs at turn start: <br/> Gain x% Armored
+                            </div>
                         </GroupFilterButton>
 
                         <GroupFilterButton>
