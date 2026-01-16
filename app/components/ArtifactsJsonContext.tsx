@@ -4,10 +4,10 @@ import { createContext, useContext, useState } from 'react';
 // TODO: Remove this testing logic
 import data from "@/testing/artifacts_data.json"
 
-const ArtifactsJsonContext = createContext(null);
+const ArtifactsJsonContext = createContext({});
 export const useArtifactsJson = () => useContext(ArtifactsJsonContext);
 
-export const ArtifactsJsonProvider = ({ children }) => {
+export const ArtifactsJsonProvider = ({ children }: { children: React.ReactNode }) => {
     const [jsonData, setJsonData] = useState(data);
 
     return (
