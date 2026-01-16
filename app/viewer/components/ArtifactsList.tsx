@@ -41,7 +41,7 @@ export default function ArtifactsList({ artifacts, filterOpts }: Args) {
             return 0
         })
 
-    console.log(sortedArtifacts)
+    // console.log(sortedArtifacts)
 
     return (
         <div className="flex flex-col gap-4">
