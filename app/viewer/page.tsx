@@ -147,7 +147,7 @@ export default function ViewerHome() {
         //     </div>
         // </div>
         <div className="flex">
-            <div className={`flex flex-col items-center gap-4 bg-base-300 h-screen p-4 ${showSidebar? "w-120":"w-10 overflow-hidden"}`}>
+            <div className={`flex flex-none flex-col items-center gap-4 bg-base-300 h-screen p-4 ${showSidebar? "w-80":"w-10 overflow-hidden"}`}>
                 {/* Clear Filters button */}
                 <div className={`flex items-center justify-center ${!showSidebar? "hidden":""}`}>
                     <button className="btn hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
@@ -179,7 +179,7 @@ export default function ViewerHome() {
                     }
                 </div>
             </div>
-            <div className="flex flex-col h-screen w-full m-4">
+            <div className="flex flex-col min-w-0 max-w-full m-4">
                 <button className="btn btn-square btn-ghost mb-4" onClick={toggleSideBar}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
