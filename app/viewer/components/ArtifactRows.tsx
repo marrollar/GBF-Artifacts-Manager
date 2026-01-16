@@ -9,7 +9,7 @@ export function NameRow({ children }: { children: React.ReactNode }) {
 
 export function ValueRow({ children }: { children: React.ReactNode }) {
     return (
-        <div className="row-span-1 row-start-3 p-2 border-r border-r-amber-50/30">
+        <div className="row-span-1 row-start-3 p-2 border-r border-r-amber-50/30 text-yellow-300">
             {children}
         </div>
     )
