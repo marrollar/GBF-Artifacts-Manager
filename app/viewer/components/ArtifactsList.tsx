@@ -2,6 +2,7 @@
 
 import type { ActiveFilters } from "../filtering/filterConfig";
 import { elements, elementSortOrder, weapons, weaponSortOrder, type Artifacts } from "../types";
+import { NameRow, ValueRow } from "./ArtifactRows";
 
 type Args = {
     artifacts: Artifacts,
@@ -78,75 +79,74 @@ function WeaponBlock({ weapon, artifacts }: { weapon: string, artifacts: [string
     return (
         <div>
             <img src={`/Label_Weapon_${weapon}.png`} />
-            <div className="mt-2">
+            <div className="flex flex-col ml-2 mt-2">
+                {/* <div className="grid grid-cols-9 gap-4"> */}
                 {
                     artifacts.map((artifact) => {
                         return (
-                            <div key={artifact[0]} className="ml-2 ">
-                                <table className="table border border-collapse">
-                                    <tbody>
-                                        <tr>
-                                            <th className="border">
-                                                <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
-                                            </th>
-                                            <td className="border text-clip truncate overflow-scroll">
-                                                {artifact[1].s1.name}
-                                            </td>
-                                            <td className="border text-left">
-                                                {artifact[1].s1.value}
-                                            </td>
-                                            <td className="border text-right truncate overflow-scroll">
-                                                {artifact[1].s2.name}
-                                            </td>
-                                            <td className="border text-left">
-                                                {artifact[1].s2.value}
-                                            </td>
-                                            <td className="border text-right truncate overflow-scroll">
-                                                {artifact[1].s3.name}
-                                            </td>
-                                            <td className="border text-left ">
-                                                {artifact[1].s3.value}
-                                            </td>
-                                            <td className="border text-right truncate overflow-scroll">
-                                                {artifact[1].s4.name}
-                                            </td>
-                                            <td className="border text-left ">
-                                                {artifact[1].s4.value}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                {/* <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
-                                <div className="text-right overflow-scroll">
-                                    {artifact[1].s1.name}
+                            <div key={artifact[0]} className="flex min-w-0 gap-4">
+                                <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+                                <div className="grid grid-cols-4 grid-rows-3 border border-collapse">
+                                    <NameRow>
+                                        {artifact[1].s1.name}
+                                    </NameRow>
+                                    <ValueRow>
+                                        {artifact[1].s1.value}
+                                    </ValueRow>
+                                    <NameRow>
+                                        {artifact[1].s2.name}
+                                    </NameRow>
+                                    <ValueRow>
+                                        {artifact[1].s2.value}
+                                    </ValueRow>
+                                    <NameRow>
+                                        {artifact[1].s3.name}
+                                    </NameRow>
+                                    <ValueRow>
+                                        {artifact[1].s3.value}
+                                    </ValueRow>
+                                    <NameRow>
+                                        {artifact[1].s4.name}
+                                    </NameRow>
+                                    <ValueRow>
+                                        {artifact[1].s4.value}
+                                    </ValueRow>
                                 </div>
-                                <div className="text-left ">
-                                    {artifact[1].s1.value}
-                                </div>
-                                <div className="text-right overflow-scroll">
-                                    {artifact[1].s2.name}
-                                </div>
-                                <div className="text-left">
-                                    {artifact[1].s2.value}
-                                </div>
-                                <div className="text-right overflow-scroll">
-                                    {artifact[1].s3.name}
-                                </div>
-                                <div className="text-left ">
-                                    {artifact[1].s3.value}
-                                </div>
-                                <div className="text-right overflow-scroll">
-                                    {artifact[1].s4.name}
-                                </div>
-                                <div className="text-left ">
-                                    {artifact[1].s4.value}
-                                </div> */}
                             </div>
+
+                            // <div key={artifact[0]} className="flex gap-2">
+                            //     <input type="checkbox" className="flex-none checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+                            //     <NameRow>
+                            //         {artifact[1].s1.name}
+                            //     </div>
+                            //     <ValueRow>
+                            //         {artifact[1].s1.value}
+                            //     </div>
+                            //     <NameRow>
+                            //         {artifact[1].s2.name}
+                            //     </div>
+                            //     <ValueRow>
+                            //         {artifact[1].s2.value}
+                            //     </div>
+                            //     <NameRow>
+                            //         {artifact[1].s3.name}
+                            //     </div>
+                            //     <ValueRow>
+                            //         {artifact[1].s3.value}
+                            //     </div>
+                            //     <NameRow>
+                            //         {artifact[1].s4.name}
+                            //     </div>
+                            //     <ValueRow>
+                            //         {artifact[1].s4.value}
+                            //     </div>
+                            // </div>
 
                         )
                     })
                 }
             </div>
         </div>
+
     )
 }

@@ -179,7 +179,7 @@ export default function ViewerHome() {
                     }
                 </div>
             </div>
-            <div className="flex flex-col min-w-0 max-w-full m-4">
+            <div className="flex grow flex-col min-w-0 max-w-full m-4">
                 <button className="btn btn-square btn-ghost mb-4" onClick={toggleSideBar}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
