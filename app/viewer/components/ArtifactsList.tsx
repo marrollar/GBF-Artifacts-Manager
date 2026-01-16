@@ -59,7 +59,10 @@ function ElementBlock({ element, artifacts }: { element: string, artifacts: [str
     return (
         <details className="flex flex-col collapse border collapse-arrow">
             <summary className="collapse-title">
-                <img src={`/Icon_Element_${element}.png`} />
+                <div className="flex items-center gap-4">
+                    <img src={`/Icon_Element_${element}.png`} />
+                    Count: {artifacts.length}
+                </div>
             </summary>
             <div className="collapse-content">
                 <div className="flex flex-col gap-4">
@@ -77,49 +80,57 @@ function ElementBlock({ element, artifacts }: { element: string, artifacts: [str
 
 function WeaponBlock({ weapon, artifacts }: { weapon: string, artifacts: [string, Artifacts[number]][] }) {
     return (
-        <div>
-            <img src={`/Label_Weapon_${weapon}.png`} />
-            <div className="flex flex-col ml-2 mt-2">
-                <div className="h-full grid grid-cols-4 auto-rows-fr grid-flow-col ">
-                    {
-                        artifacts.map((artifact) => {
-                            return (
-                                <div key={artifact[0]} className="col-span-full grid grid-rows-[2fr_1fr] grid-cols-[50px_1fr_1fr_1fr_1fr] h-20 items-center">
-                                    <img src={`/Label_Weapon_${weapon}.png`} />
-                                    <NameRow>
-                                        {artifact[1].s1.name}
-                                    </NameRow>
-                                    <NameRow>
-                                        {artifact[1].s2.name}
-                                    </NameRow>
-                                    <NameRow>
-                                        {artifact[1].s3.name}
-                                    </NameRow>
-                                    <NameRow last={true}>
-                                        {artifact[1].s4.name}
-                                    </NameRow>
-                                    <div className="justify-self-center align-self-center pb-[12px]">
-                                        <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+        <details className="collapse collapse-arrow">
+            <summary className="collapse-title ">
+                <div className="flex items-center gap-4">
+                    <img src={`/Label_Weapon_${weapon}.png`} />
+                    Count: {artifacts.length}
+                </div>
+            </summary>
+            <div className="collapse-content">
+                <div className="flex flex-col ml-2 mt-2">
+                    <div className="h-full grid grid-cols-4 auto-rows-fr grid-flow-col ">
+                        {
+                            artifacts.map((artifact) => {
+                                return (
+                                    <div key={artifact[0]} className="col-span-full grid grid-rows-[2fr_1fr] grid-cols-[50px_1fr_1fr_1fr_1fr] h-20 items-center">
+                                        <img src={`/Label_Weapon_${weapon}.png`} />
+                                        <NameRow>
+                                            {artifact[1].s1.name}
+                                        </NameRow>
+                                        <NameRow>
+                                            {artifact[1].s2.name}
+                                        </NameRow>
+                                        <NameRow>
+                                            {artifact[1].s3.name}
+                                        </NameRow>
+                                        <NameRow last={true}>
+                                            {artifact[1].s4.name}
+                                        </NameRow>
+                                        <div className="justify-self-center align-self-center pb-[12px]">
+                                            <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+                                        </div>
+                                        <ValueRow>
+                                            {artifact[1].s1.value}
+                                        </ValueRow>
+                                        <ValueRow>
+                                            {artifact[1].s2.value}
+                                        </ValueRow>
+                                        <ValueRow>
+                                            {artifact[1].s3.value}
+                                        </ValueRow>
+                                        <ValueRow last={true}>
+                                            {artifact[1].s4.value}
+                                        </ValueRow >
                                     </div>
-                                    <ValueRow>
-                                        {artifact[1].s1.value}
-                                    </ValueRow>
-                                    <ValueRow>
-                                        {artifact[1].s2.value}
-                                    </ValueRow>
-                                    <ValueRow>
-                                        {artifact[1].s3.value}
-                                    </ValueRow>
-                                    <ValueRow last={true}>
-                                        {artifact[1].s4.value}
-                                    </ValueRow >
-                                </div>
-                            )
-                        })
-                    }
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </details>
 
     )
 }
