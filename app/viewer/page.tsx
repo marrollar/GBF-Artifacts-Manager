@@ -86,9 +86,9 @@ export default function ViewerHome() {
 
     return (
         <div className="flex">
-            <div className={`flex flex-none flex-col items-center gap-4 bg-base-300 p-4 sticky top-0 ${showSidebar ? "w-120" : "w-10 overflow-hidden"}`}>
+            <div className={`flex flex-none flex-col items-center gap-4 bg-base-300 p-4 sticky top-0 h-screen overflow-auto ${showSidebar ? "w-120" : "w-12 overflow-hidden"}`}>
                 {/* Collapse sidebar button */}
-                <button className={`btn btn-square btn-ghost mb-4 absolute hover:bg-neutral-500 ${showSidebar ? "top-4 right-2" : ""}`} onClick={toggleSideBar}>
+                <button className={`btn btn-square btn-ghost mb-4 fixed bg-base-100 hover:bg-neutral-500 ${showSidebar ? "top-4 left-2" : ""}`} onClick={toggleSideBar}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -106,7 +106,7 @@ export default function ViewerHome() {
 
                 {/* Clear Filters button */}
                 <div className={`flex items-center justify-center ${!showSidebar ? "hidden" : ""}`}>
-                    <button className="btn hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
+                    <button className="btn bg-base-100 hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
                 </div>
 
                 {/* Search bar */}
@@ -337,13 +337,13 @@ export default function ViewerHome() {
                             </div>
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            At Eot: If equipper didn't attack, gain random buff(s)
+                            At EoT: If equipper didn't attack, gain random buff(s)
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            At Eot: Chance to Dispel all buffs from foe
+                            At EoT: Chance to Dispel all buffs from foe
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            At Eot: Chance to progress turn count by 5
+                            At EoT: Chance to progress turn count by 5
                         </GroupFilterButton>
 
                         <GroupFilterButton>
@@ -393,7 +393,7 @@ export default function ViewerHome() {
                             Boost item drop rate by x
                         </GroupFilterButton>
                         <GroupFilterButton>
-                            At EOT: Chance to find earrings
+                            At EoT: Chance to find earrings
                         </GroupFilterButton>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import { Element, Weapon } from "../types";
+import type { Element, Weapon } from "../types";
 import type { FilterDefinition } from "./filters";
 
 export const FILTERS = [
