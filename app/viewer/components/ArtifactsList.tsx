@@ -3,14 +3,31 @@
 import type { ActiveFilters } from "../filtering/filterConfig";
 import { elements, elementSortOrder, weapons, weaponSortOrder, type Artifacts } from "../types";
 import { NameRow, ValueRow } from "./ArtifactRows";
+import React from "react";
 
-type Args = {
+type Props = {
     artifacts: Artifacts,
     filterOpts: ActiveFilters
 }
 
-export default function ArtifactsList({ artifacts, filterOpts }: Args) {
-    const sortedArtifacts = Object.entries(artifacts)
+function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFilters) {
+    const artiData = artifact[1];
+    const eleFilter = filterOpts.element;
+    const wepFilter = filterOpts.weapon
+
+    if ((eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
+        (wepFilter.size === 0 || wepFilter.has(artiData.weapon))) {
+        return true
+    }
+
+    return false
+
+}
+
+export default function ArtifactsList({ artifacts, filterOpts }: Props) {
+    const filteredArtifacts = Object.entries(artifacts).filter(arti => filterLogic(arti, filterOpts))
+
+    const sortedArtifacts = filteredArtifacts
         .sort((a, b) => {
             const a_elemOrd = elementSortOrder.get(a[1].element);
             const b_elemOrd = elementSortOrder.get(b[1].element);
@@ -41,14 +58,17 @@ export default function ArtifactsList({ artifacts, filterOpts }: Args) {
             return 0
         })
 
-    // console.log(sortedArtifacts)
-
     return (
         <div className="flex flex-col gap-4">
             {
-                Object.entries(elements).map(([_, ele_str]) => (
-                    <ElementBlock key={"eb" + ele_str} element={ele_str} artifacts={sortedArtifacts.filter(arti => arti[1].element === ele_str)} />
-                ))
+                Object.entries(elements).map(([_, ele_str]) => {
+                    const relevantArtis = sortedArtifacts.filter(arti => arti[1].element === ele_str)
+
+                    if (relevantArtis.length > 0) {
+                        return <ElementBlock key={"eb" + ele_str} element={ele_str} artifacts={relevantArtis} />
+                    }
+                    return <React.Fragment key={"eb" + ele_str} />
+                })
             }
         </div>
 
@@ -67,9 +87,14 @@ function ElementBlock({ element, artifacts }: { element: string, artifacts: [str
             <div className="collapse-content">
                 <div className="flex flex-col gap-4">
                     {
-                        Object.entries(weapons).map(([_, wep_str]) => (
-                            <WeaponBlock key={"wb" + wep_str} weapon={wep_str} artifacts={artifacts.filter(arti => arti[1].weapon === wep_str)} />
-                        ))
+                        Object.entries(weapons).map(([_, wep_str]) => {
+                            const relevantArtis = artifacts.filter(arti => arti[1].weapon === wep_str)
+
+                            if (relevantArtis.length > 0) {
+                                return <WeaponBlock key={"wb" + wep_str} weapon={wep_str} artifacts={relevantArtis} />
+                            }
+                            return <React.Fragment key={"wb" + wep_str} />
+                        })
                     }
                 </div>
             </div>
