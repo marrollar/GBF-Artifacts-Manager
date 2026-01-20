@@ -10,11 +10,11 @@ export type FilterDefinition =
         type: "select";
         key: "element";
         label: string;
-        options: readonly Element[];
+        options: Set<Element>;
     }
     | {
         type: "select";
         key: "weapon";
         label: string;
-        options: readonly Weapon[];
+        options: Set<Weapon>;
     }

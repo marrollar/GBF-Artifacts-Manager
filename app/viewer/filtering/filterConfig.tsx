@@ -11,13 +11,13 @@ export const FILTERS = [
         type: "select",
         key: "element",
         label: "Element",
-        options: Object.values(Element)
+        options: new Set<Element>
     },
     {
         type: "select",
         key: "weapon",
         label: "Weapon",
-        options: Object.values(Weapon)
+        options: new Set<Weapon>
     }
 ] as const satisfies readonly FilterDefinition[];
 
@@ -27,7 +27,7 @@ type FilterValue<T extends FilterDefinition> =
     T extends TextNarrowing
     ? string
     : T extends SelectNarrowing
-    ? T["options"][number] | null
+    ? T["options"]
     : never
 
 export type ActiveFilters = {
