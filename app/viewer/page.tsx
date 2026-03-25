@@ -63,13 +63,13 @@ export default function ViewerHome() {
 
     const handleSk1Search = useDebouncedCallback((term) => {
         setFilters(prev => ({ ...prev, ["sk1Search"]: term }))
-    })
+    }, 300)
     const handleSk2Search = useDebouncedCallback((term) => {
         setFilters(prev => ({ ...prev, ["sk2Search"]: term }))
-    })
+    }, 300)
     const handleSk3Search = useDebouncedCallback((term) => {
         setFilters(prev => ({ ...prev, ["sk3Search"]: term }))
-    })
+    }, 300)
 
     const showSidebar = () => {
         setShowSidebar(true)
@@ -129,7 +129,7 @@ export default function ViewerHome() {
         <div className="h-screen">
             <Group>
                 <Panel collapsible collapsedSize={__SIDEBAR.collapsedSize} minSize={__SIDEBAR.minSize} defaultSize={__SIDEBAR.defaultSize} className="bg-base-300 p-2" panelRef={setSidebarPanelRef} onResize={onPanelResize}>
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-2 pr-6">
                         {/* Show sidebar button */}
                         <button className={`btn btn-square btn-ghost bg-base-100 w-[30px] h-[30px] hover:bg-neutral-500 ${sidebarIsShown ? "hidden" : ""}`} onClick={showSidebar}>
                             <svg
@@ -197,49 +197,13 @@ export default function ViewerHome() {
 
 
                             {/* Skill Group 1 Filters */}
-                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
-                                <div className="flex gap-2">
-                                    <label className={`input self-center mb-2`}>
-                                        <input type="search" placeholder="Skill Group 1 Search" onChange={(e) => { handleSk1Search(e.target.value) }}></input>
-                                    </label>
-                                    <div className={`flex items-center mb-2`}>
-                                        {/* TODO: Implement filter clearing */}
-                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK1 TRASH") }} />
-                                    </div>
-                                </div>
-
-                                <FilterGroup btnNames={SK1_NAMES} />
-                            </div>
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" />
 
                             {/* Skill Group 2 Filters */}
-                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
-                                <div className="flex gap-2">
-                                    <label className={`input self-center mb-2`}>
-                                        <input type="search" placeholder="Skill Group 2 Search" onChange={(e) => { handleSk2Search(e.target.value) }}></input>
-                                    </label>
-                                    <div className={`flex items-center mb-2`}>
-                                        {/* TODO: Implement filter clearing */}
-                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK2 TRASH") }} />
-                                    </div>
-                                </div>
-
-                                <FilterGroup btnNames={SK2_NAMES} />
-                            </div>
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" />
 
                             {/* Skill Group 3 Filters */}
-                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
-                                <div className="flex gap-2">
-                                    <label className={`input self-center mb-2`}>
-                                        <input type="search" placeholder="Skill Group 3 Search" onChange={(e) => { handleSk3Search(e.target.value) }}></input>
-                                    </label>
-                                    <div className={`flex items-center mb-2`}>
-                                        {/* TODO: Implement filter clearing */}
-                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK3 TRASH") }} />
-                                    </div>
-                                </div>
-
-                                <FilterGroup btnNames={SK3_NAMES} />
-                            </div>
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" />
                         </div>
 
                     </div>

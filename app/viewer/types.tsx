@@ -85,9 +85,9 @@ export const SK1_NAMES: FilterButtonData[] = [
 ]
 
 export const SK2_NAMES: FilterButtonData[] = [
-    { name: "N.A. DMG Cap", aliases: ["NA DMG Cap"] },
-    { name: "Skill DMG Cap" },
-    { name: "C.A. DMG Cap", aliases: ["CA DMG Cap"] },
+    { name: "N.A. DMG Cap", aliases: ["NA DMG Cap", "NA Cap"] },
+    { name: "Skill DMG Cap", aliases: ["Skill Cap", "Sk Cap"] },
+    { name: "C.A. DMG Cap", aliases: ["CA DMG Cap", "CA Cap"] },
     { name: "Supplemental N.A. DMG", aliases: ["Supplemental NA DMG", "N.A. Supp", "NA Supp"] },
     { name: "Supplemental Skill DMG", aliases: ["Skill Supp"] },
     { name: "Supplemental C.A. DMG", aliases: ["Supplemental CA DMG", "C.A. Supp", "CA Supp"] },
@@ -100,9 +100,9 @@ export const SK2_NAMES: FilterButtonData[] = [
     { name: "DMG Reduction when at or below 50% HP:" },
     { name: "Boost DMG cap for critical hits by" },
     { name: "Max HP boost for a 70% hit to DEF:" },
-    { name: "N.A. DMG cap boost for an 80%/60% hit to skill/C.A. DMG cap:", aliases: ["NA DMG cap boost for an 80%/60% hit to skill/CA DMG cap:", "NA Trade"] },
-    { name: "Skill DMG cap boost for an 80%/60% hit to N.A./C.A. DMG cap:", aliases: ["Skill Trade"] },
-    { name: "C.A. DMG cap boost for an 80%/60% hit to N.A./skill DMG cap:", aliases: ["CA DMG cap boost for an 80%/60% hit to NA/skill DMG cap:", "CA Trade"] },
+    { name: "N.A. DMG cap boost for an 80%/60% hit to skill/C.A. DMG cap:", aliases: ["NA DMG cap boost for an 80%/60% hit to skill/CA DMG cap:", "NA cap boost for an 80%/60% hit to skill/CA DMG cap:", "NA Trade"] },
+    { name: "Skill DMG cap boost for an 80%/60% hit to N.A./C.A. DMG cap:", aliases: ["Skill cap boost for an 80%/60% hit to N.A./C.A. DMG cap:", "Skill Trade"] },
+    { name: "C.A. DMG cap boost for an 80%/60% hit to N.A./skill DMG cap:", aliases: ["CA DMG cap boost for an 80%/60% hit to NA/skill DMG cap:", "CA cap boost for an 80%/60% hit to NA/skill DMG cap:", "CA Trade"] },
     { name: "Chance to cancel incoming dispels:", aliases: ["Chance for Dispel Cancel"] },
     { name: "Chance to remove 1 debuff before attacking:", aliases: ["Chance for Dispel"] }
 ]
