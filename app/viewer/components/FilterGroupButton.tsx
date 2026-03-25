@@ -1,4 +1,4 @@
-export default function GroupFilterButton({ children }: { children:React.ReactNode }) {
+export default function FilterGroupButton({ children }: { children:React.ReactNode }) {
     
     
     return (

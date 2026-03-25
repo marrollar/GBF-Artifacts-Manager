@@ -6,8 +6,11 @@ import { useDebouncedCallback } from "use-debounce"
 import ArtifactsList from "./components/ArtifactsList"
 import { ActiveFilters } from "./filtering/filterConfig"
 import type { Artifacts, Element, Weapon } from "./types"
-import { elements, weapons } from "./types"
-import GroupFilterButton from "./components/GroupFilterButton"
+import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons } from "./types"
+import FilterGroupButton from "./components/FilterGroupButton"
+import { Group, Panel, Separator, usePanelCallbackRef } from "react-resizable-panels";
+import ClearFilterButton from "./components/ClearFilterButton"
+import FilterGroup from "./components/FilterGroup"
 
 const __default_filter: ActiveFilters = {
     search: "",
@@ -16,11 +19,18 @@ const __default_filter: ActiveFilters = {
 
 }
 
+const __SIDEBAR = {
+    collapsedSize: 40,
+    minSize: 100,
+    defaultSize: "35%"
+}
+
 export default function ViewerHome() {
     const { jsonData } = useArtifactsJson();
     const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
     const [rr, toggleReRender] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
+    const [sidebarIsShown, setShowSidebar] = useState(false);
+    const [sidebarPanelRef, setSidebarPanelRef] = usePanelCallbackRef();
 
     function updateFilter<K extends keyof ActiveFilters>(
         key: K,
@@ -47,12 +57,33 @@ export default function ViewerHome() {
         }
     }
 
-    const handleSearch = useDebouncedCallback((term) => {
+    const handleSuperSearch = useDebouncedCallback((term) => {
         setFilters(prev => ({ ...prev, ["search"]: term }))
     }, 300) // TODO Consider if debouncing is necessary
 
-    const toggleSideBar = () => {
-        setShowSidebar(!showSidebar)
+    const handleSk1Search = useDebouncedCallback((term) => {
+        setFilters(prev => ({ ...prev, ["sk1Search"]: term }))
+    })
+    const handleSk2Search = useDebouncedCallback((term) => {
+        setFilters(prev => ({ ...prev, ["sk2Search"]: term }))
+    })
+    const handleSk3Search = useDebouncedCallback((term) => {
+        setFilters(prev => ({ ...prev, ["sk3Search"]: term }))
+    })
+
+    const showSidebar = () => {
+        setShowSidebar(true)
+        sidebarPanelRef?.resize(__SIDEBAR.defaultSize)
+    }
+
+    const onPanelResize = () => {
+        console.log(sidebarPanelRef?.isCollapsed())
+        // console.log(sidebarPanelRef?.getSize())
+        if (sidebarPanelRef?.isCollapsed()) {
+            setShowSidebar(false)
+        } else {
+            setShowSidebar(true)
+        }
     }
 
     if (!jsonData) {
@@ -95,322 +126,132 @@ export default function ViewerHome() {
     })
 
     return (
-        <div className="flex">
-            <div className={`flex flex-none flex-col items-center gap-4 bg-base-300 p-4 sticky top-0 h-screen overflow-auto ${showSidebar ? "w-120" : "w-12 overflow-hidden"}`}>
-                {/* Collapse sidebar button */}
-                <button className={`btn btn-square btn-ghost mb-4 fixed bg-base-100 hover:bg-neutral-500 ${showSidebar ? "top-4 left-2" : ""}`} onClick={toggleSideBar}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        className="inline-block h-6 w-6 stroke-current"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        ></path>
-                    </svg>
-                </button>
+        <div className="h-screen">
+            <Group>
+                <Panel collapsible collapsedSize={__SIDEBAR.collapsedSize} minSize={__SIDEBAR.minSize} defaultSize={__SIDEBAR.defaultSize} className="bg-base-300 p-2" panelRef={setSidebarPanelRef} onResize={onPanelResize}>
+                    <div className="flex flex-col items-center gap-2">
+                        {/* Show sidebar button */}
+                        <button className={`btn btn-square btn-ghost bg-base-100 w-[30px] h-[30px] hover:bg-neutral-500 ${sidebarIsShown ? "hidden" : ""}`} onClick={showSidebar}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                className="inline-block h-6 w-6 stroke-current"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1"
+                                    d="M4 6 h16 M4 12 h16 M4 18 h16"
+                                ></path>
+                            </svg>
+                        </button>
 
-                {/* Clear Filters button */}
-                <div className={`flex items-center justify-center ${!showSidebar ? "hidden" : ""}`}>
-                    <button className="btn bg-base-100 hover:bg-red-400" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
-                </div>
+                        <div className={`flex flex-col items-center gap-2 ${!sidebarIsShown ? "hidden" : ""}`}>
+                            {/* Clear Filters button */}
+                            <div className={`flex items-center justify-center `}>
+                                <button className="btn bg-base-100 hover:bg-red-400 h-7" onClick={() => setFilters(__default_filter)}> Clear Filters </button>
+                            </div>
 
-                {/* Search bar */}
-                <label className={`input ${!showSidebar ? "hidden" : ""}`}>
-                    <input type="search" placeholder="Search" onChange={(e) => { handleSearch(e.target.value) }}></input>
-                </label>
+                            {/* Search bar */}
+                            <label className={`input`}>
+                                <input type="search" placeholder="Search" onChange={(e) => { handleSuperSearch(e.target.value) }}></input>
+                            </label>
 
-                {/* Elements filter */}
-                <div className={`flex items-center justify-center gap-2 h-[30px] ${!showSidebar ? "hidden" : ""}`}>
-                    {
-                        Object.entries(elements).map(([key, value]) => (
-                            <button key={key} className={`btn p-0.5 hover:bg-neutral-500 ${filters["element"].has(value as Element) ? "bg-accent" : ""}`} onClick={() => updateFilter("element", value)}>
-                                <img className="h-[30px]" src={`/Icon_Element_${value}.png`} />
-                            </button>
-                        ))
-                    }
-                </div>
-                {/* Weapons filter */}
-                <div className={`flex flex-wrap items-center justify-center gap-2 h-[60px] ${!showSidebar ? "hidden" : ""}`}>
-                    {
-                        Object.entries(weapons).map(([key, value]) => (
-                            <button key={key} className={`hover:bg-neutral-500 hover:cursor-pointer rounded-md p-0.5 ${filters["weapon"].has(value as Weapon) ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
-                                <img className="h-[20px]" src={`/Label_Weapon_${value}.png`} />
-                            </button>
-                        ))
-                    }
-                </div>
+                            {/* Elements filter */}
+                            <div className="flex gap-2">
+                                <div className={`flex items-center gap-2 h-[50px] overflow-auto`}>
+                                    {
+                                        Object.entries(elements).map(([key, value]) => (
+                                            <button key={key} className={`flex-none p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md ${filters["element"].has(value as Element) ? "bg-accent" : ""}`} onClick={() => updateFilter("element", value)}>
+                                                <img className="w-[30px] h-[30px]" src={`/Icon_Element_${value}.png`} />
+                                            </button>
+                                        ))
+                                    }
+                                </div>
+                                <div className={`flex items-center`}>
+                                    {/* TODO: Implement filter clearing */}
+                                    <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED ELEMENT TRASH") }} />
+                                </div>
+                            </div>
 
-                {/* Skill Group 1 Filters */}
-                <div className={`flex flex-col border p-2 ${!showSidebar ? "hidden" : ""}`}>
-                    <div className="self-center font-bold">
-                        Skill Group 1 Filters
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                        <GroupFilterButton>
-                            ATK
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            HP
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            C.A. DMG
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Skill DMG
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Elemental ATK
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Critical Hit Rate
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            D.A. Rate
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            T.A. Rate
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            DEF
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Superior Element Reduction
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Dodge Rate
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Healing
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Debuff Success Rate
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Debuff Resistance
-                        </GroupFilterButton>
-                    </div>
-                </div>
 
-                {/* Skill Group 2 Filters */}
-                <div className={`flex flex-col border p-2 ${!showSidebar ? "hidden" : ""}`}>
-                    <div className="self-center font-bold">
-                        Skill Group 2 Filters
-                    </div>
-                    <div className="grid grid-cols-4 gap-1">
-                        <div className="flex flex-col gap-1">
-                            <GroupFilterButton>
-                                N.A. Cap
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                Skill Cap
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                C.A. Cap
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                SP C.A. Cap
-                            </GroupFilterButton>
+                            {/* Weapons filter */}
+                            <div className="flex gap-2">
+                                <div className="flex overflow-auto">
+                                    <div className="flex-none grid grid-flow-row grid-rows-2 grid-cols-5 overflow-auto pb-2">
+                                        {
+                                            Object.entries(weapons).map(([key, value]) => (
+                                                <button key={key} className={`p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md  ${filters["weapon"].has(value as Weapon) ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
+                                                    <img className="h-[20px]" src={`/Label_Weapon_${value}.png`} />
+                                                </button>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                                <div className={`flex items-center pb-2`}>
+                                    {/* TODO: Implement filter clearing */}
+                                    <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED WEAPON TRASH") }} />
+                                </div>
+                            </div>
+
+
+                            {/* Skill Group 1 Filters */}
+                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
+                                <div className="flex gap-2">
+                                    <label className={`input self-center mb-2`}>
+                                        <input type="search" placeholder="Skill Group 1 Search" onChange={(e) => { handleSk1Search(e.target.value) }}></input>
+                                    </label>
+                                    <div className={`flex items-center mb-2`}>
+                                        {/* TODO: Implement filter clearing */}
+                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK1 TRASH") }} />
+                                    </div>
+                                </div>
+
+                                <FilterGroup btnNames={SK1_NAMES} />
+                            </div>
+
+                            {/* Skill Group 2 Filters */}
+                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
+                                <div className="flex gap-2">
+                                    <label className={`input self-center mb-2`}>
+                                        <input type="search" placeholder="Skill Group 2 Search" onChange={(e) => { handleSk2Search(e.target.value) }}></input>
+                                    </label>
+                                    <div className={`flex items-center mb-2`}>
+                                        {/* TODO: Implement filter clearing */}
+                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK2 TRASH") }} />
+                                    </div>
+                                </div>
+
+                                <FilterGroup btnNames={SK2_NAMES} />
+                            </div>
+
+                            {/* Skill Group 3 Filters */}
+                            <div className={`flex flex-col bg-base-200 rounded-md border border-gray-700 p-2 max-w-[375px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
+                                <div className="flex gap-2">
+                                    <label className={`input self-center mb-2`}>
+                                        <input type="search" placeholder="Skill Group 3 Search" onChange={(e) => { handleSk3Search(e.target.value) }}></input>
+                                    </label>
+                                    <div className={`flex items-center mb-2`}>
+                                        {/* TODO: Implement filter clearing */}
+                                        <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED SK3 TRASH") }} />
+                                    </div>
+                                </div>
+
+                                <FilterGroup btnNames={SK3_NAMES} />
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <GroupFilterButton >
-                                N.A. Trade
-                            </GroupFilterButton>
-                            <GroupFilterButton >
-                                Skill Trade
-                            </GroupFilterButton>
-                            <GroupFilterButton >
-                                C.A. Trade
-                            </GroupFilterButton>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <GroupFilterButton>
-                                N.A. Supp
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                Skill Supp
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                C.A. Supp
-                            </GroupFilterButton>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <GroupFilterButton>
-                                Crit Amp
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                C.B. Amp
-                            </GroupFilterButton>
-                            <GroupFilterButton>
-                                Amp at 100% HP
-                            </GroupFilterButton>
-                        </div>
+
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                        <GroupFilterButton>
-                            TA while above 50% HP
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            HP Boost, 70% DEF cut
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            DR at/below 50% HP
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Regeneration
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Turn-Based DMG Reduction
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Chance to Dispel
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Chance to Dispel Cancel
-                        </GroupFilterButton>
-                    </div>
-                </div>
-
-                {/* Skill Group 3 Filters */}
-                <div className={`flex flex-col border p-2 ${!showSidebar ? "hidden" : ""}`}>
-                    <div className="self-center font-bold">
-                        Skill Group 3 Filters
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Battle Start: <br /> DMG Mitigation with value of x
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Battle Start: <br /> Gain x random buff(s)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Battle Start: <br />20% HP Cut, x% DMG Cap after 3 turns
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On KO: <br /> All allies gain x random buff(s)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On Swap to Main: <br /> x% DMG Amp
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On foe 50% HP: <br /> Restore equipper's HP by x
-                            </div>
-                        </GroupFilterButton>
-
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On casting 1st-slot skill: <br /> Cut 1st-slot skill cd by 1, cut x% HP
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On using debuff skill: <br /> Apply x% DMG Taken Amplified (2 hits)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On using healing skill: <br /> Ally in the next position gains x% Bonus DMG (1 time)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Each 10 skills used: <br /> Gain 1% DMG Cap Up (Stackable / Max 5%)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                On using skill w/ 10 or more cd: <br /> Gain x% DMG Amp
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Cut linked skill cds by 1 after using a linked skill x times
-                        </GroupFilterButton>
-
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                At EoT: Gain Supplemental DMG based on amount of charge bar spent that turn
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            At EoT: If equipper didn't attack, gain random buff(s)
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            At EoT: Chance to Dispel all buffs from foe
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            At EoT: Chance to progress turn count by 5
-                        </GroupFilterButton>
-
-                        <GroupFilterButton>
-                            Battle Start & every 5 turns: Gain Shield with value of x
-                        </GroupFilterButton>
-                        <GroupFilterButton >
-                            Chance to gain Flurry (6-hit / 1 time) before attacking
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Gain 20% Bonus DMG (1 time) after being targeted by foes' attacks x time(s)
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Gain Flurry (3-hit / 1 time) after hitting a foe x times
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Plain DMG to a foe at EoT based on how much HP the equipper lost that turn
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                Gain Supplemental Skill DMG (Stackable / Max: 50,000) after dealing this amount of skill DMG
-                            </div>
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            On Single attacks: Gain x random buff(s)
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            On using a green or blue potion: Boost FC bar by x
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            <div className="text-left">
-                                When a foe has 3 or fewer buffs at turn start: <br /> Gain x% Armored
-                            </div>
-                        </GroupFilterButton>
-
-                        <GroupFilterButton>
-                            When sub ally: 1 random debuff to all foes every x turns
-                        </GroupFilterButton>
-
-                        <GroupFilterButton>
-                            Boost EXP earned by x
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            Boost item drop rate by x
-                        </GroupFilterButton>
-                        <GroupFilterButton>
-                            At EoT: Chance to find earrings
-                        </GroupFilterButton>
-                    </div>
-                </div>
-            </div>
-            <div className="flex grow flex-col min-w-0 max-w-full m-4 ">
-                <ArtifactsList artifacts={artifacts} filterOpts={filters} />
-            </div>
+                </Panel>
+                <Separator>
+                    <div className="w-0.5 h-full ml-1 mr-1 shrink-0 bg-gray-600" />
+                </Separator>
+                <Panel className="bg-base-300 p-2">
+                    right
+                </Panel>
+            </Group>
         </div>
+
     )
 }

@@ -25,10 +25,29 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
 }
 
 export default function ArtifactsList({ artifacts, filterOpts }: Props) {
-    const filteredArtifacts = Object.entries(artifacts).filter(arti => filterLogic(arti, filterOpts))
+    var filteredArtifacts = Object.entries(artifacts).filter(arti => filterLogic(arti, filterOpts))
+
+    for(var i = 0; i < filteredArtifacts.length; i++) {
+        const s1 = filteredArtifacts[i][1].s1
+        const s2 = filteredArtifacts[i][1].s2
+        // console.log(filteredArtifacts[i][1])
+        if (s2.id < s1.id) {
+            filteredArtifacts[i][1].s1 = s2
+            filteredArtifacts[i][1].s2 = s1
+        }
+        // console.log(filteredArtifacts[i][1])
+    }
 
     const sortedArtifacts = filteredArtifacts
         .sort((a, b) => {
+            // if (a[1].s2.name < a[1].s1.name) {
+            //     a[1].s1, a[1].s2 = a[1].s2, a[1].s1
+            // }
+
+            // if (b[1].s2.name < b[1].s1.name) {
+            //     b[1].s1, b[1].s2 = b[1].s2, b[1].s1
+            // }
+
             const a_elemOrd = elementSortOrder.get(a[1].element);
             const b_elemOrd = elementSortOrder.get(b[1].element);
 
@@ -121,10 +140,10 @@ function WeaponBlock({ weapon, artifacts }: { weapon: string, artifacts: [string
                                     <div key={artifact[0]} className="col-span-full grid grid-rows-[2fr_1fr] grid-cols-[50px_1fr_1fr_1fr_1fr] h-20 items-center">
                                         <img src={`/Label_Weapon_${weapon}.png`} />
                                         <NameRow>
-                                            {artifact[1].s1.name}
+                                            {artifact[1].s1.name + artifact[1].s1.id}
                                         </NameRow>
                                         <NameRow>
-                                            {artifact[1].s2.name}
+                                            {artifact[1].s2.name + artifact[1].s2.id}
                                         </NameRow>
                                         <NameRow>
                                             {artifact[1].s3.name}
