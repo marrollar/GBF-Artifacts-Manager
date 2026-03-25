@@ -129,24 +129,23 @@ export default function ViewerHome() {
         <div className="h-screen">
             <Group>
                 <Panel collapsible collapsedSize={__SIDEBAR.collapsedSize} minSize={__SIDEBAR.minSize} defaultSize={__SIDEBAR.defaultSize} className="bg-base-300 p-2" panelRef={setSidebarPanelRef} onResize={onPanelResize}>
+                    {/* Show sidebar button */}
+                    <button className={`btn btn-square btn-ghost bg-base-100 w-[30px] h-[30px] hover:bg-neutral-500 ${sidebarIsShown ? "hidden" : ""}`} onClick={showSidebar}>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="inline-block h-6 w-6 stroke-current"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="1"
+                                d="M4 6 h16 M4 12 h16 M4 18 h16"
+                            ></path>
+                        </svg>
+                    </button>
                     <div className="flex flex-col items-center gap-2 pr-6">
-                        {/* Show sidebar button */}
-                        <button className={`btn btn-square btn-ghost bg-base-100 w-[30px] h-[30px] hover:bg-neutral-500 ${sidebarIsShown ? "hidden" : ""}`} onClick={showSidebar}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                className="inline-block h-6 w-6 stroke-current"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="1"
-                                    d="M4 6 h16 M4 12 h16 M4 18 h16"
-                                ></path>
-                            </svg>
-                        </button>
-
                         <div className={`flex flex-col items-center gap-2 ${!sidebarIsShown ? "hidden" : ""}`}>
                             {/* Clear Filters button */}
                             <div className={`flex items-center justify-center `}>
@@ -212,7 +211,7 @@ export default function ViewerHome() {
                     <div className="w-0.5 h-full ml-1 mr-1 shrink-0 bg-gray-600" />
                 </Separator>
                 <Panel className="bg-base-300 p-2">
-                    right
+                    <ArtifactsList artifacts={artifacts} filterOpts={filters} />
                 </Panel>
             </Group>
         </div>
