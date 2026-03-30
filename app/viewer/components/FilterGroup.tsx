@@ -4,6 +4,7 @@ import ClearFilterButton from "./ClearFilterButton";
 import FilterGroupButton from "./FilterGroupButton";
 import { useDebouncedCallback } from "use-debounce";
 import { FilterHandlers } from "../page";
+import React from "react";
 
 type Props = {
     readonly showSidebar: boolean,
@@ -46,10 +47,11 @@ export default function FilterGroup({ showSidebar, btnNames, groupName, currentF
 
                             return filteredButtons.map((btnData) => {
                                 return (
-                                    <FilterGroupButton className={`${currentFilters.has(btnData.name) ? "bg-accent text-base-200" : ""}`} onClick={() => selectedSkillsUpdater(btnData.name)} >
-                                        {btnData.name}
-                                    </FilterGroupButton>
-
+                                    <React.Fragment key={btnData.name}>
+                                        <FilterGroupButton className={`${currentFilters.has(btnData.name) ? "bg-accent text-base-200" : ""}`} onClick={() => selectedSkillsUpdater(btnData.name)} >
+                                            {btnData.name}
+                                        </FilterGroupButton>
+                                    </React.Fragment>
                                 )
                             })
                         }
