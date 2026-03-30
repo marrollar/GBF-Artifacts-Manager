@@ -5,14 +5,15 @@ import FilterGroupButton from "./FilterGroupButton";
 import { useDebouncedCallback } from "use-debounce";
 import { FilterHandlers } from "../page";
 
-type Params = {
+type Props = {
     readonly showSidebar: boolean,
     readonly btnNames: FilterButtonData[],
     readonly inpPlaceholder: string,
-    selectedSkillsUpdater: FilterHandlers["sk1Search"] | FilterHandlers["sk2Search"] | FilterHandlers["sk3Search"];
+    selectedSkillsUpdater: FilterHandlers["sk1Search"] | FilterHandlers["sk2Search"] | FilterHandlers["sk3Search"],
+    readonly clearFilter: () => void
 }
 
-export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, selectedSkillsUpdater }: Params) {
+export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, selectedSkillsUpdater, clearFilter }: Props) {
     const [filterQuery, setFilterQuery] = useState("");
 
     const handleSearch = useDebouncedCallback((term) => {
@@ -25,9 +26,8 @@ export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, sel
                 <label className={`input self-center w-full`}>
                     <input type="search" placeholder={inpPlaceholder} onChange={(e) => { handleSearch(e.target.value) }}></input>
                 </label>
-                {/* TODO: Implement trash icon to clear the filter from main page */}
                 <div className={`flex items-center `}>
-                    <ClearFilterButton onClick={() => console.warn("UNIMPLEMENTED SKILL GROUP TRASHING")} />
+                    <ClearFilterButton onClick={() => clearFilter()} />
                 </div>
             </div>
             <div className={`flex flex-wrap gap-1`}>

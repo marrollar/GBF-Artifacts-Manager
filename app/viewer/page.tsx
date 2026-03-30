@@ -30,8 +30,6 @@ const __SIDEBAR = {
     defaultSize: "35%"
 }
 
-
-
 export default function ViewerHome() {
     const { jsonData } = useArtifactsJson();
     const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
@@ -91,6 +89,23 @@ export default function ViewerHome() {
         return (value: FilterInputs[K]) => {
             filterHandlers[key](value);
         };
+    }
+
+    function filterClearer<K extends keyof ActiveFilters>(key: K) {
+        switch (key) {
+            case "search":
+                return () => setFilters(prev => ({ ...prev, [key]: "" }));
+            case "sk1Search":
+                return () => setFilters(prev => ({ ...prev, [key]: new Set<string> }));;
+            case "sk2Search":
+                return () => setFilters(prev => ({ ...prev, [key]: new Set<string> }));;
+            case "sk3Search":
+                return () => setFilters(prev => ({ ...prev, [key]: new Set<string> }));;
+            case "element":
+                return () => setFilters(prev => ({ ...prev, [key]: new Set<Element> }));;
+            case "weapon":
+                return () => setFilters(prev => ({ ...prev, [key]: new Set<Weapon> }));;
+        }
     }
 
     const showSidebar = () => {
@@ -189,8 +204,7 @@ export default function ViewerHome() {
                                     }
                                 </div>
                                 <div className={`flex items-center`}>
-                                    {/* TODO: Implement filter clearing */}
-                                    <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED ELEMENT TRASH") }} />
+                                    <ClearFilterButton onClick={filterClearer("element")} />
                                 </div>
                             </div>
 
@@ -209,20 +223,19 @@ export default function ViewerHome() {
                                     </div>
                                 </div>
                                 <div className={`flex items-center pb-2`}>
-                                    {/* TODO: Implement filter clearing */}
-                                    <ClearFilterButton onClick={() => { console.warn("UNIMPLEMENTED WEAPON TRASH") }} />
+                                    <ClearFilterButton onClick={filterClearer("weapon")} />
                                 </div>
                             </div>
 
 
                             {/* Skill Group 1 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" selectedSkillsUpdater={filterUpdater("sk1Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" selectedSkillsUpdater={filterUpdater("sk1Search")} filterClearer={filterClearer("sk1Search")} />
 
                             {/* Skill Group 2 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" selectedSkillsUpdater={filterUpdater("sk2Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" selectedSkillsUpdater={filterUpdater("sk2Search")} filterClearer={filterClearer("sk2Search")} />
 
                             {/* Skill Group 3 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" selectedSkillsUpdater={filterUpdater("sk3Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" selectedSkillsUpdater={filterUpdater("sk3Search")} filterClearer={filterClearer("sk2Search")} />
                         </div>
 
                     </div>
