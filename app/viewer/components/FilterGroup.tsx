@@ -3,14 +3,16 @@ import { FilterButtonData } from "../types";
 import ClearFilterButton from "./ClearFilterButton";
 import FilterGroupButton from "./FilterGroupButton";
 import { useDebouncedCallback } from "use-debounce";
+import { FilterHandlers } from "../page";
 
 type Params = {
     readonly showSidebar: boolean,
     readonly btnNames: FilterButtonData[],
-    readonly inpPlaceholder: string
+    readonly inpPlaceholder: string,
+    selectedSkillsUpdater: FilterHandlers["sk1Search"] | FilterHandlers["sk2Search"] | FilterHandlers["sk3Search"];
 }
 
-export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, setSelectedFilters }: Params) {
+export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, selectedSkillsUpdater }: Params) {
     const [filterQuery, setFilterQuery] = useState("");
 
     const handleSearch = useDebouncedCallback((term) => {

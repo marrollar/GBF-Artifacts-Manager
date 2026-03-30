@@ -25,6 +25,7 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
 }
 
 export default function ArtifactsList({ artifacts, filterOpts }: Props) {
+    console.log(filterOpts)
     var filteredArtifacts = Object.entries(artifacts).filter(arti => filterLogic(arti, filterOpts))
 
     for(var i = 0; i < filteredArtifacts.length; i++) {

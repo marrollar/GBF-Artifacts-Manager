@@ -8,6 +8,24 @@ export type FilterDefinition =
     }
     | {
         type: "select";
+        key:"sk1Search";
+        label:string;
+        options:Set<string>;  
+    }
+    | {
+        type: "select";
+        key:"sk2Search";
+        label:string;
+        options:Set<string>;  
+    }
+    | {
+        type: "select";
+        key:"sk3Search";
+        label:string;
+        options:Set<string>;  
+    }
+    | {
+        type: "select";
         key: "element";
         label: string;
         options: Set<Element>;

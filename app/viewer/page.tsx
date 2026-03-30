@@ -1,22 +1,27 @@
 'use client'
 import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
-import Image from "next/image"
 import { useState } from "react"
+import { Group, Panel, Separator, usePanelCallbackRef } from "react-resizable-panels"
 import { useDebouncedCallback } from "use-debounce"
 import ArtifactsList from "./components/ArtifactsList"
-import { ActiveFilters } from "./filtering/filterConfig"
-import type { Artifacts, Element, Weapon } from "./types"
-import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons } from "./types"
-import FilterGroupButton from "./components/FilterGroupButton"
-import { Group, Panel, Separator, usePanelCallbackRef } from "react-resizable-panels";
 import ClearFilterButton from "./components/ClearFilterButton"
 import FilterGroup from "./components/FilterGroup"
+import { ActiveFilters, FilterInputs } from "./filtering/filterConfig"
+import type { Artifacts, Element, Weapon } from "./types"
+import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons } from "./types"
 
 const __default_filter: ActiveFilters = {
     search: "",
+    sk1Search: new Set<string>,
+    sk2Search: new Set<string>,
+    sk3Search: new Set<string>,
     element: new Set<Element>,
     weapon: new Set<Weapon>
 
+}
+
+export type FilterHandlers = {
+    [K in keyof FilterInputs]: (value: FilterInputs[K]) => void;
 }
 
 const __SIDEBAR = {
@@ -25,6 +30,8 @@ const __SIDEBAR = {
     defaultSize: "35%"
 }
 
+
+
 export default function ViewerHome() {
     const { jsonData } = useArtifactsJson();
     const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
@@ -32,11 +39,35 @@ export default function ViewerHome() {
     const [sidebarIsShown, setShowSidebar] = useState(false);
     const [sidebarPanelRef, setSidebarPanelRef] = usePanelCallbackRef();
 
-    function updateFilter<K extends keyof ActiveFilters>(
-        key: K,
-        value: string
-    ) {
-        if (key === "element") {
+    const filterHandlers: FilterHandlers = {
+        search: (value) => {
+            setFilters(prev => ({ ...prev, ["search"]: value }))
+        },
+        sk1Search: (value) => {
+            if (filters["sk1Search"].has(value)) {
+                filters["sk1Search"].delete(value)
+            } else {
+                filters["sk1Search"].add(value)
+            }
+            toggleReRender(!rr);
+        },
+        sk2Search: (value) => {
+            if (filters["sk2Search"].has(value)) {
+                filters["sk2Search"].delete(value)
+            } else {
+                filters["sk2Search"].add(value)
+            }
+            toggleReRender(!rr);
+        },
+        sk3Search: (value) => {
+            if (filters["sk3Search"].has(value)) {
+                filters["sk3Search"].delete(value)
+            } else {
+                filters["sk3Search"].add(value)
+            }
+            toggleReRender(!rr);
+        },
+        element: (value) => {
             const castedValue = value as Element;
             if (filters["element"].has(castedValue)) {
                 filters["element"].delete(castedValue)
@@ -44,7 +75,8 @@ export default function ViewerHome() {
                 filters["element"].add(castedValue)
             }
             toggleReRender(!rr);
-        } else if (key === "weapon") {
+        },
+        weapon: (value) => {
             const castedValue = value as Weapon;
             if (filters["weapon"].has(castedValue)) {
                 filters["weapon"].delete(castedValue)
@@ -52,24 +84,14 @@ export default function ViewerHome() {
                 filters["weapon"].add(castedValue)
             }
             toggleReRender(!rr);
-        } else {
-            setFilters(prev => ({ ...prev, [key]: value }))
         }
     }
 
-    const handleSuperSearch = useDebouncedCallback((term) => {
-        setFilters(prev => ({ ...prev, ["search"]: term }))
-    }, 300) // TODO Consider if debouncing is necessary
-
-    const handleSk1Search = useDebouncedCallback((term) => {
-        setFilters(prev => ({ ...prev, ["sk1Search"]: term }))
-    }, 300)
-    const handleSk2Search = useDebouncedCallback((term) => {
-        setFilters(prev => ({ ...prev, ["sk2Search"]: term }))
-    }, 300)
-    const handleSk3Search = useDebouncedCallback((term) => {
-        setFilters(prev => ({ ...prev, ["sk3Search"]: term }))
-    }, 300)
+    function filterUpdater<K extends keyof ActiveFilters>(key: K) {
+        return (value: FilterInputs[K]) => {
+            filterHandlers[key](value);
+        };
+    }
 
     const showSidebar = () => {
         setShowSidebar(true)
@@ -77,8 +99,6 @@ export default function ViewerHome() {
     }
 
     const onPanelResize = () => {
-        console.log(sidebarPanelRef?.isCollapsed())
-        // console.log(sidebarPanelRef?.getSize())
         if (sidebarPanelRef?.isCollapsed()) {
             setShowSidebar(false)
         } else {
@@ -154,7 +174,7 @@ export default function ViewerHome() {
 
                             {/* Search bar */}
                             <label className={`input`}>
-                                <input type="search" placeholder="Search" onChange={(e) => { handleSuperSearch(e.target.value) }}></input>
+                                <input type="search" placeholder="Search" onChange={(e) => { filterUpdater("search")(e.target.value) }}></input>
                             </label>
 
                             {/* Elements filter */}
@@ -162,7 +182,7 @@ export default function ViewerHome() {
                                 <div className={`flex items-center gap-2 h-[50px] overflow-auto`}>
                                     {
                                         Object.entries(elements).map(([key, value]) => (
-                                            <button key={key} className={`flex-none p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md ${filters["element"].has(value as Element) ? "bg-accent" : ""}`} onClick={() => updateFilter("element", value)}>
+                                            <button key={key} className={`flex-none p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md ${filters["element"].has(value as Element) ? "bg-accent" : ""}`} onClick={() => filterUpdater("element")(value)}>
                                                 <img className="w-[30px] h-[30px]" src={`/Icon_Element_${value}.png`} />
                                             </button>
                                         ))
@@ -181,7 +201,7 @@ export default function ViewerHome() {
                                     <div className="flex-none grid grid-flow-row grid-rows-2 grid-cols-5 overflow-auto pb-2">
                                         {
                                             Object.entries(weapons).map(([key, value]) => (
-                                                <button key={key} className={`p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md  ${filters["weapon"].has(value as Weapon) ? "bg-accent" : ""}`} onClick={() => updateFilter("weapon", value)}>
+                                                <button key={key} className={`p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md  ${filters["weapon"].has(value as Weapon) ? "bg-accent" : ""}`} onClick={() => filterUpdater("weapon")(value)}>
                                                     <img className="h-[20px]" src={`/Label_Weapon_${value}.png`} />
                                                 </button>
                                             ))
@@ -196,13 +216,13 @@ export default function ViewerHome() {
 
 
                             {/* Skill Group 1 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" selectedSkillsUpdater={filterUpdater("sk1Search")} />
 
                             {/* Skill Group 2 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" selectedSkillsUpdater={filterUpdater("sk2Search")} />
 
                             {/* Skill Group 3 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" />
+                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" selectedSkillsUpdater={filterUpdater("sk3Search")} />
                         </div>
 
                     </div>
