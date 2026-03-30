@@ -8,12 +8,13 @@ import { FilterHandlers } from "../page";
 type Props = {
     readonly showSidebar: boolean,
     readonly btnNames: FilterButtonData[],
-    readonly inpPlaceholder: string,
+    readonly groupName: string,
+    readonly currentFilters: Set<string>,
     selectedSkillsUpdater: FilterHandlers["sk1Search"] | FilterHandlers["sk2Search"] | FilterHandlers["sk3Search"],
     readonly clearFilter: () => void
 }
 
-export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, selectedSkillsUpdater, clearFilter }: Props) {
+export default function FilterGroup({ showSidebar, btnNames, groupName, currentFilters, selectedSkillsUpdater, clearFilter }: Props) {
     const [filterQuery, setFilterQuery] = useState("");
 
     const handleSearch = useDebouncedCallback((term) => {
@@ -24,7 +25,7 @@ export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, sel
         <div className={`flex flex-col w-full bg-base-200 rounded-md border border-gray-700 p-2 gap-2 min-h-[220px] max-h-[250px] overflow-auto ${!showSidebar ? "hidden" : ""}`}>
             <div className="flex gap-2 ">
                 <label className={`input self-center w-full`}>
-                    <input type="search" placeholder={inpPlaceholder} onChange={(e) => { handleSearch(e.target.value) }}></input>
+                    <input type="search" placeholder={groupName} onChange={(e) => { handleSearch(e.target.value) }}></input>
                 </label>
                 <div className={`flex items-center `}>
                     <ClearFilterButton onClick={() => clearFilter()} />
@@ -45,9 +46,10 @@ export default function FilterGroup({ showSidebar, btnNames, inpPlaceholder, sel
 
                             return filteredButtons.map((btnData) => {
                                 return (
-                                    <FilterGroupButton key={btnData.name}>
+                                    <FilterGroupButton className={`${currentFilters.has(btnData.name) ? "bg-accent text-base-200" : ""}`} onClick={() => selectedSkillsUpdater(btnData.name)} >
                                         {btnData.name}
                                     </FilterGroupButton>
+
                                 )
                             })
                         }

@@ -229,13 +229,28 @@ export default function ViewerHome() {
 
 
                             {/* Skill Group 1 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK1_NAMES} inpPlaceholder="Skill Group 1 Search" selectedSkillsUpdater={filterUpdater("sk1Search")} filterClearer={filterClearer("sk1Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown}
+                                btnNames={SK1_NAMES}
+                                groupName="Skill Group 1 Search"
+                                currentFilters={filters["sk1Search"]}
+                                selectedSkillsUpdater={filterUpdater("sk1Search")}
+                                clearFilter={filterClearer("sk1Search")} />
 
                             {/* Skill Group 2 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK2_NAMES} inpPlaceholder="Skill Group 2 Search" selectedSkillsUpdater={filterUpdater("sk2Search")} filterClearer={filterClearer("sk2Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown}
+                                btnNames={SK2_NAMES}
+                                groupName="Skill Group 2 Search"
+                                currentFilters={filters["sk2Search"]}
+                                selectedSkillsUpdater={filterUpdater("sk2Search")}
+                                clearFilter={filterClearer("sk2Search")} />
 
                             {/* Skill Group 3 Filters */}
-                            <FilterGroup showSidebar={sidebarIsShown} btnNames={SK3_NAMES} inpPlaceholder="Skill Group 3 Search" selectedSkillsUpdater={filterUpdater("sk3Search")} filterClearer={filterClearer("sk2Search")} />
+                            <FilterGroup showSidebar={sidebarIsShown}
+                                btnNames={SK3_NAMES}
+                                groupName="Skill Group 3 Search"
+                                currentFilters={filters["sk3Search"]}
+                                selectedSkillsUpdater={filterUpdater("sk3Search")}
+                                clearFilter={filterClearer("sk2Search")} />
                         </div>
 
                     </div>
