@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "GBF Artifacts Viewer",
+  "version": "1.0",
+  "description": "A more concise viewer for your artifacts.",
+  "action": {
+    "default_icon": {
+      "48": "Icon_Element_Plain.png"
+    }
+  },
+    "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["next/**"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
