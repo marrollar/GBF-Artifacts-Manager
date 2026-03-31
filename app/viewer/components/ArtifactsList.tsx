@@ -1,9 +1,9 @@
 'use client'
 
-import type { ActiveFilters } from "../filtering/filterConfig";
-import { elements, elementSortOrder, weapons, weaponSortOrder, type Artifacts } from "../types";
-import { NameRow, ValueRow } from "./ArtifactRows";
 import React from "react";
+import type { ActiveFilters } from "../filtering/filterConfig";
+import { elementSortOrder, weapons, weaponSortOrder, type Artifacts } from "../types";
+import { ArtifactSkillColumn } from "./ArtifactRows";
 
 type Props = {
     artifacts: Artifacts,
@@ -12,11 +12,19 @@ type Props = {
 
 function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFilters) {
     const artiData = artifact[1];
+    const search = filterOpts.search;
+    const sk1Filter = filterOpts.sk1Search;
+    const sk2Filter = filterOpts.sk2Search;
+    const sk3Filter = filterOpts.sk3Search;
     const eleFilter = filterOpts.element;
     const wepFilter = filterOpts.weapon
 
-    if ((eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
-        (wepFilter.size === 0 || wepFilter.has(artiData.weapon))) {
+    if ((sk1Filter.size === 0 || sk1Filter.has(artiData.s1.name)) &&
+        (sk2Filter.size === 0 || sk2Filter.has(artiData.s2.name)) &&
+        (sk3Filter.size === 0 || sk3Filter.has(artiData.s3.name)) &&
+        (eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
+        (wepFilter.size === 0 || wepFilter.has(artiData.weapon))
+    ) {
         return true
     }
 
@@ -25,18 +33,16 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
 }
 
 export default function ArtifactsList({ artifacts, filterOpts }: Props) {
-    console.log(filterOpts)
     var filteredArtifacts = Object.entries(artifacts).filter(arti => filterLogic(arti, filterOpts))
 
-    for(var i = 0; i < filteredArtifacts.length; i++) {
+    for (var i = 0; i < filteredArtifacts.length; i++) {
         const s1 = filteredArtifacts[i][1].s1
         const s2 = filteredArtifacts[i][1].s2
-        // console.log(filteredArtifacts[i][1])
+
         if (s2.id < s1.id) {
             filteredArtifacts[i][1].s1 = s2
             filteredArtifacts[i][1].s2 = s1
         }
-        // console.log(filteredArtifacts[i][1])
     }
 
     const sortedArtifacts = filteredArtifacts
@@ -79,103 +85,26 @@ export default function ArtifactsList({ artifacts, filterOpts }: Props) {
         })
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
             {
-                Object.entries(elements).map(([_, ele_str]) => {
-                    const relevantArtis = sortedArtifacts.filter(arti => arti[1].element === ele_str)
-
-                    if (relevantArtis.length > 0) {
-                        return <ElementBlock key={"eb" + ele_str} element={ele_str} artifacts={relevantArtis} />
-                    }
-                    return <React.Fragment key={"eb" + ele_str} />
+                Object.entries(sortedArtifacts).map(([id, artifact]) => {
+                    const artiInfo = artifact[1]
+                    return (
+                        <div key={id} className="flex gap-1 h-[40px] items-center">
+                            <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
+                            <img src={`/Icon_Element_${artiInfo.element}.png`} className="flex-none w-[25px] h-auto object-contain" />
+                            <img src={`/Label_Weapon_${artiInfo.weapon}.png`} className="flex-none w-[50px] h-auto object-contain" />
+                            <div className="flex h-full w-full">
+                                <ArtifactSkillColumn name={artiInfo.s1.name} value={artiInfo.s1.value} />
+                                <ArtifactSkillColumn name={artiInfo.s2.name} value={artiInfo.s2.value} />
+                                <ArtifactSkillColumn name={artiInfo.s3.name} value={artiInfo.s3.value} />
+                                <ArtifactSkillColumn name={artiInfo.s4.name} value={artiInfo.s4.value} />
+                            </div>
+                        </div>
+                    )
                 })
             }
         </div>
-
-    )
-}
-
-function ElementBlock({ element, artifacts }: { element: string, artifacts: [string, Artifacts[number]][] }) {
-    return (
-        <details className="flex flex-col collapse border collapse-arrow">
-            <summary className="collapse-title">
-                <div className="flex items-center gap-4">
-                    <img src={`/Icon_Element_${element}.png`} />
-                    Count: {artifacts.length}
-                </div>
-            </summary>
-            <div className="collapse-content">
-                <div className="flex flex-col gap-4">
-                    {
-                        Object.entries(weapons).map(([_, wep_str]) => {
-                            const relevantArtis = artifacts.filter(arti => arti[1].weapon === wep_str)
-
-                            if (relevantArtis.length > 0) {
-                                return <WeaponBlock key={"wb" + wep_str} weapon={wep_str} artifacts={relevantArtis} />
-                            }
-                            return <React.Fragment key={"wb" + wep_str} />
-                        })
-                    }
-                </div>
-            </div>
-        </details>
-
-    )
-}
-
-function WeaponBlock({ weapon, artifacts }: { weapon: string, artifacts: [string, Artifacts[number]][] }) {
-    return (
-        <details className="collapse collapse-arrow">
-            <summary className="collapse-title ">
-                <div className="flex items-center gap-4">
-                    <img src={`/Label_Weapon_${weapon}.png`} />
-                    Count: {artifacts.length}
-                </div>
-            </summary>
-            <div className="collapse-content">
-                <div className="flex flex-col ml-2 mt-2">
-                    <div className="h-full grid grid-cols-4 auto-rows-fr grid-flow-col ">
-                        {
-                            artifacts.map((artifact) => {
-                                return (
-                                    <div key={artifact[0]} className="col-span-full grid grid-rows-[2fr_1fr] grid-cols-[50px_1fr_1fr_1fr_1fr] h-20 items-center">
-                                        <img src={`/Label_Weapon_${weapon}.png`} />
-                                        <NameRow>
-                                            {artifact[1].s1.name + artifact[1].s1.id}
-                                        </NameRow>
-                                        <NameRow>
-                                            {artifact[1].s2.name + artifact[1].s2.id}
-                                        </NameRow>
-                                        <NameRow>
-                                            {artifact[1].s3.name}
-                                        </NameRow>
-                                        <NameRow last={true}>
-                                            {artifact[1].s4.name}
-                                        </NameRow>
-                                        <div className="justify-self-center align-self-center pb-[12px]">
-                                            <input type="checkbox" className="checkbox checkbox-error" disabled checked={artifact[1].is_scrap} />
-                                        </div>
-                                        <ValueRow>
-                                            {artifact[1].s1.value}
-                                        </ValueRow>
-                                        <ValueRow>
-                                            {artifact[1].s2.value}
-                                        </ValueRow>
-                                        <ValueRow>
-                                            {artifact[1].s3.value}
-                                        </ValueRow>
-                                        <ValueRow last={true}>
-                                            {artifact[1].s4.value}
-                                        </ValueRow >
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </div>
-            </div>
-
-        </details>
 
     )
 }
