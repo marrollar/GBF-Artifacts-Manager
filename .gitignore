@@ -43,3 +43,5 @@ next-env.d.ts
 testing/*
 firefox-extension/*
 chrome-extension/*
+!chrome-extension/manifest.json
+!chrome-extension/background.js
