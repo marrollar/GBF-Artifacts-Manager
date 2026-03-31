@@ -31,8 +31,6 @@ export function ArtifactSkillColumn({ name, value }: Props) {
         let top = rect.top - tooltipRect.height - 8;
         let left = rect.left;
 
-        console.log(left, tooltipRect.width, window.innerWidth)
-
         // Clamp horizontally
         if (left + tooltipRect.width > window.innerWidth) {
             left = window.innerWidth - tooltipRect.width - 8;
@@ -50,35 +48,21 @@ export function ArtifactSkillColumn({ name, value }: Props) {
     }, [nameIsHovered, rect]);
 
     return (
-        <div className={`flex flex-col flex-1 h-full rounded-md ${nameIsHovered ? "bg-gray-700" : ""}`}>
+        <div className={`flex flex-col flex-1 h-full rounded-md hover:outline-[1px] hover:outline-gray-500`}>
             <div className="flex h-1/2">
-                <div className="flex overflow-clip px-[6px]" onMouseEnter={handleEnter} onMouseLeave={() => setNameIsHovered(false)} >
+                <div className="flex overflow-clip px-[6px] hover:cursor-default" onMouseEnter={handleEnter} onMouseLeave={() => setNameIsHovered(false)} >
                     {name}
                 </div>
             </div>
-            <div className="flex h-1/2 text-yellow-300 overflow-clip items-center px-[6px]">
+            <div className="flex h-1/2 text-yellow-300 overflow-clip items-center px-[6px] hover:cursor-default">
                 {value}
             </div>
             {nameIsHovered && rect && (
                 <div
                     ref={tooltipRef}
                     style={{
-                    //     position: "fixed",
                         top: pos?.top,
                         left: pos?.left,
-                    //     background: "#213452",
-                    //     color: "white",
-                    //     padding: "8px 12px",
-                    //     borderRadius: "6px",
-                    //     borderColor: "#ffffff",
-                    //     borderStyle: "solid",
-
-                    //     maxWidth: "250px",
-                    //     whiteSpace: "normal",
-                    //     wordBreak: "break-word",
-
-                    //     zIndex: 1000,
-                    //     pointerEvents: "none"
                     }}
                     className="
                         fixed
@@ -90,11 +74,12 @@ export function ArtifactSkillColumn({ name, value }: Props) {
                         max-w-[250px]
                         whitespace-normal
                         wrap-break-word
-                        
+                        border
+                        border-gray-500
                     "
                 >
                     <div>{name}</div>
-                    <div style={{ color: "yellow" }}>{value}</div>
+                    <div className="text-yellow-300">{value}</div>
                 </div>
             )}
         </div>

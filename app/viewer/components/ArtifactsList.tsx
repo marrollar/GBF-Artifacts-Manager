@@ -20,8 +20,9 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
     const wepFilter = filterOpts.weapon
 
     if ((sk1Filter.size === 0 || sk1Filter.has(artiData.s1.name)) &&
-        (sk2Filter.size === 0 || sk2Filter.has(artiData.s2.name)) &&
-        (sk3Filter.size === 0 || sk3Filter.has(artiData.s3.name)) &&
+        (sk1Filter.size === 0 || sk1Filter.has(artiData.s2.name)) &&
+        (sk2Filter.size === 0 || sk2Filter.has(artiData.s3.name)) &&
+        (sk3Filter.size === 0 || sk3Filter.has(artiData.s4.name)) &&
         (eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
         (wepFilter.size === 0 || wepFilter.has(artiData.weapon))
     ) {
