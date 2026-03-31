@@ -1,35 +1,33 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useArtifactsJson } from './ArtifactsJsonContext';
+import { useArtifactsJSON } from './ArtifactsJsonContext';
 
 export default function FileUpload() {
-    const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState("");
     const [error, setError] = useState('');
-    const {setJsonData} = useArtifactsJson();
+    const { setArtifactsJSON } = useArtifactsJSON();
     const router = useRouter();
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
         if (!file) return;
 
         if (file.type === 'application/json' || file.name.endsWith('.json')) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const parsed = JSON.parse(reader.result);
-                setJsonData(parsed);
-                setError('');
-                router.push('/viewer');
+            try {
+                await setArtifactsJSON(file);
+                setError("")
+                setFileName(file.name)
+                router.push("/viewer")
             }
-            reader.onerror = () => {
-                setError('File was not parseable as json.');
-                setJsonData(null);
+            catch (err) {
+                setError("File was not parseable as json.")
+                setFileName("");
+                console.error("Failed to load JSON", err)
             }
-
-            reader.readAsText(file);
         } else {
             setError('File input should be json.');
-            setFile(null);
+            setFileName("");
         }
     }
 
@@ -40,8 +38,8 @@ export default function FileUpload() {
                 className="file-input file-input-primary"
                 onChange={handleFileChange}></input>
             {
-                file && (
-                    <p className="text-gray-700">Selected file: {file.name}</p>
+                fileName && (
+                    <p className="text-gray-700">Selected file: {fileName}</p>
                 )
             }
             {error && (

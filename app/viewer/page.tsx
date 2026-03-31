@@ -1,5 +1,5 @@
 'use client'
-import { useArtifactsJson } from "@/app/components/ArtifactsJsonContext"
+import { useArtifactsJSON } from "@/app/components/ArtifactsJsonContext"
 import { useState } from "react"
 import { Group, Panel, Separator, usePanelCallbackRef } from "react-resizable-panels"
 import { useDebouncedCallback } from "use-debounce"
@@ -31,7 +31,7 @@ const __SIDEBAR = {
 }
 
 export default function ViewerHome() {
-    const { jsonData } = useArtifactsJson();
+    const { artifactsJSON } = useArtifactsJSON();
     const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
     const [rr, toggleReRender] = useState(false);
     const [sidebarIsShown, setShowSidebar] = useState(false);
@@ -121,41 +121,41 @@ export default function ViewerHome() {
         }
     }
 
-    if (!jsonData) {
+    if (!artifactsJSON) {
         return <p className="text-red-500 mt-2">Loading...or json data not found.</p>
     }
 
     const artifacts: Artifacts = {};
-    Object.entries(jsonData).forEach(([id, v]) => {
-        const info = JSON.parse(v);
+    Object.entries(artifactsJSON).forEach(([id, artifact]) => {
+        // const info = JSON.parse(v);
 
         artifacts[id] = {
-            element: info.element,
-            weapon: info.weapon_group,
-            is_scrap: info.is_scrap,
+            element: artifact.element as Element,
+            weapon: artifact.weapon_group as Weapon,
+            is_scrap: artifact.is_scrap,
             s1: {
-                id: Math.floor(info.s1.skill_id / 10),
-                name: info.s1.name,
-                value: info.s1.effect_value,
-                quality: info.s1.skill_quality
+                id: Math.floor(artifact.s1.skill_id / 10),
+                name: artifact.s1.name,
+                value: artifact.s1.effect_value,
+                quality: artifact.s1.skill_quality
             },
             s2: {
-                id: Math.floor(info.s2.skill_id / 10),
-                name: info.s2.name,
-                value: info.s2.effect_value,
-                quality: info.s2.skill_quality
+                id: Math.floor(artifact.s2.skill_id / 10),
+                name: artifact.s2.name,
+                value: artifact.s2.effect_value,
+                quality: artifact.s2.skill_quality
             },
             s3: {
-                id: Math.floor(info.s3.skill_id / 10),
-                name: info.s3.name,
-                value: info.s3.effect_value,
-                quality: info.s3.skill_quality
+                id: Math.floor(artifact.s3.skill_id / 10),
+                name: artifact.s3.name,
+                value: artifact.s3.effect_value,
+                quality: artifact.s3.skill_quality
             },
             s4: {
-                id: Math.floor(info.s4.skill_id / 10),
-                name: info.s4.name,
-                value: info.s4.effect_value,
-                quality: info.s4.skill_quality
+                id: Math.floor(artifact.s4.skill_id / 10),
+                name: artifact.s4.name,
+                value: artifact.s4.effect_value,
+                quality: artifact.s4.skill_quality
             },
         }
     })
