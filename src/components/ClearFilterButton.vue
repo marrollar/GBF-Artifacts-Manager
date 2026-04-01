@@ -1,15 +1,15 @@
 <script setup lang="tsx">
-const props = defineProps<{
-    filterName: string
-}>();
+// const props = defineProps<{
+//     filterName: string
+// }>();
 
-const emits = defineEmits<{
-    clearFilter: [filterName: string]
-}>();
+// const emits = defineEmits<{
+//     clearFilter: [filterName: string]
+// }>();
 </script>
 
 <template>
-    <button class="bg-base-100 hover:bg-red-400 p-1 rounded-md hover:cursor-pointer" @click="emits('clearFilter', props.filterName)">
+    <button class="bg-base-100 hover:bg-red-400 p-1 rounded-md hover:cursor-pointer" @click="$emit('clearFilter')">
         <svg xmlns=" http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
