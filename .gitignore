@@ -45,3 +45,4 @@ firefox-extension/*
 chrome-extension/*
 !chrome-extension/manifest.json
 !chrome-extension/background.js
+_old
