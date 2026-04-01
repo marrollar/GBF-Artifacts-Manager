@@ -1,11 +1,4 @@
 <script setup lang="tsx">
-// const props = defineProps<{
-//     filterName: string
-// }>();
-
-// const emits = defineEmits<{
-//     clearFilter: [filterName: string]
-// }>();
 </script>
 
 <template>

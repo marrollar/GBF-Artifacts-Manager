@@ -1,8 +1,9 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type { FilterHandlers } from "@/App.vue";
 import type { FilterButtonData } from "@/types";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ClearFilterButton from "./ClearFilterButton.vue";
+import FilterGroupButton from "./FilterGroupButton.vue";
 
 const props = defineProps<{
   readonly btnNames: FilterButtonData[];
@@ -15,6 +16,21 @@ const props = defineProps<{
 }>();
 
 const groupSearch = ref("");
+
+const filteredButtons = computed(() => {
+  if (!groupSearch) return props.btnNames;
+
+  const normalizedSearch = groupSearch.value.toLowerCase().trim();
+  const filteredButtons = props.btnNames.filter((btn) => {
+    const nameMatch = btn.name.toLowerCase().trim().includes(normalizedSearch);
+    const aliasMatch = btn.aliases?.some((alias) =>
+      alias.toLowerCase().trim().includes(normalizedSearch),
+    );
+    return nameMatch || aliasMatch;
+  });
+
+  return filteredButtons;
+});
 </script>
 
 <template>
@@ -26,8 +42,15 @@ const groupSearch = ref("");
         <input v-model="groupSearch" type="search" :placeholder="groupName" />
       </label>
       <div class="flex items-center">
-        <ClearFilterButton
-          @click="$emit('clearFilter')"
+        <ClearFilterButton @click="$emit('clearFilter')" />
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-1">
+      <div v-for="btnData in filteredButtons">
+        <FilterGroupButton
+          :current-filters="currentFilters"
+          :btn-name="btnData.name"
+          @update-filter="selectedSkillsUpdater(btnData.name)"
         />
       </div>
     </div>

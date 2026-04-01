@@ -14,6 +14,8 @@ import {
   elements,
   weapons,
   SK1_NAMES,
+  SK2_NAMES,
+  SK3_NAMES
 } from "./types";
 import { reactive, ref } from "vue";
 import type { SplitterPanel } from "reka-ui";
@@ -237,6 +239,24 @@ const __SIDEBAR = {
               :current-filters="filters['sk1Search']"
               :selected-skills-updater="filterUpdaterFactory('sk1Search')"
               @clear-filter="clearFilter('sk1Search')"
+            />
+
+            <!-- Skill Group 2 Filters -->
+            <FilterGroup
+              :btn-names="SK2_NAMES"
+              group-name="Skill Group 2 Search"
+              :current-filters="filters['sk2Search']"
+              :selected-skills-updater="filterUpdaterFactory('sk2Search')"
+              @clear-filter="clearFilter('sk2Search')"
+            />
+
+            <!-- Skill Group 3 Filters -->
+            <FilterGroup
+              :btn-names="SK3_NAMES"
+              group-name="Skill Group 3 Search"
+              :current-filters="filters['sk3Search']"
+              :selected-skills-updater="filterUpdaterFactory('sk3Search')"
+              @clear-filter="clearFilter('sk3Search')"
             />
           </div>
         </div>
