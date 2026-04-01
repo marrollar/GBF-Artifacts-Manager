@@ -43,6 +43,31 @@ export const weaponSortOrder = new Map([
     ["Katana", 9]
 ])
 
+export interface RawSkill {
+    skill_id: number;
+    skill_quality: number;
+    level: number;
+    name: string;
+    is_max_quality: boolean;
+    effect_value: string;
+    icon_image: string;
+}
+
+export interface RawArtifact {
+    weapon_group: string;
+    element: string;
+    is_scrap: boolean;
+    s1: RawSkill;
+    s2: RawSkill;
+    s3: RawSkill;
+    s4: RawSkill;
+    name: string;
+}
+
+export interface RawArtifactData {
+    [id: string]: string;
+}
+
 export type SkillInfo = {
     id: number,
     name: string,

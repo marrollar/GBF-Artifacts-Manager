@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Group, Panel, Separator, usePanelCallbackRef } from "react-resizable-panels"
 import ArtifactsList from "./components/ArtifactsList"
 import ClearFilterButton from "./components/ClearFilterButton"
 import FilterGroup from "./components/FilterGroup"
 import { ActiveFilters, FilterInputs } from "./filtering/filterConfig"
-import type { Artifacts, Element, Weapon } from "./types"
+import type { Artifacts, Element, RawArtifact, RawArtifactData, Weapon } from "./types"
 import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons } from "./types"
+// import browser from "webextension-polyfill"
 
 const __default_filter: ActiveFilters = {
     search: "",
@@ -29,13 +30,20 @@ const __SIDEBAR = {
     defaultSize: "35%"
 }
 
+// const extensionType =
+//   typeof chrome !== "undefined"
+//     ? chrome
+//     : typeof browser !== "undefined"
+//     ? browser
+//     : null;
+
 export default function ViewerHome() {
-    // const { artifactsJSON } = useArtifactsJSON();
+    const [artifactsJSON, setArtifactsJSON] = useState<Record<string, RawArtifact>>({});
     const [filters, setFilters] = useState<ActiveFilters>(__default_filter);
     const [rr, toggleReRender] = useState(false);
     const [sidebarIsShown, setShowSidebar] = useState(false);
     const [sidebarPanelRef, setSidebarPanelRef] = usePanelCallbackRef();
-    
+
     const filterHandlers: FilterHandlers = {
         search: (value) => {
             setFilters(prev => ({ ...prev, ["search"]: value }))
@@ -120,8 +128,25 @@ export default function ViewerHome() {
         }
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            if (typeof window !== "undefined" && browser?.runtime?.id) {
+                const result: string = await browser?.runtime.sendMessage({ action: "getData" });
+                const rawData: RawArtifactData = JSON.parse(result);
+                const parsed: Record<string, RawArtifact> = Object.fromEntries(
+                    Object.entries(rawData).map(([id, artifactStr]) => [id, JSON.parse(artifactStr)])
+                );
+
+                setArtifactsJSON(parsed);
+            } else {
+                setArtifactsJSON({});
+            }
+        };
+        fetchData();
+    }, []);
+
     if (!artifactsJSON) {
-        return <p className="text-red-500 mt-2">Loading...or json data not found.</p>
+        return <p className="text-red-500 mt-2">Loading...or json data not found.</p>;
     }
 
     const artifacts: Artifacts = {};

@@ -8,13 +8,21 @@
       "48": "Icon_Element_Plain.png"
     }
   },
-    "background": {
-    "service_worker": "background.js"
+  "background": {
+    "service_worker": "./background.js",
+    "type": "module"
   },
+  "permissions": [
+    "storage"
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["next/**"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "next/**"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
