@@ -3,6 +3,7 @@ import type { ActiveFilters } from "@/filtering/filterConfig";
 import { elementSortOrder, weaponSortOrder, type Artifacts } from "@/types";
 import { getImage } from "@/utils";
 import ArtifactSkillColumn from "./ArtifactSkillColumn.vue";
+import { computed } from "vue";
 
 const props = defineProps<{
   artifacts: Artifacts;
@@ -22,8 +23,9 @@ function filterLogic(
   const wepFilter = filterOpts.weapon;
 
   if (
-    (sk1Filter.size === 0 || sk1Filter.has(artiData.s1.name)) &&
-    (sk1Filter.size === 0 || sk1Filter.has(artiData.s2.name)) &&
+    (sk1Filter.size === 0 ||
+      sk1Filter.has(artiData.s1.name) ||
+      sk1Filter.has(artiData.s2.name)) &&
     (sk2Filter.size === 0 || sk2Filter.has(artiData.s3.name)) &&
     (sk3Filter.size === 0 || sk3Filter.has(artiData.s4.name)) &&
     (eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
@@ -102,7 +104,9 @@ function filterAndSort(artifacts: Artifacts, filterOpts: ActiveFilters) {
   return sortedArtifacts;
 }
 
-const sortedArtifacts = filterAndSort(props.artifacts, props.filterOpts);
+const sortedArtifacts = computed(() => {
+  return filterAndSort(props.artifacts, props.filterOpts);
+});
 </script>
 
 <template>
