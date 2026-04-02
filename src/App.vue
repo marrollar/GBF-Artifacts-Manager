@@ -16,12 +16,17 @@ import {
   SK1_NAMES,
   SK2_NAMES,
   SK3_NAMES,
+  type RawArtifactData,
+  type RawArtifact,
+  type Artifacts,
 } from "./types";
 import { reactive, ref } from "vue";
 import type { SplitterPanel } from "reka-ui";
 import { getImage, updateSet } from "./utils";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import FilterGroup from "./components/FilterGroup.vue";
+import test_data from "../testing/artifacts_data.json";
+import ArtifactsList from "./components/ArtifactsList.vue";
 
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
@@ -120,17 +125,61 @@ const __SIDEBAR = {
   minSize: 20,
   defaultSize: 35,
 };
+
+// TODO: Remove for prod
+// const rawData:RawArtifactData = JSON.parse(test_data)
+// console.log(test_data)
+const artifactsJSON: Record<string, RawArtifact> = Object.fromEntries(
+  Object.entries(test_data).map(([id, artifactStr]) => [
+    id,
+    JSON.parse(artifactStr),
+  ]),
+);
+const artifacts: Artifacts = {};
+    Object.entries(artifactsJSON).forEach(([id, artifact]) => {
+
+        artifacts[id] = {
+            element: artifact.element as Element,
+            weapon: artifact.weapon_group as Weapon,
+            is_scrap: artifact.is_scrap,
+            s1: {
+                id: Math.floor(artifact.s1.skill_id / 10),
+                name: artifact.s1.name,
+                value: artifact.s1.effect_value,
+                quality: artifact.s1.skill_quality
+            },
+            s2: {
+                id: Math.floor(artifact.s2.skill_id / 10),
+                name: artifact.s2.name,
+                value: artifact.s2.effect_value,
+                quality: artifact.s2.skill_quality
+            },
+            s3: {
+                id: Math.floor(artifact.s3.skill_id / 10),
+                name: artifact.s3.name,
+                value: artifact.s3.effect_value,
+                quality: artifact.s3.skill_quality
+            },
+            s4: {
+                id: Math.floor(artifact.s4.skill_id / 10),
+                name: artifact.s4.name,
+                value: artifact.s4.effect_value,
+                quality: artifact.s4.skill_quality
+            },
+        }
+    })
 </script>
 
 <template>
   <div id="app" class="h-screen">
-    <ResizablePanelGroup direction="horizontal" class="bg-base-300 p-2">
+    <ResizablePanelGroup direction="horizontal">
       <ResizablePanel
         ref="sidePanelRef"
         collapsible
         :collapsed-size="__SIDEBAR.collapsedSize"
         :min-size="__SIDEBAR.minSize"
         :default-size="__SIDEBAR.defaultSize"
+        class="bg-base-300 p-2"
       >
         <div class="w-full h-full overflow-auto">
           <!-- Show sidebar button -->
@@ -169,7 +218,7 @@ const __SIDEBAR = {
                   class="btn bg-base-100 hover:bg-red-400 h-7"
                   @click="clearFilter('all')"
                 >
-                  Clear Filters
+                  Clear All Filters
                 </button>
               </div>
 
@@ -260,8 +309,10 @@ const __SIDEBAR = {
         </div>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel>
-        <div class="w-full h-full overflow-auto"></div>
+      <ResizablePanel class="bg-base-300">
+        <div class="w-full h-full overflow-auto">
+          <ArtifactsList :artifacts="artifacts" :filter-opts="filters"/>
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   </div>
