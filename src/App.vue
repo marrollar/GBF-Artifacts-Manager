@@ -4,29 +4,28 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import type { SplitterPanel } from "reka-ui";
+import { reactive, ref } from "vue";
+import test_data from "../testing/artifacts_data.json";
+import ArtifactsList from "./components/ArtifactsList.vue";
+import ClearFilterButton from "./components/ClearFilterButton.vue";
+import FilterGroup from "./components/FilterGroup.vue";
 import {
   type ActiveFilters,
   type FilterInputs,
 } from "./filtering/filterConfig";
 import {
-  type Weapon,
-  type Element,
   elements,
-  weapons,
   SK1_NAMES,
   SK2_NAMES,
   SK3_NAMES,
-  type RawArtifactData,
-  type RawArtifact,
+  weapons,
   type Artifacts,
+  type Element,
+  type RawArtifact,
+  type Weapon
 } from "./types";
-import { reactive, ref } from "vue";
-import type { SplitterPanel } from "reka-ui";
 import { getImage, updateSet } from "./utils";
-import ClearFilterButton from "./components/ClearFilterButton.vue";
-import FilterGroup from "./components/FilterGroup.vue";
-import test_data from "../testing/artifacts_data.json";
-import ArtifactsList from "./components/ArtifactsList.vue";
 
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
