@@ -15,7 +15,7 @@ import {
   weapons,
   SK1_NAMES,
   SK2_NAMES,
-  SK3_NAMES
+  SK3_NAMES,
 } from "./types";
 import { reactive, ref } from "vue";
 import type { SplitterPanel } from "reka-ui";
@@ -198,9 +198,7 @@ const __SIDEBAR = {
                 </button>
 
                 <div class="flex items-center">
-                  <ClearFilterButton
-                    @clear-filter="clearFilter('element')"
-                  />
+                  <ClearFilterButton @clear-filter="clearFilter('element')" />
                 </div>
               </div>
             </div>
@@ -226,9 +224,7 @@ const __SIDEBAR = {
                 </div>
               </div>
               <div class="flex items-center pb-2">
-                <ClearFilterButton
-                  @clear-filter="clearFilter('weapon')"
-                />
+                <ClearFilterButton @clear-filter="clearFilter('weapon')" />
               </div>
             </div>
 
