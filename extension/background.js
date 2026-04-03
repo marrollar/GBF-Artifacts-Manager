@@ -15,33 +15,33 @@ import { DebuggerManager } from "./src/DebuggerManager.js";
 //   }
 // });
 
-// browser.action.onClicked.addListener(() => {
-//   browser.windows.create({
-//     url: browser.runtime.getURL("index.html"),
-//     type: "popup",
-//     width: 1000,
-//     height: 800,
-//   });
-// });
+chrome.action.onClicked.addListener(() => {
+  chrome.windows.create({
+    url: chrome.runtime.getURL("index.html"),
+    type: "popup",
+    width: 1000,
+    height: 800,
+  });
+});
 
 // /*********************/
 // /* Testing functions */
 // /*********************/
 
-// async function loadTestData() {
-//   try {
-//     const response = await fetch(browser.runtime.getURL("artifacts_data.json"));
-//     const data = await response.json();
+async function loadTestData() {
+  try {
+    const response = await fetch(chrome.runtime.getURL("artifacts_data.json"));
+    const data = await response.json();
 
-//     console.log("Seeding storage with:", data);
+    console.log("Seeding storage with:", data);
 
-//     await browser.storage.local.set({ artifactsData: data });
-//   } catch (err) {
-//     console.error("Failed to seed test data: ", err);
-//   }
-// }
+    await chrome.storage.local.set({ artifactsData: data });
+  } catch (err) {
+    console.error("Failed to seed test data: ", err);
+  }
+}
 
-// browser.runtime.onInstalled.addListener(() => {
+// chrome.runtime.onInstalled.addListener(() => {
 //   console.log("On Installed");
 //   loadTestData();
 // });
