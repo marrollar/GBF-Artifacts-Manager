@@ -10,37 +10,37 @@
  * @property {object} body The content of the file
  */
 
-/**
- * - The JSON object that contains information about the webpage after being tokenized. 
- * - This object comes from executing JSON.parse() on the body property of a ResultInfoRaw object.
- * @typedef ResultInfo
- * @property {string} data - A string containing the HTML for the current page. This string has been escaped so any special characters are replaced with their percent encoding
- * @property {object} display_list - A JSON containing the items the player has favorited and are populating the UI at the bottom of the screen
- * @property {object} option - Contains aditional info that may be used by the game webpage to populate itself
- * @property {ResultData} option.result_data - A JSON object that contains extra info that is used to populate a results page after clearing a stage in the game
- */
+// /**
+//  * - The JSON object that contains information about the webpage after being tokenized. 
+//  * - This object comes from executing JSON.parse() on the body property of a ResultInfoRaw object.
+//  * @typedef ResultInfo
+//  * @property {string} data - A string containing the HTML for the current page. This string has been escaped so any special characters are replaced with their percent encoding
+//  * @property {object} display_list - A JSON containing the items the player has favorited and are populating the UI at the bottom of the screen
+//  * @property {object} option - Contains aditional info that may be used by the game webpage to populate itself
+//  * @property {ResultData} option.result_data - A JSON object that contains extra info that is used to populate a results page after clearing a stage in the game
+//  */
 
-/**
- * - A JSON object that contains extra info that is used to populate a results page after clearing a stage in the game
- * @typedef ResultData
- * @property {number} quest_type - Contains information about what kind of quest the results page is for. 
- * - 1 => raid, 
- * - 25 => sandbox, 
- * - ext...
- * @property {object | Array} replicard - Contains extra information specific to replicard stage. 
- * - object is only populated if the results are for a replicard stage.
- * @property {object} rewards - Contains info about the rewards earned from the stage
- * @property {object} rewards.reward_list A JSON containing information about any items that were dropped by the stage. This JSON has the following entries that contain JSONs when populated and an empty array when not:
- * - "1" => wooden chest drops
- * - "2" => silver chest drops
- * - "3" => gold chest drops
- * - "4" => MVP/Host/Red chest drops
- * - "11" => blue chest drops
- * - "13" => (maybe purple?) chest drops
- * - "15" => (maybe purple?) chest drops
- * - "16" => Conditional/Extra/Light Blue chest drops
- * @property {string} url - The return url that clicking the continue button will bring you to
- */
+// /**
+//  * - A JSON object that contains extra info that is used to populate a results page after clearing a stage in the game
+//  * @typedef ResultData
+//  * @property {number} quest_type - Contains information about what kind of quest the results page is for. 
+//  * - 1 => raid, 
+//  * - 25 => sandbox, 
+//  * - ext...
+//  * @property {object | Array} replicard - Contains extra information specific to replicard stage. 
+//  * - object is only populated if the results are for a replicard stage.
+//  * @property {object} rewards - Contains info about the rewards earned from the stage
+//  * @property {object} rewards.reward_list A JSON containing information about any items that were dropped by the stage. This JSON has the following entries that contain JSONs when populated and an empty array when not:
+//  * - "1" => wooden chest drops
+//  * - "2" => silver chest drops
+//  * - "3" => gold chest drops
+//  * - "4" => MVP/Host/Red chest drops
+//  * - "11" => blue chest drops
+//  * - "13" => (maybe purple?) chest drops
+//  * - "15" => (maybe purple?) chest drops
+//  * - "16" => Conditional/Extra/Light Blue chest drops
+//  * @property {string} url - The return url that clicking the continue button will bring you to
+//  */
 
 /**
  * - A JSON containing information about any items that were dropped by the stage
