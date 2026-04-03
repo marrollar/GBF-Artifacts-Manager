@@ -15,7 +15,7 @@ function filterLogic(
   filterOpts: ActiveFilters,
 ) {
   const artiData = artifact[1];
-  const search = filterOpts.search; // TODO: Implement global search
+  // const search = filterOpts.search; // TODO: Implement global search
   const sk1Filter = filterOpts.sk1Search;
   const sk2Filter = filterOpts.sk2Search;
   const sk3Filter = filterOpts.sk3Search;

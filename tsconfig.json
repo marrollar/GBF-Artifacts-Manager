@@ -10,10 +10,10 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   }
 }

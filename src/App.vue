@@ -23,9 +23,10 @@ import {
   type Artifacts,
   type Element,
   type RawArtifact,
-  type Weapon
+  type Weapon,
 } from "./types";
 import { getImage, updateSet } from "./utils";
+import browser from "webextension-polyfill";
 
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
@@ -134,39 +135,53 @@ const artifactsJSON: Record<string, RawArtifact> = Object.fromEntries(
     JSON.parse(artifactStr),
   ]),
 );
-const artifacts: Artifacts = {};
-    Object.entries(artifactsJSON).forEach(([id, artifact]) => {
 
-        artifacts[id] = {
-            element: artifact.element as Element,
-            weapon: artifact.weapon_group as Weapon,
-            is_scrap: artifact.is_scrap,
-            s1: {
-                id: Math.floor(artifact.s1.skill_id / 10),
-                name: artifact.s1.name,
-                value: artifact.s1.effect_value,
-                quality: artifact.s1.skill_quality
-            },
-            s2: {
-                id: Math.floor(artifact.s2.skill_id / 10),
-                name: artifact.s2.name,
-                value: artifact.s2.effect_value,
-                quality: artifact.s2.skill_quality
-            },
-            s3: {
-                id: Math.floor(artifact.s3.skill_id / 10),
-                name: artifact.s3.name,
-                value: artifact.s3.effect_value,
-                quality: artifact.s3.skill_quality
-            },
-            s4: {
-                id: Math.floor(artifact.s4.skill_id / 10),
-                name: artifact.s4.name,
-                value: artifact.s4.effect_value,
-                quality: artifact.s4.skill_quality
-            },
-        }
-    })
+const testRetrieval = ref();
+
+async function fetchFromLocalStorage() {
+  try {
+    const data = await browser.runtime.sendMessage({ action: "getData" });
+    // const data = await browser.storage.local.get("artifactsData");
+    console.log("Raw result: ", data);
+    testRetrieval.value = data || "default value"
+    console.log("Final value: ", testRetrieval, testRetrieval.value)
+  } catch (err) {
+    console.error("Failed to get data.");
+  }
+}
+
+const artifacts: Artifacts = {};
+Object.entries(artifactsJSON).forEach(([id, artifact]) => {
+  artifacts[id] = {
+    element: artifact.element as Element,
+    weapon: artifact.weapon_group as Weapon,
+    is_scrap: artifact.is_scrap,
+    s1: {
+      id: Math.floor(artifact.s1.skill_id / 10),
+      name: artifact.s1.name,
+      value: artifact.s1.effect_value,
+      quality: artifact.s1.skill_quality,
+    },
+    s2: {
+      id: Math.floor(artifact.s2.skill_id / 10),
+      name: artifact.s2.name,
+      value: artifact.s2.effect_value,
+      quality: artifact.s2.skill_quality,
+    },
+    s3: {
+      id: Math.floor(artifact.s3.skill_id / 10),
+      name: artifact.s3.name,
+      value: artifact.s3.effect_value,
+      quality: artifact.s3.skill_quality,
+    },
+    s4: {
+      id: Math.floor(artifact.s4.skill_id / 10),
+      name: artifact.s4.name,
+      value: artifact.s4.effect_value,
+      quality: artifact.s4.skill_quality,
+    },
+  };
+});
 </script>
 
 <template>
@@ -218,6 +233,13 @@ const artifacts: Artifacts = {};
                   @click="clearFilter('all')"
                 >
                   Clear All Filters
+                </button>
+                <!-- TODO:REMOVE TEST BUTTON -->
+                <button
+                  @click="fetchFromLocalStorage"
+                  class="btn bg-base-100 hover:bg-red-400 h-7"
+                >
+                  Test
                 </button>
               </div>
 
@@ -310,7 +332,7 @@ const artifacts: Artifacts = {};
       <ResizableHandle />
       <ResizablePanel class="bg-base-300">
         <div class="w-full h-full overflow-auto">
-          <ArtifactsList :artifacts="artifacts" :filter-opts="filters"/>
+          <ArtifactsList :artifacts="artifacts" :filter-opts="filters" />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
