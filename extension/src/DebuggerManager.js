@@ -1,8 +1,13 @@
+import { urlFilter } from "../service_worker_config.js";
 import { NetworkFilter } from "./NetworkFilter";
 
 /** - Stores an up to date list of every debugger attached to a tab */
 /** @type {chrome.debugger.TargetInfo[]} */
 export var activeDebuggers = [];
+
+var requestLog = [];
+var requestLogAll = [];
+
 
 /**
  * This class manages all debuggers by dynamically attaching and detaching them when needed.
@@ -15,18 +20,24 @@ export class DebuggerManager {
    */
   static EnableEventListeners() {
     // Adds listeners for network events and tab changes
+    // @ts-ignore
     if (!chrome.debugger.onEvent.hasListener(NetworkFilter.NetworkListener)) {
       console.log("%c[+]Activating listener on NetworkListener", "color:lime;");
+      // @ts-ignore
       chrome.debugger.onEvent.addListener(NetworkFilter.NetworkListener);
       let networkListenerStatus = chrome.debugger.onEvent.hasListener(
+        // @ts-ignore
         NetworkFilter.NetworkListener,
       );
       console.log("%c[info]false --> " + networkListenerStatus, "color:aqua;");
     }
+    // @ts-ignore
     if (!chrome.tabs.onUpdated.hasListener(DebuggerManager.TabListener)) {
       console.log("%c[+]Activating listener on TabListener", "color:lime;");
+      // @ts-ignore
       chrome.tabs.onUpdated.addListener(DebuggerManager.TabListener);
       let TabListenerStatus = chrome.tabs.onUpdated.hasListener(
+        // @ts-ignore
         DebuggerManager.TabListener,
       );
       console.log("%c[info]false --> " + TabListenerStatus, "color:aqua;");
@@ -44,12 +55,14 @@ export class DebuggerManager {
   static TabListener(tabId, changeInfo, tab) {
     if (
       urlFilter.extensionUrlRegex.test(tab.url) &&
+      // @ts-ignore
       changeInfo.status === "loading"
     ) {
       DebuggerManager.RefreshActiveDebuggers();
       return;
     }
     // Excludes tabs that aren't loading or are chrome extension pages
+    // @ts-ignore
     if (!(changeInfo.status === "loading")) {
       return;
     }

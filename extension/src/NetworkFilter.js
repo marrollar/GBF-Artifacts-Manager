@@ -1,5 +1,3 @@
-import { urlFilter } from "../service_worker_config.js";
-
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
 export class NetworkFilter {
   /**
