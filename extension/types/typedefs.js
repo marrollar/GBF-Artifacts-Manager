@@ -1,3 +1,5 @@
+// Modified and derived from https://github.com/granbluetracker/Granblue-Fantasy-Tracker
+
 /** TYPE DEFINITIONS */
 
 /**
