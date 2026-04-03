@@ -6,12 +6,13 @@
     },
     {
       "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.extension.json"
     }
   ],
   "compilerOptions": {
     "baseUrl": ".",
-    "allowJs": true,
-    "checkJs": true,
     "paths": {
       "@/*": ["./src/*"]
     }
