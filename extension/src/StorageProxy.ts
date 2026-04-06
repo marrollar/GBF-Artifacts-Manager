@@ -1,5 +1,3 @@
-// import { activeDebuggers } from "./DebuggerManager.ts";
-
 import { global_state } from "./globals.ts";
 
 /**

@@ -1,11 +1,16 @@
-type TrackedRequest = {
+export enum RequestTypes {
+  ListPage = "ListPage",
+  ArtifactsDestructed = "ArtifactsDestructed",
+}
+
+export type TrackedRequest = {
   requestId: string;
   tabId: number | undefined;
-  fileType: string;
+  requestType: RequestTypes | undefined;
   timestamp: number;
 };
 
-type State = {
+export type State = {
   requestLog: [string, Network, number | undefined][];
   /** Tracks the last loot file info */
   trackedRequest: TrackedRequest;
@@ -18,7 +23,7 @@ export const global_state: State = {
   trackedRequest: {
     requestId: "",
     tabId: undefined,
-    fileType: "",
+    requestType: undefined,
     timestamp: 0,
   },
   activeDebuggers: [],
