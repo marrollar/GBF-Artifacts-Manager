@@ -1,5 +1,5 @@
 import { urlFilter } from "../service_worker_config";
-import { global_state } from "./globals";
+import { global_state, RequestTypes } from "./globals";
 
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
 export class NetworkFilter {
@@ -18,27 +18,27 @@ export class NetworkFilter {
     ) {
       console.log("%c[Step 1] RETRIEVING DATA", "color:coral;");
       // console.log("%c[1.1]Request found that matches file URL", "color:coral;");
-      let fileType = "";
-      // Decides what type of file this is
-      //   if (urlFilter.rewardUrlRegex.test(params.request.url)) {
-      //     fileType = "Battle Data";
-      //   } else if (urlFilter.sephiraOpenRegex.test(params.request.url)) {
-      //     fileType = "Sephira Results";
-      //   } else if (urlFilter.xenoboxUrlRegex.test(params.request.url)) {
-      //     fileType = "Xenobox";
-      //   } else if (urlFilter.eventLandingRegex.test(params.request.url)) {
-      //     fileType = "EventLanding";
-      //   }
-
+      let requestType: RequestTypes;
       if (urlFilter.artifactsInventoryUrlRegex.test(params.request.url)) {
-        
+        requestType = RequestTypes.ListPage;
+      } else if (
+        urlFilter.artifactsDecomposeUrlRegex.test(params.request.url)
+      ) {
+        requestType = RequestTypes.ArtifactsDestructed;
+      } else {
+        console.log(
+          "%c[error] Request passed global whitelist but failed to match any individual regex: " +
+            params.request.url,
+          "color:red;",
+        );
+        return;
       }
 
       // console.log("%c[1.2]detected requestWillBeSent from: " + params.request.url + " of type: " + fileType, "color:coral;");
       global_state.trackedRequest = {
         requestId: params.requestId,
         tabId: debuggeeId.tabId,
-        fileType: fileType,
+        requestType: requestType,
         timestamp: Date.now(),
       };
       global_state.requestLog.push([message, params, debuggeeId.tabId]);
@@ -46,6 +46,7 @@ export class NetworkFilter {
     } else if (params.requestId != global_state.trackedRequest.requestId) {
       return;
     }
+
     global_state.requestLog.push([message, params, debuggeeId.tabId]);
     if (message == "Network.loadingFinished") {
       // console.log("%c[1.3]loadingFinished event matched requestId. Congrats!", "color:coral;");
@@ -58,23 +59,20 @@ export class NetworkFilter {
               "color:coral;",
               global_state.requestLog,
             );
-            switch (global_state.trackedRequest.fileType) {
-              case "Battle Data":
-                DataProcessor.ProcessRewardJSON(response);
+
+            switch (global_state.trackedRequest.requestType) {
+              case RequestTypes.ListPage:
+                // TODO: Implement
+                console.log("%c[info] ListPage hit", "color:coral;")
                 break;
-              case "Sephira Results":
-                DataProcessor.ProcessSephiraJSON(response);
-                break;
-              case "Xenobox":
-                DataProcessor.ProcessXenoboxJSON(response);
-                break;
-              case "EventLanding":
-                DataProcessor.ProcessEventLanding(response);
+              case RequestTypes.ArtifactsDestructed:
+                // TODO: Implement
+                console.log("%c[info] ArtifactsDestructed hit", "color:coral;")
                 break;
               default:
                 console.log(
-                  "%c[error]fileType did not match any known values: " +
-                    global_state.trackedRequest.fileType,
+                  "%c[error]requestType did not match any known values: " +
+                    global_state.trackedRequest.requestType,
                   "color:red;",
                 );
                 break;
