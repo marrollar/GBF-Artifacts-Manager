@@ -1,5 +1,5 @@
 import { urlFilter } from "../service_worker_config.js";
-import { NetworkFilter } from "./NetworkFilter";
+import { NetworkFilter } from "./NetworkFilter.ts";
 import { global_state } from "./globals.ts";
 
 /**
