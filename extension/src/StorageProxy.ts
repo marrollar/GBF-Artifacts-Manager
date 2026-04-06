@@ -41,6 +41,7 @@ class StorageProxy {
   }
 
   async save(obj: object) {
+    // TODO: Reimplement this comment block?
     /** Updates local values if the values in perminent storage change */
     // if (obj?.Settings?.timerStart) {
     //     timerStart = obj.Settings.timerStart;

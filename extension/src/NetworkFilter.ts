@@ -1,4 +1,5 @@
 import { urlFilter } from "../service_worker_config";
+import { DataProcessor } from "./DataProcessor";
 import { global_state, RequestTypes } from "./globals";
 
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
@@ -24,7 +25,7 @@ export class NetworkFilter {
       } else if (
         urlFilter.artifactsDecomposeUrlRegex.test(params.request.url)
       ) {
-        requestType = RequestTypes.ArtifactsDestructed;
+        requestType = RequestTypes.ArtifactsDestroyed;
       } else {
         console.log(
           "%c[error] Request passed global whitelist but failed to match any individual regex: " +
@@ -63,11 +64,12 @@ export class NetworkFilter {
             switch (global_state.trackedRequest.requestType) {
               case RequestTypes.ListPage:
                 // TODO: Implement
-                console.log("%c[info] ListPage hit", "color:coral;")
+                console.log("%c[info]ListPage hit", "color:coral;")
+                DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw) // TODO: Unsafe cast
                 break;
-              case RequestTypes.ArtifactsDestructed:
+              case RequestTypes.ArtifactsDestroyed:
                 // TODO: Implement
-                console.log("%c[info] ArtifactsDestructed hit", "color:coral;")
+                console.log("%c[info]ArtifactsDestroyed hit", "color:coral;")
                 break;
               default:
                 console.log(
@@ -94,7 +96,7 @@ export class NetworkFilter {
   /**
    * Function to return response body and handle errors that may arrise
    */
-  static sendCommandPromise(tabId: number, params: Network): Promise<string> {
+  static sendCommandPromise(tabId: number, params: Network): Promise<object> {
     return new Promise((resolve, reject) => {
       try {
         chrome.debugger.sendCommand(
@@ -108,12 +110,10 @@ export class NetworkFilter {
           function (response) {
             if (chrome.runtime.lastError) {
               reject(chrome.runtime.lastError);
-              // @ts-expect-error
-            } else if (!response || !response.body) {
+            } else if (!response || !response.hasOwnProperty("body")) {
               console.error("Response was empty");
               reject(new Error("Response was empty"));
             } else {
-              // @ts-expect-error
               resolve(response);
             }
           },

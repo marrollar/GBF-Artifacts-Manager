@@ -1,6 +1,6 @@
 export enum RequestTypes {
   ListPage = "ListPage",
-  ArtifactsDestructed = "ArtifactsDestructed",
+  ArtifactsDestroyed = "ArtifactsDestroyed",
 }
 
 export type TrackedRequest = {

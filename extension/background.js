@@ -1,7 +1,7 @@
 // Modified and derived from https://github.com/granbluetracker/Granblue-Fantasy-Tracker, with additions relevant to this project
 
 // import browser from "webextension-polyfill";
-import { DebuggerManager } from "./src/DebuggerManager.js";
+import { DebuggerManager } from "./src/DebuggerManager.ts";
 
 // /*******************************/
 // /* App communication functions */
@@ -28,6 +28,7 @@ chrome.action.onClicked.addListener(() => {
 // /* Testing functions */
 // /*********************/
 
+// TODO: REMOVE after testing finishes
 async function loadTestData() {
   try {
     const response = await fetch(chrome.runtime.getURL("artifacts_data.json"));
@@ -40,6 +41,12 @@ async function loadTestData() {
     console.error("Failed to seed test data: ", err);
   }
 }
+
+chrome.runtime.onInstalled.addListener((details) => {
+    chrome.storage.local.clear(() => {
+        console.log("Cleared local storage for testing purposes")
+    })
+})
 
 // chrome.runtime.onInstalled.addListener(() => {
 //   console.log("On Installed");

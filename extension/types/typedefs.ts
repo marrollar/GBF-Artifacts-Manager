@@ -11,7 +11,7 @@ type ResultInfoRaw = {
    */
   base64Encoded: boolean;
   /** The content of the file */
-  body: object;
+  body: any;
 };
 
 // /**
