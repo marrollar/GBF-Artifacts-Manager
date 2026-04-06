@@ -23,7 +23,5 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "extension/**/*.ts",
-    "extension/**/*.js"
   ]
 }

@@ -16,7 +16,7 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         content: "index.html",
-        background: "extension/background.ts",
+        background: "extension/background.js",
       },
       output: {
         entryFileNames: (chunkInfo) => {

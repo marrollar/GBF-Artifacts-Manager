@@ -12,6 +12,11 @@
     "service_worker": "./background.js",
     "type": "module"
   },
-  "permissions": ["storage", "webRequest", "webRequestBlocking"],
-  "host_permissions": ["*://game.granbluefantasy.jp/#list"]
+  "permissions": [
+    "tabs",
+    "debugger",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "host_permissions": ["*://*.granbluefantasy.jp/*"]
 }

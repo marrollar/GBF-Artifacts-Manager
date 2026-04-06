@@ -17,6 +17,6 @@
 
     "skipLibCheck": true
   },
-  "include": ["extension/**/*.js"],
+  "include": ["extension/**/*.js", "extension/**/*.ts"],
   "exclude": ["node_modules"]
 }
