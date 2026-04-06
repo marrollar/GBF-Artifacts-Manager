@@ -1,7 +1,7 @@
 <script setup lang="tsx">
-import type { ActiveFilters } from "@/filtering/filterConfig";
-import { elementSortOrder, weaponSortOrder, type Artifacts } from "@/types";
-import { getImage } from "@/utils";
+import type { ActiveFilters } from "@/app/filtering/filterConfig";
+import { elementSortOrder, weaponSortOrder, type Artifacts } from "@/app/types";
+import { getImage } from "@/app/utils";
 import ArtifactSkillColumn from "./ArtifactSkillColumn.vue";
 import { computed } from "vue";
 

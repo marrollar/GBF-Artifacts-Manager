@@ -16,8 +16,15 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["extension/**/*.js", "extension/**/*.ts"],
+  "include": ["src/extension/**/*.js", "src/extension/**/*.ts"],
   "exclude": ["node_modules"]
 }

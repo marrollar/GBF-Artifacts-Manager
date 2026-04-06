@@ -3,10 +3,10 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable";
+} from "@/app/components/ui/resizable";
 import type { SplitterPanel } from "reka-ui";
 import { reactive, ref } from "vue";
-import test_data from "../testing/artifacts_data.json";
+import test_data from "../../testing/artifacts_data.json";
 import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import FilterGroup from "./components/FilterGroup.vue";

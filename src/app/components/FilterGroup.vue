@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import type { FilterHandlers } from "@/App.vue";
-import type { FilterButtonData } from "@/types";
+import type { FilterButtonData } from "@/app/types";
 import { computed, ref } from "vue";
 import ClearFilterButton from "./ClearFilterButton.vue";
 import FilterGroupButton from "./FilterGroupButton.vue";
