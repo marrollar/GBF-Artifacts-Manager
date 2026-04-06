@@ -25,9 +25,13 @@ const urlFilter = {
     gameUrlRegex: maybe(),
     extensionUrlRegex: new RegExp("^chrome:\/\/extensions\/|^chrome-extension:\/\/"),
 
-    // Artifacts page
-    artifactsUrl: "rest\/artifact\/list\/",
-    artifactsUrlRegex: maybe(),
+    // Artifacts inventory request url
+    artiInventoryUrl: "rest\/artifact\/list\/",
+    artifactsInventoryUrlRegex: maybe(),
+
+    // Artifacts execute decompose request url
+    artiDecomposeUrl: "rest\/artifact\/execute_decompose",
+    artifactsDecomposeUrlRegex: maybe(),
 
     // // Results file URL
     // soloRewardUrl: "result\/content\/index\/\\d{10}",
@@ -59,13 +63,14 @@ const urlFilter = {
     // eventLandingUrl: maybe(),
     // eventLandingRegex: maybe(),
 
-    // // Network listener whitelist
-    // whitelistUrl: maybe(),
-    // whitelist: maybe(),
+    // Network listener whitelist
+    whitelistUrl: maybe(),
+    whitelist: maybe(),
 };
 
 urlFilter.gameUrlRegex = new RegExp(urlFilter.gameUrl);
-urlFilter.artifactsUrlRegex = new RegExp(urlFilter.artifactsUrl);
+urlFilter.artifactsInventoryUrlRegex = new RegExp(urlFilter.artiInventoryUrl);
+urlFilter.artifactsDecomposeUrlRegex = new RegExp(urlFilter.artiDecomposeUrl);
 // urlFilter.soloRewardUrlRegex = new RegExp(urlFilter.gameUrl + urlFilter.soloRewardUrl);
 // urlFilter.raidRewardUrlRegex = new RegExp(urlFilter.gameUrl + urlFilter.raidRewardUrl);
 // urlFilter.soloOrRaidRewardUrl = urlFilter.soloRewardUrl + "|" + urlFilter.raidRewardUrl;
@@ -81,9 +86,10 @@ urlFilter.artifactsUrlRegex = new RegExp(urlFilter.artifactsUrl);
 // urlFilter.eventLandingUrl = urlFilter.tokenEventLandingUrl + "|" + urlFilter.guildwarLandingUrl; // + "|" + urlFilter.soloTreasureLandingUrl;
 // urlFilter.eventLandingRegex = new RegExp(urlFilter.gameUrl + "(" + urlFilter.eventLandingUrl + ")");
 
-// // Remove comment below to enable the processing of event pages
+// Remove comment below to enable the processing of event pages
 // urlFilter.whitelistUrl = urlFilter.soloOrRaidRewardUrl + "|" + urlFilter.sephiraOrXenoUrl + "|" + urlFilter.eventLandingUrl;
-// urlFilter.whitelist = new RegExp(urlFilter.gameUrl + "(" + urlFilter.whitelistUrl + ")");
+urlFilter.whitelistUrl = urlFilter.artiInventoryUrl;
+urlFilter.whitelist = new RegExp(urlFilter.gameUrl + "(" + urlFilter.whitelistUrl + ")");
 DeepFreeze(urlFilter);
 
 /** 
