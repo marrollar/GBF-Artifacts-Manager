@@ -1,4 +1,6 @@
-import { activeDebuggers } from "./DebuggerManager.js";
+// import { activeDebuggers } from "./DebuggerManager.ts";
+
+import { global_state } from "./globals.ts";
 
 /**
  * Synchronizes read/write events to prevent race conditions
@@ -29,10 +31,10 @@ class StorageProxy {
     this.writeProtectFlag = false;
   }
 
-  async get(key:string) {
+  async get(key: string) {
     const writeRequestQueueCopy = this.writeRequestQueue.slice();
     while (writeRequestQueueCopy.length > 0) {
-      let object:Record<string, any> | undefined = writeRequestQueueCopy.pop();
+      let object: Record<string, any> | undefined = writeRequestQueueCopy.pop();
       if (object?.hasOwnProperty(key)) {
         return object[key];
       }
@@ -40,7 +42,7 @@ class StorageProxy {
     return this.getObjectFromLocalStorage(key);
   }
 
-  async save(obj:object) {
+  async save(obj: object) {
     /** Updates local values if the values in perminent storage change */
     // if (obj?.Settings?.timerStart) {
     //     timerStart = obj.Settings.timerStart;
@@ -55,10 +57,10 @@ class StorageProxy {
     }
   }
 
-  async getVar(varName:string) {
+  async getVar(varName: string) {
     switch (varName) {
       case "activeDebuggers":
-        return activeDebuggers;
+        return global_state.activeDebuggers;
       case "Settings":
         let settings = await storageProxy.get("Settings");
         return settings;
@@ -68,7 +70,7 @@ class StorageProxy {
   }
 
   /* Returns object from chrome's local storage */
-  async getObjectFromLocalStorage(key:string) {
+  async getObjectFromLocalStorage(key: string) {
     return new Promise((resolve, reject) => {
       try {
         chrome.storage.local.get(key, function (value) {
@@ -82,7 +84,7 @@ class StorageProxy {
   }
 
   /* Stores object from chrome's local storage */
-  async saveObjectInLocalStorage(obj:object) {
+  async saveObjectInLocalStorage(obj: object) {
     return new Promise((resolve, reject) => {
       try {
         chrome.storage.local.set(obj, function () {

@@ -1,13 +1,6 @@
 import { urlFilter } from "../service_worker_config.js";
 import { NetworkFilter } from "./NetworkFilter";
-
-/** - Stores an up to date list of every debugger attached to a tab */
-/** @type {chrome.debugger.TargetInfo[]} */
-export var activeDebuggers = [];
-
-var requestLog = [];
-var requestLogAll = [];
-
+import { global_state } from "./globals.ts";
 
 /**
  * This class manages all debuggers by dynamically attaching and detaching them when needed.
@@ -47,12 +40,8 @@ export class DebuggerManager {
   /**
    * Dynamically adds a debugger when a tab loads a URL from Granblue Fantasy, and removes it when the tab views a non Granblue Fantasy URL
    * - Receives events from chrome.tabs.onUpdated
-   * @param {number} tabId
-   * @param {object} changeInfo
-   * @param {Tab} tab
-   * @returns {void}
    */
-  static TabListener(tabId, changeInfo, tab) {
+  static TabListener(tabId:number, changeInfo:object, tab:Tab)  {
     if (
       urlFilter.extensionUrlRegex.test(tab.url) &&
       // @ts-ignore
@@ -67,7 +56,7 @@ export class DebuggerManager {
       return;
     }
     let isOnGame = urlFilter.gameUrlRegex.test(tab.url);
-    let hasDebuggerAttached = activeDebuggers.some(
+    let hasDebuggerAttached = global_state.activeDebuggers.some(
       (item) => item.tabId == tabId,
     );
     if (isOnGame && !hasDebuggerAttached) {
@@ -79,9 +68,8 @@ export class DebuggerManager {
 
   /**
    * Attaches a debugger to the tab matching the tabId
-   * @param {number} tabId
    */
-  static AddDebugger(tabId) {
+  static AddDebugger(tabId:number) {
     try {
       chrome.debugger.attach(
         {
@@ -102,13 +90,12 @@ export class DebuggerManager {
 
   /**
    * Removes a debugger from the tab matching the tabId
-   * @param {Debuggee} debuggeeId
    */
-  static async RemoveDebugger(debuggeeId) {
+  static async RemoveDebugger(debuggeeId:Debuggee) {
     try {
       // Creates bool that shows if the debuggeeId has a debugger attached
       let hasDebugger =
-        activeDebuggers.filter(function (e) {
+        global_state.activeDebuggers.filter(function (e) {
           return e.tabId == debuggeeId.tabId;
         }).length > 0;
       if (hasDebugger) {
@@ -117,8 +104,7 @@ export class DebuggerManager {
           "color:red;",
           debuggeeId,
         );
-        requestLog = [];
-        requestLogAll = [];
+        global_state.requestLog = [];
         await chrome.debugger.detach(debuggeeId);
         await DebuggerManager.RefreshActiveDebuggers();
       } else {
@@ -143,13 +129,13 @@ export class DebuggerManager {
    */
   static async RefreshActiveDebuggers() {
     chrome.debugger.getTargets(async function (result) {
-      activeDebuggers = result.filter(function (e) {
+      global_state.activeDebuggers = result.filter(function (e) {
         return e.attached == true;
       });
       console.log(
         "%c[info]Active debuggers Refreshed: ",
         "color:aqua;",
-        activeDebuggers,
+        global_state.activeDebuggers,
       );
     });
   }
@@ -157,9 +143,9 @@ export class DebuggerManager {
   /**
    * Enables network events on debugged tab by sending a Network.enable command to the target debugee.
    * These events are listened to by the NetworkFilter.NetworkListener() method
-   * @param {number} tabId The tabId for the new debugee
+   * @param tabId The tabId for the new debugee
    */
-  static onAttach(tabId) {
+  static onAttach(tabId:number) {
     try {
       console.log("%c[+]New debugger added to: " + tabId, "color:lime;");
       chrome.debugger.sendCommand(
