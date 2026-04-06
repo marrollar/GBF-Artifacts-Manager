@@ -3,6 +3,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.extension.tsbuildinfo",
     "allowJs": true,
     "checkJs": true,
+    "allowImportingTsExtensions": true,
 
     "noEmit": true,
 
