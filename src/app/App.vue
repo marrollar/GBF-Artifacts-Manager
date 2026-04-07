@@ -1,4 +1,5 @@
 <script setup lang="tsx">
+import { type GetDataMessage, type ResponseMessage } from "@/api/messages.ts";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,7 +7,7 @@ import {
 } from "@/app/components/ui/resizable";
 import type { SplitterPanel } from "reka-ui";
 import { reactive, ref } from "vue";
-import test_data from "../../testing/artifacts_data.json";
+import browser from "webextension-polyfill";
 import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import FilterGroup from "./components/FilterGroup.vue";
@@ -22,11 +23,9 @@ import {
   weapons,
   type Artifacts,
   type Element,
-  type RawArtifact,
   type Weapon,
 } from "./types";
 import { getImage, updateSet } from "./utils";
-import browser from "webextension-polyfill";
 
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
@@ -126,62 +125,60 @@ const __SIDEBAR = {
   defaultSize: 35,
 };
 
-// TODO: Remove for prod
-// const rawData:RawArtifactData = JSON.parse(test_data)
-// console.log(test_data)
-const artifactsJSON: Record<string, RawArtifact> = Object.fromEntries(
-  Object.entries(test_data).map(([id, artifactStr]) => [
-    id,
-    JSON.parse(artifactStr),
-  ]),
-);
-
-const testRetrieval = ref();
+const artifacts = ref<Artifacts>({});
 
 async function fetchFromLocalStorage() {
   try {
-    const data = await browser.runtime.sendMessage({ action: "getData" });
-    // const data = await browser.storage.local.get("artifactsData");
-    console.log("Raw result: ", data);
-    testRetrieval.value = data || "default value"
-    console.log("Final value: ", testRetrieval, testRetrieval.value)
+    const msg: GetDataMessage = {
+      action: "getData",
+      params: {
+        key: null,
+      },
+    };
+    const data = (await browser.runtime.sendMessage(msg)) as ResponseMessage;
+    console.log("App side: ", data);
+
+    if (typeof data.response === "string") {
+      console.error("Error during data retrieval: ", data.response);
+    } else {
+      Object.entries(data.response).forEach(([id, rawArti]) => {
+        const artifact = JSON.parse(rawArti);
+
+        artifacts.value[id] = {
+          element: artifact.element as Element,
+          weapon: artifact.weapon_group as Weapon,
+          is_scrap: artifact.is_scrap,
+          s1: {
+            id: Math.floor(artifact.s1.skill_id / 10),
+            name: artifact.s1.name,
+            value: artifact.s1.effect_value,
+            quality: artifact.s1.skill_quality,
+          },
+          s2: {
+            id: Math.floor(artifact.s2.skill_id / 10),
+            name: artifact.s2.name,
+            value: artifact.s2.effect_value,
+            quality: artifact.s2.skill_quality,
+          },
+          s3: {
+            id: Math.floor(artifact.s3.skill_id / 10),
+            name: artifact.s3.name,
+            value: artifact.s3.effect_value,
+            quality: artifact.s3.skill_quality,
+          },
+          s4: {
+            id: Math.floor(artifact.s4.skill_id / 10),
+            name: artifact.s4.name,
+            value: artifact.s4.effect_value,
+            quality: artifact.s4.skill_quality,
+          },
+        };
+      });
+    }
   } catch (err) {
     console.error("Failed to get data.");
   }
 }
-
-const artifacts: Artifacts = {};
-Object.entries(artifactsJSON).forEach(([id, artifact]) => {
-  artifacts[id] = {
-    element: artifact.element as Element,
-    weapon: artifact.weapon_group as Weapon,
-    is_scrap: artifact.is_scrap,
-    s1: {
-      id: Math.floor(artifact.s1.skill_id / 10),
-      name: artifact.s1.name,
-      value: artifact.s1.effect_value,
-      quality: artifact.s1.skill_quality,
-    },
-    s2: {
-      id: Math.floor(artifact.s2.skill_id / 10),
-      name: artifact.s2.name,
-      value: artifact.s2.effect_value,
-      quality: artifact.s2.skill_quality,
-    },
-    s3: {
-      id: Math.floor(artifact.s3.skill_id / 10),
-      name: artifact.s3.name,
-      value: artifact.s3.effect_value,
-      quality: artifact.s3.skill_quality,
-    },
-    s4: {
-      id: Math.floor(artifact.s4.skill_id / 10),
-      name: artifact.s4.name,
-      value: artifact.s4.effect_value,
-      quality: artifact.s4.skill_quality,
-    },
-  };
-});
 </script>
 
 <template>
@@ -226,20 +223,21 @@ Object.entries(artifactsJSON).forEach(([id, artifact]) => {
               class="flex flex-col items-center gap-2"
               v-if="!sidePanelRef?.isCollapsed"
             >
-              <!-- Clear Filters button -->
-              <div class="flex items-center justify-center">
+              <div class="flex items-center justify-center gap-2">
+                <!-- Clear Filters button -->
                 <button
                   class="btn bg-base-100 hover:bg-red-400 h-7"
                   @click="clearFilter('all')"
                 >
                   Clear All Filters
                 </button>
-                <!-- TODO:REMOVE TEST BUTTON -->
+
+                <!-- Refresh data button -->
                 <button
-                  @click="fetchFromLocalStorage"
-                  class="btn bg-base-100 hover:bg-red-400 h-7"
+                  @click="fetchFromLocalStorage()"
+                  class="btn bg-base-100 hover:bg-green-400 h-7"
                 >
-                  Test
+                  Refresh
                 </button>
               </div>
 

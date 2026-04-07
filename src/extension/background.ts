@@ -2,6 +2,14 @@
 
 // import browser from "webextension-polyfill";
 import { DebuggerManager } from "./src/DebuggerManager.ts";
+import {
+  GetDataMessage,
+  ApiMessage,
+  SetDataMessage,
+  StringResponse,
+  ResponseMessage,
+} from "@/api/messages.ts";
+import { storageProxy } from "./src/StorageProxy.ts";
 
 // /*******************************/
 // /* App communication functions */
@@ -42,11 +50,11 @@ async function loadTestData() {
   }
 }
 
-chrome.runtime.onInstalled.addListener((details) => {
-    chrome.storage.local.clear(() => {
-        console.log("Cleared local storage for testing purposes")
-    })
-})
+// chrome.runtime.onInstalled.addListener((details) => {
+//   chrome.storage.local.clear(() => {
+//     console.log("Cleared local storage for testing purposes");
+//   });
+// });
 
 // chrome.runtime.onInstalled.addListener(() => {
 //   console.log("On Installed");
@@ -57,31 +65,22 @@ chrome.runtime.onInstalled.addListener((details) => {
 /* Listener and support functions */
 /**********************************/
 
-// Handle messages from extension pages
-/**
- *
- * @param {any} request
- * @param {chrome.runtime.MessageSender} sender
- * @param {(response?:any) => void} sendResponse
- */
-function handleMessage(request, sender, sendResponse) {
+/** Handle messages from extension pages */
+function handleMessage(
+  request: ApiMessage,
+  _: chrome.runtime.MessageSender,
+  sendResponse: (response?: ResponseMessage) => void,
+) {
   // console.log(request);
-  let message = request.message;
-  let action = message.action;
-  let params = message.params;
+  // let message = request.message;
+  // let action = message.action;
+  // let params = message.params;
   // console.log("A content script sent a message: " + message);
+
+  const action = request.action;
+  const params = request.params;
+
   switch (action) {
-    case "setData":
-      // if (params.data == undefined) {
-      //     // console.log(message);
-      //     sendResponse({ response: "Message was missing either location or data" });
-      //     return;
-      // }
-      // /** If settings were changed, updates the time the last tracker timer was set. This is used for balancing stage data */
-      // storageProxy.save(params.data);
-      // sendResponse({ response: "Added data to write queue" });
-      console.log("setData CALLED");
-      break;
     case "getData":
       // if (params.storageKey == undefined) {
       //     sendResponse({ response: "Message was missing location" });
@@ -93,31 +92,39 @@ function handleMessage(request, sender, sendResponse) {
       //     }
       //     sendResponse({ response: result });
       // });
-      console.log("getData CALLED");
+      // break;
+
+      if (params === undefined) {
+        sendResponse({ response: "Message key was neither valid nor null" });
+        return;
+      }
+
+      if (params.key === null) {
+        storageProxy.get(null).then((result) => {
+          console.log("Extension side: ", result)
+          sendResponse({response: result as object})
+        });
+      } else {
+        storageProxy.get(params.key).then((result) => {
+          sendResponse({response: result as object})
+        });
+      }
       break;
-    case "getVar":
-      // if (params.data == undefined){
-      //     sendResponse({ response: "Message was missing data" });
-      // }
-      // storageProxy.getVar(params.data).then((result) =>{
-      //     sendResponse({ response: result });
-      // });
-      console.log("getVar CALLED");
-      break;
-    case "recalculateData":
-      // if (params.data == undefined){
-      //     sendResponse({ response: "Message was missing data" });
-      // }
-      // DataProcessor.RecalculateStageDataAll(params.data).then((result) =>{
-      //     sendResponse({ response: result });
-      // });
-      console.log("recalculateData CALLED");
-      break;
+
+    case "setData":
+    // if (params.key === undefined) {
+    //     sendResponse({ response: "Message was missing key" });
+    // }
+    // // console.log("Getting data for: " + params.storageKey);
+    // storageProxy.get(params.key).then((result) => {
+    //     sendResponse({ response: result });
+    // });
+    // break;
 
     default:
       console.log(
         "Request sent to background script was not recognized. Request received: " +
-          action,
+          request,
       );
   }
   return true;

@@ -1,4 +1,8 @@
 import { global_state } from "./globals.ts";
+import {
+  getObjectFromLocalStorage,
+  saveObjectInLocalStorage,
+} from "@/api/chrome_local_storage.ts";
 
 /**
  * Synchronizes read/write events to prevent race conditions
@@ -21,7 +25,7 @@ class StorageProxy {
       const obj = this.writeRequestQueue.shift();
       // console.log("SAVING NEW OBJECT: ", obj);
       if (obj) {
-        await this.saveObjectInLocalStorage(obj);
+        await saveObjectInLocalStorage(obj);
       } else {
         // console.log("FAILED TO SAVE NEW OBJECT")
       }
@@ -29,15 +33,30 @@ class StorageProxy {
     this.writeProtectFlag = false;
   }
 
-  async get(key: string) {
-    const writeRequestQueueCopy = this.writeRequestQueue.slice();
-    while (writeRequestQueueCopy.length > 0) {
-      let object: Record<string, any> | undefined = writeRequestQueueCopy.pop();
-      if (object?.hasOwnProperty(key)) {
-        return object[key];
+  async get(key: string | null) {
+    if (key === null) {
+      // If we want all data from storage...
+      // Exhaust everything that is about to be written first.
+      while (this.writeRequestQueue.length > 0) {
+        if (!this.writeProtectFlag) {
+          this.processRequest();
+        }
+      }
+    } else {
+      // Otherwise, search the writes in progress and see if there is an updated object in there.
+      // Return it if so.
+      const writeRequestQueueCopy = this.writeRequestQueue.slice();
+      while (writeRequestQueueCopy.length > 0) {
+        let object: Record<string, any> | undefined =
+          writeRequestQueueCopy.pop();
+        if (key !== null && object?.hasOwnProperty(key)) {
+          return object[key];
+        }
       }
     }
-    return this.getObjectFromLocalStorage(key);
+
+    // Fallback, read the object from "cold" storage and/or return all objects.
+    return getObjectFromLocalStorage(key);
   }
 
   async save(obj: object) {
@@ -66,34 +85,6 @@ class StorageProxy {
       default:
         return "Error: data did not exist or access is not allowed";
     }
-  }
-
-  /* Returns object from chrome's local storage */
-  async getObjectFromLocalStorage(key: string) {
-    return new Promise((resolve, reject) => {
-      try {
-        chrome.storage.local.get(key, function (value) {
-          resolve(value[key]);
-        });
-      } catch (ex) {
-        console.log(ex);
-        reject(ex);
-      }
-    });
-  }
-
-  /* Stores object from chrome's local storage */
-  async saveObjectInLocalStorage(obj: object) {
-    return new Promise((resolve, reject) => {
-      try {
-        chrome.storage.local.set(obj, function () {
-          resolve("Saved new object");
-        });
-      } catch (ex) {
-        console.log(ex);
-        reject(ex);
-      }
-    });
   }
 }
 
