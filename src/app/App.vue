@@ -1,31 +1,21 @@
 <script setup lang="tsx">
 import { type GetDataMessage, type ResponseMessage } from "@/api/messages.ts";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/app/components/ui/resizable";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/app/components/ui/resizable";
 import type { SplitterPanel } from "reka-ui";
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import browser from "webextension-polyfill";
 import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import FilterGroup from "./components/FilterGroup.vue";
-import {
-  type ActiveFilters,
-  type FilterInputs,
-} from "./filtering/filterConfig";
-import {
-  elements,
-  SK1_NAMES,
-  SK2_NAMES,
-  SK3_NAMES,
-  weapons,
-  type Artifacts,
-  type Element,
-  type Weapon,
-} from "./types";
+import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
+import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons, type Artifacts, type Element, type Weapon } from "./types";
 import { getImage, updateSet } from "./utils";
+
+const __SIDEBAR = {
+  collapsedSize: 4,
+  minSize: 20,
+  defaultSize: 35,
+};
 
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
@@ -36,6 +26,7 @@ const filters = reactive<ActiveFilters>({
   element: new Set<Element>(),
   weapon: new Set<Weapon>(),
 });
+const artifacts = ref<Artifacts>({});
 
 export type FilterHandlers = {
   [K in keyof FilterInputs]: (value: FilterInputs[K]) => void;
@@ -119,14 +110,6 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
   }
 }
 
-const __SIDEBAR = {
-  collapsedSize: 4,
-  minSize: 20,
-  defaultSize: 35,
-};
-
-const artifacts = ref<Artifacts>({});
-
 async function fetchFromLocalStorage() {
   try {
     const msg: GetDataMessage = {
@@ -136,7 +119,6 @@ async function fetchFromLocalStorage() {
       },
     };
     const data = (await browser.runtime.sendMessage(msg)) as ResponseMessage;
-    console.log("App side: ", data);
 
     if (typeof data.response === "string") {
       console.error("Error during data retrieval: ", data.response);
@@ -150,26 +132,26 @@ async function fetchFromLocalStorage() {
           is_scrap: artifact.is_scrap,
           s1: {
             id: Math.floor(artifact.s1.skill_id / 10),
-            name: artifact.s1.name,
-            value: artifact.s1.effect_value,
+            name: artifact.s1.name.trim(),
+            value: artifact.s1.effect_value.trim(),
             quality: artifact.s1.skill_quality,
           },
           s2: {
             id: Math.floor(artifact.s2.skill_id / 10),
-            name: artifact.s2.name,
-            value: artifact.s2.effect_value,
+            name: artifact.s2.name.trim(),
+            value: artifact.s2.effect_value.trim(),
             quality: artifact.s2.skill_quality,
           },
           s3: {
             id: Math.floor(artifact.s3.skill_id / 10),
-            name: artifact.s3.name,
-            value: artifact.s3.effect_value,
+            name: artifact.s3.name.trim(),
+            value: artifact.s3.effect_value.trim(),
             quality: artifact.s3.skill_quality,
           },
           s4: {
             id: Math.floor(artifact.s4.skill_id / 10),
-            name: artifact.s4.name,
-            value: artifact.s4.effect_value,
+            name: artifact.s4.name.trim(),
+            value: artifact.s4.effect_value.trim(),
             quality: artifact.s4.skill_quality,
           },
         };
@@ -179,6 +161,17 @@ async function fetchFromLocalStorage() {
     console.error("Failed to get data.");
   }
 }
+
+onMounted(() => {
+  fetchFromLocalStorage().then();
+
+  browser.storage.onChanged.addListener((_, area) => {
+    // TODO: This ends up being called 20 times per page because of how the extension end updates local storage. Find a way to debounce.
+    if (area === "local") {
+      fetchFromLocalStorage().then();
+    }
+  });
+});
 </script>
 
 <template>
@@ -197,11 +190,7 @@ async function fetchFromLocalStorage() {
           <button
             class="btn btn-square btn-ghost bg-base-100 w-[30px] h-[30px] hover:bg-neutral-500"
             v-if="sidePanelRef?.isCollapsed"
-            @click="
-              sidePanelRef?.isCollapsed
-                ? sidePanelRef?.expand()
-                : sidePanelRef?.collapse()
-            "
+            @click="sidePanelRef?.isCollapsed ? sidePanelRef?.expand() : sidePanelRef?.collapse()"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -219,35 +208,20 @@ async function fetchFromLocalStorage() {
           </button>
 
           <div class="flex flex-col items-center gap-2 pr-6">
-            <div
-              class="flex flex-col items-center gap-2"
-              v-if="!sidePanelRef?.isCollapsed"
-            >
+            <div class="flex flex-col items-center gap-2" v-if="!sidePanelRef?.isCollapsed">
               <div class="flex items-center justify-center gap-2">
                 <!-- Clear Filters button -->
-                <button
-                  class="btn bg-base-100 hover:bg-red-400 h-7"
-                  @click="clearFilter('all')"
-                >
+                <button class="btn bg-base-100 hover:bg-red-400 h-7" @click="clearFilter('all')">
                   Clear All Filters
                 </button>
 
                 <!-- Refresh data button -->
-                <button
-                  @click="fetchFromLocalStorage()"
-                  class="btn bg-base-100 hover:bg-green-400 h-7"
-                >
-                  Refresh
-                </button>
+                <button @click="fetchFromLocalStorage()" class="btn bg-base-100 hover:bg-green-400 h-7">Refresh</button>
               </div>
 
               <!-- Search bar -->
               <label class="input">
-                <input
-                  v-model="filters.search"
-                  type="search"
-                  placeholder="Search"
-                />
+                <input v-model="filters.search" type="search" placeholder="Search" />
               </label>
 
               <!-- Elements filter -->
@@ -275,9 +249,7 @@ async function fetchFromLocalStorage() {
               <!-- Weapons filter -->
               <div class="flex gap-2">
                 <div class="flex overflow-auto">
-                  <div
-                    class="flex-none grid grid-flow-row grid-rows-2 grid-cols-5 overflow-auto pb-2"
-                  >
+                  <div class="flex-none grid grid-flow-row grid-rows-2 grid-cols-5 overflow-auto pb-2">
                     <button
                       v-for="weapon in weapons"
                       :key="weapon"

@@ -101,7 +101,7 @@ export const SK1_NAMES: FilterButtonData[] = [
     { name: "Debuff Success Rate" },
     { name: "Double Attack Rate", aliases: ["D.A., Rate", "DA Rate"]},
     { name: "Triple Attack Rate", aliases: ["T.A., Rate", "TA Rate"] },
-    { name: "Def" },
+    { name: "DEF" },
     { name: "Debuff Resistance" },
     { name: "Dodge Rate" },
     { name: "Healing" },

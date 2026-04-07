@@ -1,7 +1,5 @@
 import { storageProxy } from "./StorageProxy";
 
-// TODO: implement everything
-
 const NAME_TO_WEAPON_GROUP: { [key: string]: string } = {
   "Ominous Amulet": "Sabre",
   "Couronne Sainte": "Sabre",

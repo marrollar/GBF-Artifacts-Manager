@@ -72,9 +72,6 @@ function handleMessage(
   sendResponse: (response?: ResponseMessage) => void,
 ) {
   // console.log(request);
-  // let message = request.message;
-  // let action = message.action;
-  // let params = message.params;
   // console.log("A content script sent a message: " + message);
 
   const action = request.action;
@@ -82,18 +79,6 @@ function handleMessage(
 
   switch (action) {
     case "getData":
-      // if (params.storageKey == undefined) {
-      //     sendResponse({ response: "Message was missing location" });
-      // }
-      // // console.log("Getting data for: " + params.storageKey);
-      // storageProxy.get(params.storageKey).then((result) => {
-      //     if (params.isStageData){
-      //         result = DataProcessor.BalanceStageData(result);
-      //     }
-      //     sendResponse({ response: result });
-      // });
-      // break;
-
       if (params === undefined) {
         sendResponse({ response: "Message key was neither valid nor null" });
         return;
@@ -101,7 +86,6 @@ function handleMessage(
 
       if (params.key === null) {
         storageProxy.get(null).then((result) => {
-          console.log("Extension side: ", result)
           sendResponse({response: result as object})
         });
       } else {
