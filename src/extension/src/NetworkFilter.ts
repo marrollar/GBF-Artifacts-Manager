@@ -1,6 +1,8 @@
 import { urlFilter } from "../service_worker_config";
 import { DataProcessor } from "./DataProcessor";
 import { global_state, RequestTypes } from "./globals";
+import { HighLighter } from "./Highlighter";
+import { storageProxy } from "./StorageProxy";
 
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
 export class NetworkFilter {
@@ -66,11 +68,14 @@ export class NetworkFilter {
                 // TODO: Implement
                 console.log("%c[info]ListPage hit", "color:coral;")
                 DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw) // TODO: Unsafe cast
+                HighLighter.HighlightTrashArtifacts(debuggeeId.tabId, response as ResultInfoRaw);
                 break;
+
               case RequestTypes.ArtifactsDestroyed:
                 // TODO: Implement
                 console.log("%c[info]ArtifactsDestroyed hit", "color:coral;")
                 break;
+
               default:
                 console.log(
                   "%c[error]requestType did not match any known values: " +

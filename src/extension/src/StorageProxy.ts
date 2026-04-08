@@ -38,6 +38,7 @@ class StorageProxy {
       // If we want all data from storage...
       // Exhaust everything that is about to be written first.
       while (this.writeRequestQueue.length > 0) {
+        // console.log("%c[info]Get all artifacts from local storage", "color:cyan;")
         if (!this.writeProtectFlag) {
           this.processRequest();
         }
@@ -47,9 +48,9 @@ class StorageProxy {
       // Return it if so.
       const writeRequestQueueCopy = this.writeRequestQueue.slice();
       while (writeRequestQueueCopy.length > 0) {
-        let object: Record<string, any> | undefined =
-          writeRequestQueueCopy.pop();
+        let object: Record<string, any> | undefined = writeRequestQueueCopy.pop();
         if (key !== null && object?.hasOwnProperty(key)) {
+          // console.log("%c[info]Found " + key + " in the write queue", "color:cyan;")
           return object[key];
         }
       }

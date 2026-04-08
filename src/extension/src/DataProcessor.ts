@@ -64,7 +64,7 @@ const KIND_TO_WEAPON: { [key: string]: string } = {
   "10": "Katana",
 };
 
-type RawArtifact = {
+export type RawArtifact = {
   id: number;
   kind: string;
   attribute: string;

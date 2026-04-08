@@ -16,7 +16,8 @@
     "tabs",
     "debugger",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "scripting"
   ],
   "host_permissions": ["*://*.granbluefantasy.jp/*"]
 }
