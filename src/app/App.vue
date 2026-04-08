@@ -8,7 +8,7 @@ import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import FilterGroup from "./components/FilterGroup.vue";
 import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
-import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons, type Artifacts, type Element, type Weapon } from "./types";
+import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons, type Artifacts, type Element, type RawArtifact, type Weapon } from "./types";
 import { getImage, updateSet } from "./utils";
 
 const __SIDEBAR = {
@@ -123,12 +123,14 @@ async function fetchFromLocalStorage() {
     if (typeof data.response === "string") {
       console.error("Error during data retrieval: ", data.response);
     } else {
-      Object.entries(data.response).forEach(([id, rawArti]) => {
-        const artifact = JSON.parse(rawArti);
+      Object.entries(data.response).forEach(([id, rawArti]:[string, string]) => {
+        const artifact:RawArtifact = JSON.parse(rawArti);
 
         artifacts.value[id] = {
           element: artifact.element as Element,
           weapon: artifact.weapon_group as Weapon,
+          is_locked:artifact.is_locked,
+          is_quirk:artifact.is_quirk,
           is_scrap: artifact.is_scrap,
           s1: {
             id: Math.floor(artifact.s1.skill_id / 10),

@@ -69,6 +69,8 @@ export type RawArtifact = {
   kind: string;
   attribute: string;
   name: string;
+  is_locked: boolean;
+  is_quirk: boolean;
   is_unnecessary: boolean;
   skill1_info: object;
   skill2_info: object;
@@ -79,27 +81,26 @@ export type RawArtifact = {
 /** Handles the processing of raw data into a format that can be stored for later */
 export class DataProcessor {
   static async ProcessInventoryJSON(response: ResultInfoRaw) {
-    console.log(
-      "%c[Step 2] PROCESSING INVENTORY DATA",
-      "color:cornflowerblue;",
-    );
+    console.log("%c[Step 2] PROCESSING INVENTORY DATA", "color:cornflowerblue;");
 
     try {
       const json = JSON.parse(response.body);
       const artifacts = json.list;
 
       for (const artifact of artifacts) {
-
-        const artiAlreadyExists = await storageProxy.get(String(artifact.id))
-        if(artiAlreadyExists !== undefined) {
-          continue
-        } 
+        const artiAlreadyExists = await storageProxy.get(String(artifact.id));
+        if (Object.keys(artiAlreadyExists).length !== 0) {
+          // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
+          continue;
+        }
 
         const {
           id: id,
           kind: kind,
           attribute: attribute,
           name: name,
+          is_locked: is_locked,
+          is_quirk: is_quirk,
           is_unnecessary: is_scrap,
           skill1_info: s1,
           skill2_info: s2,
@@ -111,26 +112,18 @@ export class DataProcessor {
         const element = ATTRIBUTE_TO_ELEMENT[attribute];
 
         if (weapon_group === undefined) {
-          console.log(
-            "%c[warn]weapon_group did not parse properly: " +
-              name +
-              "(" +
-              kind +
-              ")",
-            "color:yellow;",
-          );
+          console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
         }
         if (element === undefined) {
-          console.log(
-            "%c[warn]element did not parse properly: " + attribute,
-            "color:yellow;",
-          );
+          console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
         }
 
         await storageProxy.save({
           [id]: JSON.stringify({
             weapon_group: weapon_group,
             element: element,
+            is_locked: is_locked,
+            is_quirk: is_quirk,
             is_scrap: is_scrap,
             s1: s1,
             s2: s2,
@@ -141,11 +134,7 @@ export class DataProcessor {
         });
       }
     } catch (error) {
-      console.log(
-        "%c[error]A problem occured while processing inventory data...",
-        "color:red;",
-        error,
-      );
+      console.log("%c[error]A problem occured while processing inventory data...", "color:red;", error);
     }
   }
 }

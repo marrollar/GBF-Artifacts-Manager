@@ -56,6 +56,8 @@ export interface RawSkill {
 export interface RawArtifact {
     weapon_group: string;
     element: string;
+    is_locked:boolean;
+    is_quirk:boolean;
     is_scrap: boolean;
     s1: RawSkill;
     s2: RawSkill;
@@ -79,6 +81,8 @@ export type Artifacts = {
     [id: string]: {
         element: Element,
         weapon: Weapon,
+        is_locked:boolean,
+        is_quirk:boolean,
         is_scrap: boolean,
         s1: SkillInfo,
         s2: SkillInfo,
