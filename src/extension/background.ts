@@ -2,13 +2,7 @@
 
 // import browser from "webextension-polyfill";
 import { DebuggerManager } from "./src/DebuggerManager.ts";
-import {
-  GetDataMessage,
-  ApiMessage,
-  SetDataMessage,
-  StringResponse,
-  ResponseMessage,
-} from "@/api/messages.ts";
+import { GetDataMessage, ApiMessage, SetDataMessage, StringResponse, ResponseMessage } from "@/api/messages.ts";
 import { storageProxy } from "./src/StorageProxy.ts";
 
 // /*******************************/
@@ -86,30 +80,26 @@ function handleMessage(
 
       if (params.key === null) {
         storageProxy.get(null).then((result) => {
-          sendResponse({response: result as object})
+          sendResponse({ response: result as object });
         });
       } else {
         storageProxy.get(params.key).then((result) => {
-          sendResponse({response: result as object})
+          sendResponse({ response: result as object });
         });
       }
       break;
 
     case "setData":
-    // if (params.key === undefined) {
-    //     sendResponse({ response: "Message was missing key" });
-    // }
-    // // console.log("Getting data for: " + params.storageKey);
-    // storageProxy.get(params.key).then((result) => {
-    //     sendResponse({ response: result });
-    // });
-    // break;
+      if (params.key === undefined) {
+        sendResponse({ response: "Message was missing key" });
+      }
+
+      storageProxy.save(params);
+      sendResponse({ response: "Save request received." });
+      break;
 
     default:
-      console.log(
-        "Request sent to background script was not recognized. Request received: " +
-          request,
-      );
+      console.log("Request sent to background script was not recognized. Request received: " + request);
   }
   return true;
 }
@@ -126,10 +116,7 @@ async function InitializeServiceWorker() {
   chrome.runtime.onMessage.addListener(handleMessage);
   var manifest = chrome.runtime.getManifest();
   var currentVersion = manifest.version;
-  console.log(
-    `%c[v${currentVersion}]Service worker has started...`,
-    "color:cyan;",
-  );
+  console.log(`%c[v${currentVersion}]Service worker has started...`, "color:cyan;");
 }
 
 InitializeServiceWorker();

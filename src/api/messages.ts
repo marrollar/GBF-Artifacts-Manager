@@ -1,3 +1,5 @@
+import { RawArtifact } from "@/extension/src/DataProcessor";
+
 export type GetDataMessage = {
   action: "getData";
   params: {
@@ -23,3 +25,9 @@ export type ObjectResponse = {
 
 export type ApiMessage = GetDataMessage | SetDataMessage;
 export type ResponseMessage = StringResponse | ObjectResponse;
+
+
+export type RawArtifactMessage = {
+  key: string;
+  data: RawArtifact
+}
