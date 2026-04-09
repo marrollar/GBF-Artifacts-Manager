@@ -36,3 +36,18 @@ export type FilterDefinition =
         label: string;
         options: Set<Weapon>;
     }
+    | {
+        type:"toggle";
+        key:"filterFavorite";
+        label:string;
+    }
+    | {
+        type:"toggle";
+        key:"filterQuirk";
+        label:string;
+    }
+    | {
+        type:"toggle";
+        key:"filterScrap";
+        label:string;
+    }

@@ -12,20 +12,27 @@ export class HighLighter {
       const json = JSON.parse(response.body);
       const artifacts = json.list;
 
+      const artifactsToMark = [];
+      for (const artifact of artifacts) {
+        const id = artifact.id;
+        const localRecord = await storageProxy.get(id);
+
+        if (artifact.is_unnecessary || localRecord.is_scrap) {
+          artifactsToMark.push(id);
+        }
+      }
+
       chrome.scripting.executeScript({
         target: { tabId },
-        func: (artifacts) => {
-          for (const artifact of artifacts) {
-            if (artifact.is_unnecessary) {
-              const el = document.querySelector(`li[data-id="${artifact.id}"]`) as HTMLLIElement;
-
-              if (el) {
-                el.style.outline = "1px solid red"
-              }
+        func: (artifactIds) => {
+          for (const id of artifactIds) {
+            const el = document.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+            if (el) {
+              el.style.outline = "1px solid red";
             }
           }
         },
-        args: [artifacts],
+        args: [artifactsToMark],
       });
     } catch (e) {
       console.log("%c[error]Error while highlighting trash artifacts: " + e, "color:red;");
