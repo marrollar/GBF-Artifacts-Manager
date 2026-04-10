@@ -67,7 +67,8 @@ onBeforeUnmount(() => {
       class="dropdown absolute min-w-[140px] bg-base-100 border-gray-600 p-2 mt-1 rounded-md border z-1001 flex flex-col gap-1"
     >
       <div v-for="option in options" :key="option.key" class="flex center gap-1">
-        <input type="checkbox" class="toggle" :value="option.key" @change="onChange" />
+        <!-- TODO: This needs to get synced up with the reset all filters button to reset the toggle. -->
+        <input type="checkbox" class="toggle" :value="option.key" @change="onChange" /> 
         {{ option.label }}
       </div>
     </div>

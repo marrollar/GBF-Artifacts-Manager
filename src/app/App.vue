@@ -213,7 +213,7 @@ onMounted(() => {
                   <button
                     v-for="element in elements"
                     :key="element"
-                    class="flex-none p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md"
+                    class="flex-none p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md transition-colors duration-200 ease-out"
                     :class="{ 'bg-accent': filters['element'].has(element) }"
                   >
                     <img
@@ -236,7 +236,7 @@ onMounted(() => {
                     <button
                       v-for="weapon in weapons"
                       :key="weapon"
-                      class="p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md"
+                      class="p-0.5 hover:bg-neutral-500 hover:cursor-pointer rounded-md transition-colors duration-200 ease-out"
                       :class="{ 'bg-accent': filters['weapon'].has(weapon) }"
                     >
                       <img
