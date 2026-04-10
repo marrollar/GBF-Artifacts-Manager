@@ -1,5 +1,8 @@
-import { storageProxy } from "./StorageProxy";
+import type { Element, RawArtifact, Weapon } from "@/app/types";
+import type { ResultInfoRaw } from "../types/typedefs";
+import { GetArtifact, SaveArtifact } from "./StorageProxy";
 
+// @ts-expect-error
 const NAME_TO_WEAPON_GROUP: { [key: string]: string } = {
   "Ominous Amulet": "Sabre",
   "Couronne Sainte": "Sabre",
@@ -42,7 +45,7 @@ const NAME_TO_WEAPON_GROUP: { [key: string]: string } = {
   "Jinyao Xianglu": "Katana",
 };
 
-const ATTRIBUTE_TO_ELEMENT: { [key: string]: string } = {
+const ATTRIBUTE_TO_ELEMENT: { [key: string]: Element } = {
   "1": "Fire",
   "2": "Water",
   "3": "Earth",
@@ -51,7 +54,7 @@ const ATTRIBUTE_TO_ELEMENT: { [key: string]: string } = {
   "6": "Dark",
 };
 
-const KIND_TO_WEAPON: { [key: string]: string } = {
+const KIND_TO_WEAPON: { [key: string]: Weapon } = {
   "1": "Sabre",
   "2": "Dagger",
   "3": "Spear",
@@ -64,20 +67,6 @@ const KIND_TO_WEAPON: { [key: string]: string } = {
   "10": "Katana",
 };
 
-export type RawArtifact = {
-  id: number;
-  kind: string;
-  attribute: string;
-  name: string;
-  is_locked: boolean;
-  is_quirk: boolean;
-  is_unnecessary: boolean;
-  skill1_info: object;
-  skill2_info: object;
-  skill3_info: object;
-  skill4_info: object;
-};
-
 /** Handles the processing of raw data into a format that can be stored for later */
 export class DataProcessor {
   static async ProcessInventoryJSON(response: ResultInfoRaw) {
@@ -85,54 +74,83 @@ export class DataProcessor {
 
     try {
       const json = JSON.parse(response.body);
-      const artifacts = json.list;
+      const networkArtifacts: Record<number, RawArtifact> = json.list;
 
-      for (const artifact of artifacts) {
-        const artiAlreadyExists = await storageProxy.get(String(artifact.id));
-        if (Object.keys(artiAlreadyExists).length !== 0) {
-          // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
-          continue;
-        }
-
-        const {
-          id: id,
-          kind: kind,
-          attribute: attribute,
-          name: name,
-          is_locked: is_locked,
-          is_quirk: is_quirk,
-          is_unnecessary: is_scrap,
-          skill1_info: s1,
-          skill2_info: s2,
-          skill3_info: s3,
-          skill4_info: s4,
-        }: RawArtifact = artifact;
-
-        const weapon_group = KIND_TO_WEAPON[kind];
-        const element = ATTRIBUTE_TO_ELEMENT[attribute];
-
-        if (weapon_group === undefined) {
-          console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
-        }
-        if (element === undefined) {
-          console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
-        }
-
-        await storageProxy.save({
-          [id]: JSON.stringify({
-            weapon_group: weapon_group,
-            element: element,
+      Object.entries(networkArtifacts).forEach(async ([_, networkArtifact]) => {
+        const artiAlreadyExists = (await GetArtifact({ id: String(networkArtifact.id) })).data;
+        if (Object.keys(artiAlreadyExists).length === 0) {
+          const {
+            id: id,
+            kind: kind,
+            attribute: attribute,
+            name: name,
             is_locked: is_locked,
             is_quirk: is_quirk,
-            is_scrap: is_scrap,
-            s1: s1,
-            s2: s2,
-            s3: s3,
-            s4: s4,
-            name: name,
-          }),
-        });
-      }
+            is_unnecessary: is_scrap,
+            skill1_info: s1,
+            skill2_info: s2,
+            skill3_info: s3,
+            skill4_info: s4,
+          }: RawArtifact = networkArtifact;
+
+          const weapon_group = KIND_TO_WEAPON[kind];
+          const element = ATTRIBUTE_TO_ELEMENT[attribute];
+
+          if (weapon_group === undefined) {
+            console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
+          }
+          if (element === undefined) {
+            console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
+          }
+
+          await SaveArtifact({
+            data: {
+              [id]: {
+                weapon: weapon_group,
+                element: element,
+                name: name,
+                is_locked: is_locked,
+                is_quirk: is_quirk,
+                is_scrap: is_scrap,
+                s1: {
+                  id: s1.skill_id,
+                  quality: s1.skill_quality,
+                  level: s1.level,
+                  name: s1.name,
+                  is_max_quality: s1.is_max_quality,
+                  value: s1.effect_value,
+                },
+                s2: {
+                  id: s2.skill_id,
+                  quality: s2.skill_quality,
+                  level: s2.level,
+                  name: s2.name,
+                  is_max_quality: s2.is_max_quality,
+                  value: s2.effect_value,
+                },
+                s3: {
+                  id: s3.skill_id,
+                  quality: s3.skill_quality,
+                  level: s3.level,
+                  name: s3.name,
+                  is_max_quality: s3.is_max_quality,
+                  value: s3.effect_value,
+                },
+                s4: {
+                  id: s4.skill_id,
+                  quality: s4.skill_quality,
+                  level: s4.level,
+                  name: s4.name,
+                  is_max_quality: s4.is_max_quality,
+                  value: s4.effect_value,
+                },
+              },
+            },
+          });
+        } else {
+          // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
+        }
+      });
     } catch (error) {
       console.log("%c[error]A problem occured while processing inventory data...", "color:red;", error);
     }

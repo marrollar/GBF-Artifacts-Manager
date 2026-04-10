@@ -1,5 +1,6 @@
-import { RawArtifact } from "./DataProcessor";
-import { storageProxy } from "./StorageProxy";
+import { GetArtifact } from "./StorageProxy";
+import { type ResultInfoRaw } from "../types/typedefs";
+import type { RawArtifact } from "@/app/types";
 
 export class HighLighter {
   static async HighlightTrashArtifacts(tabId: number | undefined, response: ResultInfoRaw) {
@@ -10,17 +11,24 @@ export class HighLighter {
 
     try {
       const json = JSON.parse(response.body);
-      const artifacts = json.list;
+      const networkArtifacts: Record<number, RawArtifact> = json.list;
 
-      const artifactsToMark = [];
-      for (const artifact of artifacts) {
-        const id = artifact.id;
-        const localRecord = await storageProxy.get(id);
+      const artifactsToMark: number[] = [];
 
-        if (artifact.is_unnecessary || localRecord.is_scrap) {
+      Object.entries(networkArtifacts).forEach(async ([_, networkArtifact]) => {
+        const id = networkArtifact.id;
+        
+        if (networkArtifact.is_unnecessary) {
           artifactsToMark.push(id);
+        } else {
+          const localRecord = (await GetArtifact({ id: String(id) })).data;
+          Object.entries(localRecord).forEach(([id, artifact]) => {
+            if (artifact.is_scrap) {
+              artifactsToMark.push(Number(id));
+            }
+          });
         }
-      }
+      });
 
       chrome.scripting.executeScript({
         target: { tabId },

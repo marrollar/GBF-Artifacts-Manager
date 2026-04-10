@@ -5,7 +5,7 @@
 /**
  * The JSON object that contains information about the game before being tokenized
  */
-type ResultInfoRaw = {
+export type ResultInfoRaw = {
   /** If the response body is encoded in base64
    * - This should be set to false usually
    */
@@ -17,7 +17,7 @@ type ResultInfoRaw = {
 /**
  * Unique request identifier.
  */
-type Network = {
+export type Network = {
   /** HTTP request data */
   request: {
     /** Request URL */
@@ -29,7 +29,7 @@ type Network = {
 /**
  * Debuggee identifier. Either tabId, extensionId or targetId must be specified.
  */
-type Debuggee = {
+export type Debuggee = {
   /** The id of the extension which this debugger is attached to. */
   extensionId?: string;
   /** The id of the tab this debugger is attached to. */
@@ -41,7 +41,7 @@ type Debuggee = {
 /**
  * A chrome extension object containing information about a browser tab.
  */
-type Tab = {
+export type Tab = {
   /** The last committed URL of the main frame of the tab.  */
   url: string;
   /** The ID of the tab. Tab IDs are unique within a browser session.  */

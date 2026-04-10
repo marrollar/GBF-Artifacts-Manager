@@ -3,7 +3,8 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": [
-      "vite/client"
+      "vite/client",
+      "chrome"
     ],
     /* Linting */
     "strict": true,
@@ -20,8 +21,11 @@
     }
   },
   "include": [
-    "src/app/**/*.ts",
-    "src/app/**/*.tsx",
-    "src/app/**/*.vue",
+    // "src/app/**/*.ts",
+    // "src/app/**/*.tsx",
+    // "src/app/**/*.vue",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
   ]
 }

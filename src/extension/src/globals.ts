@@ -1,7 +1,16 @@
-export enum RequestTypes {
-  ListPage = "ListPage",
-  ArtifactsDestroyed = "ArtifactsDestroyed",
-}
+import { type Network } from "../types/typedefs.ts";
+
+// export enum RequestTypes {
+//   ListPage = "ListPage",
+//   ArtifactsDestroyed = "ArtifactsDestroyed",
+// }
+
+export const RequestTypes = {
+  ListPage: "ListPage",
+  ArtifactsDestroyed: "ArtifactsDestroyed",
+} as const;
+
+export type RequestTypes = (typeof RequestTypes)[keyof typeof RequestTypes];
 
 export type TrackedRequest = {
   requestId: string;

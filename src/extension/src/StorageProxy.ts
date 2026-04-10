@@ -1,8 +1,7 @@
+import { getObjectFromLocalStorage, saveObjectInLocalStorage } from "@/api/chrome_local_storage.ts";
+import { createMessageHandlerFn } from "@/api/messages.ts";
 import { global_state } from "./globals.ts";
-import {
-  getObjectFromLocalStorage,
-  saveObjectInLocalStorage,
-} from "@/api/chrome_local_storage.ts";
+import type { Artifacts } from "@/app/types.ts";
 
 /**
  * Synchronizes read/write events to prevent race conditions
@@ -33,7 +32,7 @@ class StorageProxy {
     this.writeProtectFlag = false;
   }
 
-  async get(key: string | null) {
+  async get(key: string | null): Promise<unknown> {
     if (key === null) {
       // If we want all data from storage...
       // Exhaust everything that is about to be written first.
@@ -89,4 +88,17 @@ class StorageProxy {
   }
 }
 
-export const storageProxy = new StorageProxy();
+const storageProxy = new StorageProxy();
+
+export const SaveArtifact = createMessageHandlerFn("SET_DATA", async (payload) => {
+  storageProxy.save(payload.data);
+  return { ok: true };
+});
+
+export const GetArtifact = createMessageHandlerFn("GET_DATA", async (payload) => {
+  return { data: await storageProxy.get(payload.id) as Artifacts };
+});
+
+export const GetAllArtifacts = createMessageHandlerFn("GET_ALL_DATA", async () => {
+  return { data: await storageProxy.get(null) as Artifacts };
+});

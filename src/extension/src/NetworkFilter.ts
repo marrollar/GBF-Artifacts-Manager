@@ -2,7 +2,7 @@ import { urlFilter } from "../service_worker_config";
 import { DataProcessor } from "./DataProcessor";
 import { global_state, RequestTypes } from "./globals";
 import { HighLighter } from "./Highlighter";
-import { storageProxy } from "./StorageProxy";
+import { type Debuggee, type Network, type ResultInfoRaw  } from "../types/typedefs";
 
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
 export class NetworkFilter {

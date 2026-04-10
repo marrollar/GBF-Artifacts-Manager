@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
-    "@types/chrome": "^0.1.39",
     "@types/webextension-polyfill": "^0.12.5",
     "@vueuse/core": "^14.2.1",
     "class-variance-authority": "^0.7.1",
@@ -23,6 +22,7 @@
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.1.40",
     "@types/node": "^24.12.0",
     "@typescript-eslint/eslint-plugin": "^8.58.0",
     "@typescript-eslint/parser": "^8.58.0",

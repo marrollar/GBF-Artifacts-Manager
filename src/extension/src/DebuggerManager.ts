@@ -1,6 +1,7 @@
 import { urlFilter } from "../service_worker_config.js";
 import { NetworkFilter } from "./NetworkFilter.ts";
 import { global_state } from "./globals.ts";
+import { type Debuggee, type Tab } from "../types/typedefs.ts";
 
 /**
  * This class manages all debuggers by dynamically attaching and detaching them when needed.
@@ -13,24 +14,24 @@ export class DebuggerManager {
    */
   static EnableEventListeners() {
     // Adds listeners for network events and tab changes
-    // @ts-ignore
+    // @ts-expect-error
     if (!chrome.debugger.onEvent.hasListener(NetworkFilter.NetworkListener)) {
       console.log("%c[+]Activating listener on NetworkListener", "color:lime;");
-      // @ts-ignore
+      // @ts-expect-error
       chrome.debugger.onEvent.addListener(NetworkFilter.NetworkListener);
       let networkListenerStatus = chrome.debugger.onEvent.hasListener(
-        // @ts-ignore
+        // @ts-expect-error
         NetworkFilter.NetworkListener,
       );
       console.log("%c[info]false --> " + networkListenerStatus, "color:aqua;");
     }
-    // @ts-ignore
+    // @ts-expect-error
     if (!chrome.tabs.onUpdated.hasListener(DebuggerManager.TabListener)) {
       console.log("%c[+]Activating listener on TabListener", "color:lime;");
-      // @ts-ignore
+      // @ts-expect-error
       chrome.tabs.onUpdated.addListener(DebuggerManager.TabListener);
       let TabListenerStatus = chrome.tabs.onUpdated.hasListener(
-        // @ts-ignore
+        // @ts-expect-error
         DebuggerManager.TabListener,
       );
       console.log("%c[info]false --> " + TabListenerStatus, "color:aqua;");
@@ -44,17 +45,18 @@ export class DebuggerManager {
   static TabListener(tabId:number, changeInfo:object, tab:Tab)  {
     if (
       urlFilter.extensionUrlRegex.test(tab.url) &&
-      // @ts-ignore
+      // @ts-expect-error
       changeInfo.status === "loading"
     ) {
       DebuggerManager.RefreshActiveDebuggers();
       return;
     }
     // Excludes tabs that aren't loading or are chrome extension pages
-    // @ts-ignore
+    // @ts-expect-error
     if (!(changeInfo.status === "loading")) {
       return;
     }
+
     let isOnGame = urlFilter.gameUrlRegex.test(tab.url);
     let hasDebuggerAttached = global_state.activeDebuggers.some(
       (item) => item.tabId == tabId,

@@ -2,8 +2,6 @@
 
 // import browser from "webextension-polyfill";
 import { DebuggerManager } from "./src/DebuggerManager.ts";
-import { GetDataMessage, ApiMessage, SetDataMessage, StringResponse, ResponseMessage } from "@/api/messages.ts";
-import { storageProxy } from "./src/StorageProxy.ts";
 
 // /*******************************/
 // /* App communication functions */
@@ -31,6 +29,7 @@ chrome.action.onClicked.addListener(() => {
 // /*********************/
 
 // TODO: REMOVE after testing finishes
+// @ts-expect-error
 async function loadTestData() {
   try {
     const response = await fetch(chrome.runtime.getURL("artifacts_data.json"));
@@ -44,7 +43,7 @@ async function loadTestData() {
   }
 }
 
-// chrome.runtime.onInstalled.addListener((details) => {
+// chrome.runtime.onInstalled.addListener(() => {
 //   chrome.storage.local.clear(() => {
 //     console.log("Cleared local storage for testing purposes");
 //   });
@@ -60,49 +59,49 @@ async function loadTestData() {
 /**********************************/
 
 /** Handle messages from extension pages */
-function handleMessage(
-  request: ApiMessage,
-  _: chrome.runtime.MessageSender,
-  sendResponse: (response?: ResponseMessage) => void,
-) {
-  // console.log(request);
-  // console.log("A content script sent a message: " + message);
+// function handleMessage(
+//   request: ApiMessage,
+//   _: chrome.runtime.MessageSender,
+//   sendResponse: (response?: ResponseMessage) => void,
+// ) {
+//   // console.log(request);
+//   // console.log("A content script sent a message: " + message);
 
-  const action = request.action;
-  const params = request.params;
+//   const action = request.action;
+//   const params = request.params;
 
-  switch (action) {
-    case "getData":
-      if (params === undefined) {
-        sendResponse({ response: "Message key was neither valid nor null" });
-        return;
-      }
+//   switch (action) {
+//     case "getData":
+//       if (params === undefined) {
+//         sendResponse({ response: "Message key was neither valid nor null" });
+//         return;
+//       }
 
-      if (params.key === null) {
-        storageProxy.get(null).then((result) => {
-          sendResponse({ response: result as object });
-        });
-      } else {
-        storageProxy.get(params.key).then((result) => {
-          sendResponse({ response: result as object });
-        });
-      }
-      break;
+//       if (params.key === null) {
+//         storageProxy.get(null).then((result) => {
+//           sendResponse({ response: result as object });
+//         });
+//       } else {
+//         storageProxy.get(params.key).then((result) => {
+//           sendResponse({ response: result as object });
+//         });
+//       }
+//       break;
 
-    case "setData":
-      if (params.key === undefined) {
-        sendResponse({ response: "Message was missing key" });
-      }
+//     case "setData":
+//       if (params.key === undefined) {
+//         sendResponse({ response: "Message was missing key" });
+//       }
 
-      storageProxy.save(params);
-      sendResponse({ response: "Save request received." });
-      break;
+//       storageProxy.save(params);
+//       sendResponse({ response: "Save request received." });
+//       break;
 
-    default:
-      console.log("Request sent to background script was not recognized. Request received: " + request);
-  }
-  return true;
-}
+//     default:
+//       console.log("Request sent to background script was not recognized. Request received: " + request);
+//   }
+//   return true;
+// }
 
 async function InitializeServiceWorker() {
   // var Settings = await storageProxy.get("Settings");
@@ -113,7 +112,7 @@ async function InitializeServiceWorker() {
   // else {eventList = EventList;}
   // CheckForUpdate();
   DebuggerManager.EnableEventListeners();
-  chrome.runtime.onMessage.addListener(handleMessage);
+  // chrome.runtime.onMessage.addListener(handleMessage);
   var manifest = chrome.runtime.getManifest();
   var currentVersion = manifest.version;
   console.log(`%c[v${currentVersion}]Service worker has started...`, "color:cyan;");

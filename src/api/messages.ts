@@ -1,33 +1,38 @@
-import { RawArtifact } from "@/extension/src/DataProcessor";
+import type { Artifacts } from "@/app/types";
 
-export type GetDataMessage = {
-  action: "getData";
-  params: {
-    key: string | null;
+export interface MessageMap {
+  GET_ALL_DATA: {
+    payload: undefined;
+    response: { data: Artifacts };
   };
-};
 
-export type SetDataMessage = {
-  action: "setData";
-  params: {
-    key: string;
-    data: object;
+  GET_DATA: {
+    payload: { id: string };
+    response: { data: Artifacts };
   };
-};
 
-export type StringResponse = {
-  response: string;
-};
+  SET_DATA: {
+    payload: { data: Artifacts };
+    response: { ok: true };
+  };
+}
 
-export type ObjectResponse = {
-  response: object;
-};
+export type MessageType = keyof MessageMap;
 
-export type ApiMessage = GetDataMessage | SetDataMessage;
-export type ResponseMessage = StringResponse | ObjectResponse;
+// export type Message<T extends MessageType> = MessageMap[T]["payload"] extends undefined
+//   ? { type: T }
+//   : { type: T; payload: MessageMap[T]["payload"] };
 
+// export type MessageResponse<T extends MessageType> = MessageMap[T]["response"];
 
-export type RawArtifactMessage = {
-  key: string;
-  data: RawArtifact
+// export type MessageHandler<T extends MessageType> = (
+//   msg: Message<T>,
+// ) => Promise<MessageResponse<T>> | MessageResponse<T>;
+
+export type MessageHandlerFn<T extends MessageType> = MessageMap[T]["payload"] extends undefined
+  ? () => Promise<MessageMap[T]["response"]>
+  : (payload: MessageMap[T]["payload"]) => Promise<MessageMap[T]["response"]>;
+
+export function createMessageHandlerFn<T extends MessageType>(_: T, fn: MessageHandlerFn<T>) {
+  return fn;
 }

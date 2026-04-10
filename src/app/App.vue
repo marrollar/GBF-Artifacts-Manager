@@ -1,26 +1,16 @@
 <script setup lang="tsx">
-import { type GetDataMessage, type ResponseMessage } from "@/api/messages.ts";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/app/components/ui/resizable";
+import { GetAllArtifacts } from "@/extension/src/StorageProxy";
 import type { SplitterPanel } from "reka-ui";
 import { onMounted, reactive, ref } from "vue";
 import browser from "webextension-polyfill";
 import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
+import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
 import FilterGroup from "./components/FilterGroup.vue";
 import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
-import {
-  elements,
-  SK1_NAMES,
-  SK2_NAMES,
-  SK3_NAMES,
-  weapons,
-  type Artifacts,
-  type Element,
-  type RawArtifact,
-  type Weapon,
-} from "./types";
+import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons, type Artifacts, type Element, type Weapon } from "./types";
 import { getImage, updateSet } from "./utils";
-import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
 
 const __SIDEBAR = {
   collapsedSize: 4,
@@ -138,53 +128,10 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
 
 async function fetchFromLocalStorage() {
   try {
-    const msg: GetDataMessage = {
-      action: "getData",
-      params: {
-        key: null,
-      },
-    };
-    const data = (await browser.runtime.sendMessage(msg)) as ResponseMessage;
-
-    if (typeof data.response === "string") {
-      console.error("Error during data retrieval: ", data.response);
-    } else {
-      Object.entries(data.response).forEach(([id, rawArti]: [string, string]) => {
-        const artifact: RawArtifact = JSON.parse(rawArti);
-
-        artifacts.value[id] = {
-          element: artifact.element as Element,
-          weapon: artifact.weapon_group as Weapon,
-          is_locked: artifact.is_locked,
-          is_quirk: artifact.is_quirk,
-          is_scrap: artifact.is_scrap,
-          s1: {
-            id: Math.floor(artifact.s1.skill_id / 10),
-            name: artifact.s1.name.trim(),
-            value: artifact.s1.effect_value.trim(),
-            quality: artifact.s1.skill_quality,
-          },
-          s2: {
-            id: Math.floor(artifact.s2.skill_id / 10),
-            name: artifact.s2.name.trim(),
-            value: artifact.s2.effect_value.trim(),
-            quality: artifact.s2.skill_quality,
-          },
-          s3: {
-            id: Math.floor(artifact.s3.skill_id / 10),
-            name: artifact.s3.name.trim(),
-            value: artifact.s3.effect_value.trim(),
-            quality: artifact.s3.skill_quality,
-          },
-          s4: {
-            id: Math.floor(artifact.s4.skill_id / 10),
-            name: artifact.s4.name.trim(),
-            value: artifact.s4.effect_value.trim(),
-            quality: artifact.s4.skill_quality,
-          },
-        };
-      });
-    }
+    const data = (await GetAllArtifacts()).data;
+    Object.entries(data).forEach(([id, value]) => {
+      artifacts.value[Number(id)] = value;
+    });
   } catch (err) {
     console.error("Failed to get data.");
   }

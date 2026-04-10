@@ -1,3 +1,4 @@
+
 /* Returns object from chrome's local storage */
 export async function getObjectFromLocalStorage(key: string | null) {
   // console.log("%c[info]Retrieving " + key + " from local storage", "color:cyan;")
