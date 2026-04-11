@@ -14,8 +14,15 @@ const emits = defineEmits<{
   (e: "idToScrap", payload: { id: string; checked: boolean }): void;
 }>();
 
-function filterLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
-  // const search = filterOpts.search; // TODO: Implement global search
+function regexFilter(artifact: ArtifactMap[number], filterOpts:ActiveFilters) {
+  // TODO: Make this more elaborate and/or accept the usual filters that can be selected.
+  const search = filterOpts.search;
+  const nameText = artifact.s1.name + " " + artifact.s2.name + " " + artifact.s3.name + " " + artifact.s4.name
+  return new RegExp(search).test(nameText)
+}
+
+function selectFiltersLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
+  const search = filterOpts.search;
   const sk1Filter = filterOpts.sk1Search;
   const sk2Filter = filterOpts.sk2Search;
   const sk3Filter = filterOpts.sk3Search;
@@ -33,7 +40,8 @@ function filterLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
     (wepFilter.size === 0 || wepFilter.has(artifact.weapon)) &&
     (filterFavorite ? artifact.is_locked : true) &&
     (filterQuirk ? artifact.is_quirk : true) &&
-    (filterScrap ? artifact.is_scrap : true)
+    (filterScrap ? artifact.is_scrap : true) &&
+    (search.trim().length === 0 || regexFilter(artifact, filterOpts))
   ) {
     return true;
   }
@@ -42,7 +50,7 @@ function filterLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
 }
 
 function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
-  var filteredArtifacts = Object.entries(artifacts).filter(([_, arti]) => filterLogic(arti, filterOpts));
+  var filteredArtifacts = Object.entries(artifacts).filter(([_, arti]) => selectFiltersLogic(arti, filterOpts));
 
   for (var i = 0; i < filteredArtifacts.length; i++) {
     const s1 = filteredArtifacts[i][1].s1;
