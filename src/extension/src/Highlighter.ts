@@ -14,10 +14,9 @@ export class HighLighter {
       const networkArtifacts: Record<number, RawArtifact> = json.list;
 
       const artifactsToMark: number[] = [];
-
-      Object.entries(networkArtifacts).forEach(async ([_, networkArtifact]) => {
+      const promises = Object.entries(networkArtifacts).map(async ([_, networkArtifact]) => {
         const id = networkArtifact.id;
-        
+
         if (networkArtifact.is_unnecessary) {
           artifactsToMark.push(id);
         } else {
@@ -29,6 +28,8 @@ export class HighLighter {
           });
         }
       });
+
+      await Promise.all(promises);
 
       chrome.scripting.executeScript({
         target: { tabId },
@@ -45,5 +46,18 @@ export class HighLighter {
     } catch (e) {
       console.log("%c[error]Error while highlighting trash artifacts: " + e, "color:red;");
     }
+  }
+
+  static async Mark(tabId: number, id: number) {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: (id) => {
+        const el = document.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+        if (el) {
+          el.style.outline = "1px solid red";
+        }
+      },
+      args: [id],
+    });
   }
 }

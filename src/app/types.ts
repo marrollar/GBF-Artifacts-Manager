@@ -75,20 +75,36 @@ export type SkillInfo = {
   value: string;
 };
 
-export type Artifacts = {
-  [id: number]: {
-    weapon: Weapon;
-    element: Element;
-    name: string;
-    is_locked: boolean;
-    is_quirk: boolean;
-    is_scrap: boolean;
-    s1: SkillInfo;
-    s2: SkillInfo;
-    s3: SkillInfo;
-    s4: SkillInfo;
-  };
+export type Artifact = {
+  id: number;
+  weapon: Weapon;
+  element: Element;
+  name: string;
+  is_locked: boolean;
+  is_quirk: boolean;
+  is_scrap: boolean;
+  s1: SkillInfo;
+  s2: SkillInfo;
+  s3: SkillInfo;
+  s4: SkillInfo;
 };
+
+export type ArtifactMap = Record<number, Artifact>
+
+// export type Artifacts = {
+//   [id: number]: {
+//     weapon: Weapon;
+//     element: Element;
+//     name: string;
+//     is_locked: boolean;
+//     is_quirk: boolean;
+//     is_scrap: boolean;
+//     s1: SkillInfo;
+//     s2: SkillInfo;
+//     s3: SkillInfo;
+//     s4: SkillInfo;
+//   };
+// };
 
 // export type Artifacts = Record<number, ArtifactItem>;
 // export type Artifacts = {

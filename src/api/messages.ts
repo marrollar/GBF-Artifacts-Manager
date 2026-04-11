@@ -1,18 +1,18 @@
-import type { Artifacts } from "@/app/types";
+import type { ArtifactMap } from "@/app/types";
 
 export interface MessageMap {
   GET_ALL_DATA: {
     payload: undefined;
-    response: { data: Artifacts };
+    response: { data: ArtifactMap };
   };
 
   GET_DATA: {
     payload: { id: string };
-    response: { data: Artifacts };
+    response: { data: ArtifactMap };
   };
 
   SET_DATA: {
-    payload: { data: Artifacts };
+    payload: { data: ArtifactMap };
     response: { ok: true };
   };
 }

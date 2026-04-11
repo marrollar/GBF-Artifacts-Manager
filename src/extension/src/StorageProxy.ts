@@ -1,7 +1,7 @@
 import { getObjectFromLocalStorage, saveObjectInLocalStorage } from "@/api/chrome_local_storage.ts";
 import { createMessageHandlerFn } from "@/api/messages.ts";
 import { global_state } from "./globals.ts";
-import type { Artifacts } from "@/app/types.ts";
+import type { ArtifactMap } from "@/app/types.ts";
 
 /**
  * Synchronizes read/write events to prevent race conditions
@@ -96,9 +96,9 @@ export const SaveArtifact = createMessageHandlerFn("SET_DATA", async (payload) =
 });
 
 export const GetArtifact = createMessageHandlerFn("GET_DATA", async (payload) => {
-  return { data: await storageProxy.get(payload.id) as Artifacts };
+  return { data: await storageProxy.get(payload.id) as ArtifactMap };
 });
 
 export const GetAllArtifacts = createMessageHandlerFn("GET_ALL_DATA", async () => {
-  return { data: await storageProxy.get(null) as Artifacts };
+  return { data: await storageProxy.get(null) as ArtifactMap };
 });

@@ -1,17 +1,20 @@
 <script setup lang="tsx">
 import type { ActiveFilters } from "@/app/filtering/filterConfig";
-import { elementSortOrder, weaponSortOrder, type Artifacts} from "@/app/types";
+import { elementSortOrder, weaponSortOrder, type ArtifactMap } from "@/app/types";
 import { getImage } from "@/app/utils";
 import ArtifactSkillColumn from "./ArtifactSkillColumn.vue";
 import { computed } from "vue";
 
 const props = defineProps<{
-  artifacts: Artifacts;
+  artifacts: ArtifactMap;
   filterOpts: ActiveFilters;
 }>();
 
-function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFilters) {
-  const artiData = artifact[1];
+const emits = defineEmits<{
+  (e: "idToScrap", payload: { id: string; checked: boolean }): void;
+}>();
+
+function filterLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
   // const search = filterOpts.search; // TODO: Implement global search
   const sk1Filter = filterOpts.sk1Search;
   const sk2Filter = filterOpts.sk2Search;
@@ -23,14 +26,14 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
   const filterScrap = filterOpts.filterScrap;
 
   if (
-    (sk1Filter.size === 0 || sk1Filter.has(artiData.s1.name) || sk1Filter.has(artiData.s2.name)) &&
-    (sk2Filter.size === 0 || sk2Filter.has(artiData.s3.name)) &&
-    (sk3Filter.size === 0 || sk3Filter.has(artiData.s4.name)) &&
-    (eleFilter.size === 0 || eleFilter.has(artiData.element)) &&
-    (wepFilter.size === 0 || wepFilter.has(artiData.weapon)) &&
-    (filterFavorite ? artiData.is_locked : true) &&
-    (filterQuirk ? artiData.is_quirk : true) &&
-    (filterScrap ? artiData.is_scrap : true)
+    (sk1Filter.size === 0 || sk1Filter.has(artifact.s1.name) || sk1Filter.has(artifact.s2.name)) &&
+    (sk2Filter.size === 0 || sk2Filter.has(artifact.s3.name)) &&
+    (sk3Filter.size === 0 || sk3Filter.has(artifact.s4.name)) &&
+    (eleFilter.size === 0 || eleFilter.has(artifact.element)) &&
+    (wepFilter.size === 0 || wepFilter.has(artifact.weapon)) &&
+    (filterFavorite ? artifact.is_locked : true) &&
+    (filterQuirk ? artifact.is_quirk : true) &&
+    (filterScrap ? artifact.is_scrap : true)
   ) {
     return true;
   }
@@ -38,14 +41,22 @@ function filterLogic(artifact: [string, Artifacts[number]], filterOpts: ActiveFi
   return false;
 }
 
-function filterAndSort(artifacts: Artifacts, filterOpts: ActiveFilters) {
-  var filteredArtifacts = Object.entries(artifacts).filter((arti) => filterLogic(arti, filterOpts));
+function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
+  var filteredArtifacts = Object.entries(artifacts).filter(([_, arti]) => filterLogic(arti, filterOpts));
 
   for (var i = 0; i < filteredArtifacts.length; i++) {
     const s1 = filteredArtifacts[i][1].s1;
     const s2 = filteredArtifacts[i][1].s2;
 
-    if (s2.id < s1.id) {
+    if (filterOpts.sk1Search.size > 0) {
+      const [first] = filterOpts.sk1Search;
+
+      // NOTE: This is probably always true just because we should've filtered out all entries that aren't in the filter options already.
+      if (s2.name === first) {
+        filteredArtifacts[i][1].s1 = s2;
+        filteredArtifacts[i][1].s2 = s1;
+      }
+    } else if (s2.id < s1.id) {
       filteredArtifacts[i][1].s1 = s2;
       filteredArtifacts[i][1].s2 = s1;
     }
@@ -99,7 +110,12 @@ const sortedArtifacts = computed(() => {
 <template>
   <div class="flex flex-col gap-2 p-2">
     <div v-for="artifact in sortedArtifacts" :key="artifact[0]" class="flex gap-1 h-[40px] items-center">
-      <input type="checkbox" className="checkbox checkbox-error" disabled :checked="artifact[1].is_scrap" />
+      <input
+        type="checkbox"
+        className="checkbox checkbox-error"
+        :checked="artifact[1].is_scrap"
+        @change="emits('idToScrap', {id:artifact[0], checked:($event.target as HTMLInputElement).checked})"
+      />
       <img
         :src="getImage(`Icon_Element_${artifact[1].element}.png`)"
         className="flex-none w-[25px] h-auto object-contain"

@@ -106,6 +106,7 @@ export class DataProcessor {
           await SaveArtifact({
             data: {
               [id]: {
+                id:id,
                 weapon: weapon_group,
                 element: element,
                 name: name,

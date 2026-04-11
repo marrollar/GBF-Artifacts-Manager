@@ -3,6 +3,12 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const isOpen = ref(false);
 
+const props = defineProps<{
+  filterFavorite: boolean;
+  filterQuirk: boolean;
+  filterScrap: boolean;
+}>();
+
 const emits = defineEmits<{
   toggleFavorite: [value: boolean];
   toggleQuirk: [value: boolean];
@@ -10,9 +16,9 @@ const emits = defineEmits<{
 }>();
 
 const options = [
-  { label: "Favorite", key: "favorite" },
-  { label: "Quirk", key: "quirk" },
-  { label: "Scrap", key: "scrap" },
+  { label: "Favorite", key: "favorite", ref: props.filterFavorite },
+  { label: "Quirk", key: "quirk", ref: props.filterQuirk },
+  { label: "Scrap", key: "scrap", ref: props.filterScrap },
 ];
 
 const onChange = (event: Event) => {
@@ -68,7 +74,7 @@ onBeforeUnmount(() => {
     >
       <div v-for="option in options" :key="option.key" class="flex center gap-1">
         <!-- TODO: This needs to get synced up with the reset all filters button to reset the toggle. -->
-        <input type="checkbox" class="toggle" :value="option.key" @change="onChange" /> 
+        <input type="checkbox" class="toggle" :value="option.key" @change="onChange" />
         {{ option.label }}
       </div>
     </div>

@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/app/components/ui/resizable";
-import { GetAllArtifacts } from "@/extension/src/StorageProxy";
+import { GetAllArtifacts, SaveArtifact } from "@/extension/src/StorageProxy";
 import type { SplitterPanel } from "reka-ui";
 import { onMounted, reactive, ref } from "vue";
 import browser from "webextension-polyfill";
@@ -9,7 +9,16 @@ import ClearFilterButton from "./components/ClearFilterButton.vue";
 import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
 import FilterGroup from "./components/FilterGroup.vue";
 import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
-import { elements, SK1_NAMES, SK2_NAMES, SK3_NAMES, weapons, type Artifacts, type Element, type Weapon } from "./types";
+import {
+  elements,
+  SK1_NAMES,
+  SK2_NAMES,
+  SK3_NAMES,
+  weapons,
+  type ArtifactMap,
+  type Element,
+  type Weapon,
+} from "./types";
 import { getImage, updateSet } from "./utils";
 
 const __SIDEBAR = {
@@ -30,7 +39,7 @@ const filters = reactive<ActiveFilters>({
   filterQuirk: false,
   filterScrap: false,
 });
-const artifacts = ref<Artifacts>({});
+const artifacts = ref<ArtifactMap>({});
 
 export type FilterHandlers = {
   [K in keyof FilterInputs]: (value: FilterInputs[K]) => void;
@@ -126,6 +135,13 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
   }
 }
 
+function toggleAsScrap(id: string, checked: boolean) {
+  artifacts.value[Number(id)].is_scrap = checked;
+  const arti: ArtifactMap = { [id]: artifacts.value[Number(id)] };
+  // console.log(artifacts.value[Number(id)])
+  SaveArtifact({ data: arti });
+}
+
 async function fetchFromLocalStorage() {
   try {
     const data = (await GetAllArtifacts()).data;
@@ -201,6 +217,9 @@ onMounted(() => {
                 </label>
                 <!-- Extra filters button. Icon source: https://icons.getbootstrap.com/icons/funnel/ -->
                 <ExtraFiltersMenu
+                  :filter-favorite="filters.filterFavorite"
+                  :filter-quirk="filters.filterQuirk"
+                  :filter-scrap="filters.filterScrap"
                   @toggle-favorite="(e) => filterUpdaterFactory('filterFavorite')(e)"
                   @toggle-quirk="(e) => filterUpdaterFactory('filterQuirk')(e)"
                   @toggle-scrap="(e) => filterUpdaterFactory('filterScrap')(e)"
@@ -285,7 +304,11 @@ onMounted(() => {
       <ResizableHandle />
       <ResizablePanel class="bg-base-300">
         <div class="w-full h-full overflow-auto">
-          <ArtifactsList :artifacts="artifacts" :filter-opts="filters" />
+          <ArtifactsList
+            :artifacts="artifacts"
+            :filter-opts="filters"
+            @id-to-scrap="(e) => toggleAsScrap(e.id, e.checked)"
+          />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
