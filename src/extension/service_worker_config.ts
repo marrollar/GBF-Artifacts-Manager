@@ -35,6 +35,6 @@ export const urlFilter = {
     whitelist: new RegExp(""),
 };
 
-urlFilter.whitelistUrl = urlFilter.artiInventoryUrl;
+urlFilter.whitelistUrl = urlFilter.artiInventoryUrl + "|" + urlFilter.artiDecomposeUrl;
 urlFilter.whitelist = new RegExp(urlFilter.gameUrl + "(" + urlFilter.whitelistUrl + ")");
 DeepFreeze(urlFilter);

@@ -106,7 +106,7 @@ export class DataProcessor {
           await SaveArtifact({
             data: {
               [id]: {
-                id:id,
+                id: id,
                 weapon: weapon_group,
                 element: element,
                 name: name,
@@ -154,6 +154,18 @@ export class DataProcessor {
       });
     } catch (error) {
       console.log("%c[error]A problem occured while processing inventory data...", "color:red;", error);
+    }
+  }
+
+  static async ProcessArtifactRemoval(response: ResultInfoRaw) {
+    console.log("%c[Step REMOVE] PROCESSING ARTIFACT REMOVAL", "color:cornflowerblue;");
+
+    try {
+      console.log(response)
+      // const json = JSON.parse(response.body);
+      // const networkArtifacts: Record<number, RawArtifact> = json.list;
+    } catch (e) {
+      console.log("%c[error]A problem occured while removing artifacts...", "color:red;", e);
     }
   }
 }

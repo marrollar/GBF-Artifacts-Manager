@@ -15,6 +15,10 @@ export interface MessageMap {
     payload: { data: ArtifactMap };
     response: { ok: true };
   };
+  REMOVE_ARTIFACT: {
+    payload:{id:string};
+    response:{data:ArtifactMap | false}
+  }
 }
 
 export type MessageType = keyof MessageMap;

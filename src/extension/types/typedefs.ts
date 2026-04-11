@@ -20,10 +20,17 @@ export type ResultInfoRaw = {
 export type Network = {
   /** HTTP request data */
   request: {
+    hasPostData:boolean;
+    headers:object;
+    isSameSite:boolean;
+    method:string;
+    mixedContentType:string;
+    postData:string;
     /** Request URL */
     url: string;
   };
   requestId: string;
+  type:string;
 };
 
 /**
@@ -47,3 +54,9 @@ export type Tab = {
   /** The ID of the tab. Tab IDs are unique within a browser session.  */
   id: number;
 };
+
+
+export type ArtifactsDestroyedJSON = {
+  "special_token":any,
+  "user_artifact_ids":string[]
+}

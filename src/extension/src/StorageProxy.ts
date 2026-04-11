@@ -96,9 +96,20 @@ export const SaveArtifact = createMessageHandlerFn("SET_DATA", async (payload) =
 });
 
 export const GetArtifact = createMessageHandlerFn("GET_DATA", async (payload) => {
-  return { data: await storageProxy.get(payload.id) as ArtifactMap };
+  return { data: (await storageProxy.get(payload.id)) as ArtifactMap };
 });
 
 export const GetAllArtifacts = createMessageHandlerFn("GET_ALL_DATA", async () => {
-  return { data: await storageProxy.get(null) as ArtifactMap };
+  return { data: (await storageProxy.get(null)) as ArtifactMap };
+});
+
+export const RemoveArtifact = createMessageHandlerFn("REMOVE_ARTIFACT", async (payload) => {
+  const removed = await GetArtifact({ id: payload.id });
+  try {
+    await chrome.storage.local.remove(payload.id);
+    return removed;
+  } catch (e) {
+    console.log("%c[error]Failed to remove artifact from local storage: ", payload.id, "color:red;");
+  }
+  return { data: false };
 });
