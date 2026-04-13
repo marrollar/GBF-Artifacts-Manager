@@ -133,8 +133,8 @@ const sortedArtifacts = computed(() => {
         className="flex-none w-[50px] h-auto object-contain"
       />
       <div className="flex h-full w-full">
-        <ArtifactSkillColumn :name="artifact[1].s1.name" :value="artifact[1].s1.value" />
-        <ArtifactSkillColumn :name="artifact[1].s2.name" :value="artifact[1].s2.value" />
+        <ArtifactSkillColumn :name="artifact[1].s1.name" :value="artifact[1].s1.value" class="max-w-[200px]"/>
+        <ArtifactSkillColumn :name="artifact[1].s2.name" :value="artifact[1].s2.value" class="max-w-[200px]"/>
         <ArtifactSkillColumn :name="artifact[1].s3.name" :value="artifact[1].s3.value" />
         <ArtifactSkillColumn :name="artifact[1].s4.name" :value="artifact[1].s4.value" />
       </div>

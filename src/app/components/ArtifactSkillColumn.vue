@@ -4,6 +4,7 @@ import { ref, watch } from "vue";
 const props = defineProps<{
   name: string;
   value: string;
+  class?: string;
 }>();
 
 type Position = {
@@ -46,9 +47,7 @@ watch(
 );
 </script>
 <template>
-  <div
-    class="flex flex-col flex-1 h-full rounded-md hover:outline-[1px] hover:outline-gray-500"
-  >
+  <div class="flex flex-col flex-1 h-full rounded-md hover:outline-[1px] hover:outline-gray-500" :class="class">
     <div class="flex h-1/2">
       <div
         ref="nameDiv"
@@ -59,9 +58,7 @@ watch(
         {{ props.name }}
       </div>
     </div>
-    <div
-      class="flex h-1/2 text-yellow-300 overflow-clip items-center px-[6px] hover:cursor-default"
-    >
+    <div class="flex h-1/2 text-yellow-300 overflow-clip items-center px-[6px] hover:cursor-default">
       {{ props.value }}
     </div>
     <div
