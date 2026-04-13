@@ -14,23 +14,29 @@ export class HighLighter {
       const networkArtifacts: Record<number, RawArtifact> = json.list;
 
       const artifactsToMark: number[] = [];
+      const artifactsToUnMark: number[] = [];
+
       const promises = Object.entries(networkArtifacts).map(async ([_, networkArtifact]) => {
         const id = networkArtifact.id;
+        const localRecord = (await GetArtifact({ id: String(id) })).data;
+        const [artiData] = Object.values(localRecord);
 
         if (networkArtifact.is_unnecessary) {
-          artifactsToMark.push(id);
+          if (artiData.is_scrap) {
+            artifactsToMark.push(id);
+          } else {
+            artifactsToUnMark.push(id);
+          }
         } else {
-          const localRecord = (await GetArtifact({ id: String(id) })).data;
-          Object.entries(localRecord).forEach(([id, artifact]) => {
-            if (artifact.is_scrap) {
-              artifactsToMark.push(Number(id));
-            }
-          });
+          if (artiData.is_scrap) {
+            artifactsToMark.push(id);
+          }
         }
       });
 
       await Promise.all(promises);
 
+      // Red outline for artifacts marked as scrap in the app or in game AND the app
       chrome.scripting.executeScript({
         target: { tabId },
         func: (artifactIds) => {
@@ -43,21 +49,22 @@ export class HighLighter {
         },
         args: [artifactsToMark],
       });
+
+      // Green outline for artifacts marked as scrap in game but NOT the app
+      chrome.scripting.executeScript({
+        target: { tabId },
+        func: (artifactIds) => {
+          for (const id of artifactIds) {
+            const el = document.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
+            if (el) {
+              el.style.outline = "1px solid green";
+            }
+          }
+        },
+        args: [artifactsToUnMark],
+      });
     } catch (e) {
       console.log("%c[error]Error while highlighting trash artifacts: " + e, "color:red;");
     }
-  }
-
-  static async Mark(tabId: number, id: number) {
-    chrome.scripting.executeScript({
-      target: { tabId },
-      func: (id) => {
-        const el = document.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
-        if (el) {
-          el.style.outline = "1px solid red";
-        }
-      },
-      args: [id],
-    });
   }
 }
