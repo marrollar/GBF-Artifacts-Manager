@@ -4,6 +4,8 @@ import type { RawArtifact } from "@/app/types";
 
 export class HighLighter {
   static async HighlightTrashArtifacts(tabId: number | undefined, response: ResultInfoRaw) {
+    console.log("%c[Step 3] HIGHLIGHT TRASH ARTIFACTS", "color:cornflowerblue;");
+
     // This should never happen as tabId should already be checked above when this should be called.
     if (tabId === undefined) {
       return;
@@ -57,7 +59,7 @@ export class HighLighter {
           for (const id of artifactIds) {
             const el = document.querySelector(`li[data-id="${id}"]`) as HTMLLIElement;
             if (el) {
-              el.style.outline = "1px solid green";
+              el.style.outline = "2px solid green";
             }
           }
         },

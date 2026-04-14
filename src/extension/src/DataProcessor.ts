@@ -76,82 +76,161 @@ export class DataProcessor {
       const json = JSON.parse(response.body);
       const networkArtifacts: Record<number, RawArtifact> = json.list;
 
-      Object.entries(networkArtifacts).forEach(async ([_, networkArtifact]) => {
-        const artiAlreadyExists = (await GetArtifact({ id: String(networkArtifact.id) })).data;
-        if (Object.keys(artiAlreadyExists).length === 0) {
-          const {
-            id: id,
-            kind: kind,
-            attribute: attribute,
-            name: name,
-            is_locked: is_locked,
-            is_quirk: is_quirk,
-            is_unnecessary: is_scrap,
-            skill1_info: s1,
-            skill2_info: s2,
-            skill3_info: s3,
-            skill4_info: s4,
-          }: RawArtifact = networkArtifact;
+      await Promise.all(
+        Object.entries(networkArtifacts).map(async ([_, networkArtifact]) => {
+          const artiAlreadyExists = (await GetArtifact({ id: String(networkArtifact.id) })).data;
+          if (Object.keys(artiAlreadyExists).length === 0) {
+            const {
+              id: id,
+              kind: kind,
+              attribute: attribute,
+              name: name,
+              is_locked: is_locked,
+              is_quirk: is_quirk,
+              is_unnecessary: is_scrap,
+              skill1_info: s1,
+              skill2_info: s2,
+              skill3_info: s3,
+              skill4_info: s4,
+            }: RawArtifact = networkArtifact;
 
-          const weapon_group = KIND_TO_WEAPON[kind];
-          const element = ATTRIBUTE_TO_ELEMENT[attribute];
+            const weapon_group = KIND_TO_WEAPON[kind];
+            const element = ATTRIBUTE_TO_ELEMENT[attribute];
 
-          if (weapon_group === undefined) {
-            console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
-          }
-          if (element === undefined) {
-            console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
-          }
+            if (weapon_group === undefined) {
+              console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
+            }
+            if (element === undefined) {
+              console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
+            }
 
-          await SaveArtifact({
-            data: {
-              [id]: {
-                id: id,
-                weapon: weapon_group,
-                element: element,
-                name: name.trim(),
-                is_locked: is_locked,
-                is_quirk: is_quirk,
-                is_scrap: is_scrap,
-                s1: {
-                  id: s1.skill_id,
-                  quality: s1.skill_quality,
-                  level: s1.level,
-                  name: s1.name.trim(),
-                  is_max_quality: s1.is_max_quality,
-                  value: s1.effect_value,
-                },
-                s2: {
-                  id: s2.skill_id,
-                  quality: s2.skill_quality,
-                  level: s2.level,
-                  name: s2.name.trim(),
-                  is_max_quality: s2.is_max_quality,
-                  value: s2.effect_value,
-                },
-                s3: {
-                  id: s3.skill_id,
-                  quality: s3.skill_quality,
-                  level: s3.level,
-                  name: s3.name.trim(),
-                  is_max_quality: s3.is_max_quality,
-                  value: s3.effect_value,
-                },
-                s4: {
-                  id: s4.skill_id,
-                  quality: s4.skill_quality,
-                  level: s4.level,
-                  name: s4.name.trim(),
-                  is_max_quality: s4.is_max_quality,
-                  value: s4.effect_value,
+            SaveArtifact({
+              data: {
+                [id]: {
+                  id: id,
+                  weapon: weapon_group,
+                  element: element,
+                  name: name.trim(),
+                  is_locked: is_locked,
+                  is_quirk: is_quirk,
+                  is_scrap: is_scrap,
+                  s1: {
+                    id: s1.skill_id,
+                    quality: s1.skill_quality,
+                    level: s1.level,
+                    name: s1.name.trim(),
+                    is_max_quality: s1.is_max_quality,
+                    value: s1.effect_value,
+                  },
+                  s2: {
+                    id: s2.skill_id,
+                    quality: s2.skill_quality,
+                    level: s2.level,
+                    name: s2.name.trim(),
+                    is_max_quality: s2.is_max_quality,
+                    value: s2.effect_value,
+                  },
+                  s3: {
+                    id: s3.skill_id,
+                    quality: s3.skill_quality,
+                    level: s3.level,
+                    name: s3.name.trim(),
+                    is_max_quality: s3.is_max_quality,
+                    value: s3.effect_value,
+                  },
+                  s4: {
+                    id: s4.skill_id,
+                    quality: s4.skill_quality,
+                    level: s4.level,
+                    name: s4.name.trim(),
+                    is_max_quality: s4.is_max_quality,
+                    value: s4.effect_value,
+                  },
                 },
               },
-            },
-          });
-        } else {
-          // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
-        }
-      });
+            });
+          } else {
+            // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
+          }
+        }),
+      );
+
+      // for (const [_, networkArtifact] of Object.entries(networkArtifacts)) {
+      //   const artiAlreadyExists = (await GetArtifact({ id: String(networkArtifact.id) })).data;
+      //   if (Object.keys(artiAlreadyExists).length === 0) {
+      //     const {
+      //       id: id,
+      //       kind: kind,
+      //       attribute: attribute,
+      //       name: name,
+      //       is_locked: is_locked,
+      //       is_quirk: is_quirk,
+      //       is_unnecessary: is_scrap,
+      //       skill1_info: s1,
+      //       skill2_info: s2,
+      //       skill3_info: s3,
+      //       skill4_info: s4,
+      //     }: RawArtifact = networkArtifact;
+
+      //     const weapon_group = KIND_TO_WEAPON[kind];
+      //     const element = ATTRIBUTE_TO_ELEMENT[attribute];
+
+      //     if (weapon_group === undefined) {
+      //       console.log("%c[warn]weapon_group did not parse properly: " + name + "(" + kind + ")", "color:yellow;");
+      //     }
+      //     if (element === undefined) {
+      //       console.log("%c[warn]element did not parse properly: " + attribute, "color:yellow;");
+      //     }
+
+      //     SaveArtifact({
+      //       data: {
+      //         [id]: {
+      //           id: id,
+      //           weapon: weapon_group,
+      //           element: element,
+      //           name: name.trim(),
+      //           is_locked: is_locked,
+      //           is_quirk: is_quirk,
+      //           is_scrap: is_scrap,
+      //           s1: {
+      //             id: s1.skill_id,
+      //             quality: s1.skill_quality,
+      //             level: s1.level,
+      //             name: s1.name.trim(),
+      //             is_max_quality: s1.is_max_quality,
+      //             value: s1.effect_value,
+      //           },
+      //           s2: {
+      //             id: s2.skill_id,
+      //             quality: s2.skill_quality,
+      //             level: s2.level,
+      //             name: s2.name.trim(),
+      //             is_max_quality: s2.is_max_quality,
+      //             value: s2.effect_value,
+      //           },
+      //           s3: {
+      //             id: s3.skill_id,
+      //             quality: s3.skill_quality,
+      //             level: s3.level,
+      //             name: s3.name.trim(),
+      //             is_max_quality: s3.is_max_quality,
+      //             value: s3.effect_value,
+      //           },
+      //           s4: {
+      //             id: s4.skill_id,
+      //             quality: s4.skill_quality,
+      //             level: s4.level,
+      //             name: s4.name.trim(),
+      //             is_max_quality: s4.is_max_quality,
+      //             value: s4.effect_value,
+      //           },
+      //         },
+      //       },
+      //     });
+      //   } else {
+      //     // console.log("%c[info]Artifact already exists: " + artifact.id, "color:coral;");
+      //   }
+      // }
     } catch (error) {
       console.log("%c[error]A problem occured while processing inventory data...", "color:red;", error);
     }
@@ -161,7 +240,7 @@ export class DataProcessor {
     console.log("%c[Step REMOVE] PROCESSING ARTIFACT REMOVAL", "color:cornflowerblue;");
 
     try {
-      console.log(response)
+      console.log(response);
       // const json = JSON.parse(response.body);
       // const networkArtifacts: Record<number, RawArtifact> = json.list;
     } catch (e) {

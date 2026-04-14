@@ -42,18 +42,18 @@ export class NetworkFilter {
     }
 
     if (message == "Network.loadingFinished") {
-      console.log(debuggeeId)
+      console.log(debuggeeId);
       // console.log("%c[1.3]loadingFinished event matched requestId. Congrats!", "color:coral;");
       if (debuggeeId.tabId) {
         await NetworkFilter.sendCommandPromise(debuggeeId.tabId, params)
-          .then((response) => {
+          .then(async (response) => {
             // console.log("%c[1.4]Succeeded in getting data!", "color: coral;");
             console.log("%c[info]Message chain for retrieved file", "color:coral;", global_state.requestLog);
 
             switch (global_state.trackedRequest.requestType) {
               case RequestTypes.ListPage:
                 console.log("%c[info]ListPage hit", "color:coral;");
-                DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw); // TODO: Unsafe cast
+                await DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw)
                 HighLighter.HighlightTrashArtifacts(debuggeeId.tabId, response as ResultInfoRaw);
                 break;
 
@@ -69,7 +69,7 @@ export class NetworkFilter {
                   const idsDestroyed = deserialized["user_artifact_ids"];
 
                   Object.entries(idsDestroyed).map(([_, id]) => {
-                    RemoveArtifact({ id: id })
+                    RemoveArtifact({ id: id });
                   });
                 } catch (e) {
                   console.log("%c[error]Error occurred while removing artifact from records: ", e, "color:red;");
