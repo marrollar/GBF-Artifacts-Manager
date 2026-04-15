@@ -13,6 +13,7 @@ export default defineConfig({
   },
   base: "./",
   build: {
+    minify:true, // TODO: If releasing, change this to true
     rolldownOptions: {
       input: {
         content: "./index.html",

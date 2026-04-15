@@ -4,6 +4,7 @@ import { elementSortOrder, weaponSortOrder, type ArtifactMap } from "@/app/types
 import { getImage } from "@/app/utils";
 import ArtifactSkillColumn from "./ArtifactSkillColumn.vue";
 import { computed, watch } from "vue";
+import { useVirtualList } from "@vueuse/core";
 
 const props = defineProps<{
   artifacts: ArtifactMap;
@@ -12,7 +13,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: "idToScrap", payload: { id: string; checked: boolean }): void;
-  (e:"filteredAmount", amt:number):void
+  (e: "filteredAmount", amt: number): void;
 }>();
 
 function regexFilter(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
@@ -166,33 +167,43 @@ function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
 const sortedArtifacts = computed(() => {
   return filterAndSort(props.artifacts, props.filterOpts);
 });
-watch(sortedArtifacts, (newVal) => {
-  emits("filteredAmount", newVal.length);
-}, {immediate:true})
+watch(
+  sortedArtifacts,
+  (newVal) => {
+    emits("filteredAmount", newVal.length);
+  },
+  { immediate: true },
+);
+
+const { list, containerProps, wrapperProps } = useVirtualList(sortedArtifacts, {
+  itemHeight: 40, // NOTE: This might not actually do anything because of how the css has been set...
+});
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 p-2">
-    <div v-for="artifact in sortedArtifacts" :key="artifact[0]" class="flex gap-1 h-[40px] items-center">
-      <input
-        type="checkbox"
-        className="checkbox checkbox-error"
-        :checked="artifact[1].is_scrap"
-        @change="emits('idToScrap', {id:artifact[0], checked:($event.target as HTMLInputElement).checked})"
-      />
-      <img
-        :src="getImage(`Icon_Element_${artifact[1].element}.png`)"
-        className="flex-none w-[25px] h-auto object-contain"
-      />
-      <img
-        :src="getImage(`Label_Weapon_${artifact[1].weapon}.png`)"
-        className="flex-none w-[50px] h-auto object-contain"
-      />
-      <div className="flex h-full w-full">
-        <ArtifactSkillColumn :name="artifact[1].s1.name" :value="artifact[1].s1.value" class="max-w-[200px]" />
-        <ArtifactSkillColumn :name="artifact[1].s2.name" :value="artifact[1].s2.value" class="max-w-[200px]" />
-        <ArtifactSkillColumn :name="artifact[1].s3.name" :value="artifact[1].s3.value" />
-        <ArtifactSkillColumn :name="artifact[1].s4.name" :value="artifact[1].s4.value" />
+  <div v-bind="containerProps" class="h-full p-2">
+    <div v-bind="wrapperProps">
+      <div v-for="item in list" :key="item.data[0]" class="flex gap-1 h-[40px] items-center">
+        <input
+          type="checkbox"
+          className="checkbox checkbox-error"
+          :checked="item.data[1].is_scrap"
+          @change="emits('idToScrap', {id:item.data[0], checked:($event.target as HTMLInputElement).checked})"
+        />
+        <img
+          :src="getImage(`Icon_Element_${item.data[1].element}.png`)"
+          className="flex-none w-[25px] h-auto object-contain"
+        />
+        <img
+          :src="getImage(`Label_Weapon_${item.data[1].weapon}.png`)"
+          className="flex-none w-[50px] h-auto object-contain"
+        />
+        <div className="flex h-full w-full">
+          <ArtifactSkillColumn :name="item.data[1].s1.name" :value="item.data[1].s1.value" class="max-w-[200px]" />
+          <ArtifactSkillColumn :name="item.data[1].s2.name" :value="item.data[1].s2.value" class="max-w-[200px]" />
+          <ArtifactSkillColumn :name="item.data[1].s3.name" :value="item.data[1].s3.value" />
+          <ArtifactSkillColumn :name="item.data[1].s4.name" :value="item.data[1].s4.value" />
+        </div>
       </div>
     </div>
   </div>
