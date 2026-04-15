@@ -26,9 +26,6 @@ export default defineConfig({
           if (chunkInfo.name === "background") {
             return "background.js";
           }
-          if (chunkInfo.name === "networking") { // TODO: Remove this if it ends up being unnecessary
-            return "networking.js";
-          }
           return "[name].js";
         },
       },
