@@ -40,6 +40,7 @@ const filters = reactive<ActiveFilters>({
   filterScrap: false,
 });
 const artifacts = ref<ArtifactMap>({});
+const filteredCount = ref<number>(0);
 
 export type FilterHandlers = {
   [K in keyof FilterInputs]: (value: FilterInputs[K]) => void;
@@ -50,33 +51,33 @@ const filterHandlers: FilterHandlers = {
     filters.search = value;
   },
   sk1Search: (value) => {
-    const k = value[0]
-    const v = value[1]
+    const k = value[0];
+    const v = value[1];
 
     if (filters.sk1Search.has(k)) {
-      filters.sk1Search.delete(k)
+      filters.sk1Search.delete(k);
     } else {
-      filters.sk1Search.set(k, v)
+      filters.sk1Search.set(k, v);
     }
   },
   sk2Search: (value) => {
-    const k = value[0]
-    const v = value[1]
+    const k = value[0];
+    const v = value[1];
 
     if (filters.sk2Search.has(k)) {
-      filters.sk2Search.delete(k)
+      filters.sk2Search.delete(k);
     } else {
-      filters.sk2Search.set(k, v)
+      filters.sk2Search.set(k, v);
     }
   },
   sk3Search: (value) => {
-    const k = value[0]
-    const v = value[1]
+    const k = value[0];
+    const v = value[1];
 
     if (filters.sk3Search.has(k)) {
-      filters.sk3Search.delete(k)
+      filters.sk3Search.delete(k);
     } else {
-      filters.sk3Search.set(k, v)
+      filters.sk3Search.set(k, v);
     }
   },
   element: (value) => {
@@ -312,11 +313,15 @@ onMounted(() => {
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel class="bg-base-300">
-        <div class="w-full h-full overflow-auto">
+        <div class="flex flex-col w-full h-full overflow-auto">
+          <div class="flex flex-none bg-base-100 h-[44px] p-2 items-center text-[0.875rem] font-bold">
+            Filtered: {{ filteredCount }} / {{ Object.keys(artifacts).length }}
+          </div>
           <ArtifactsList
             :artifacts="artifacts"
             :filter-opts="filters"
             @id-to-scrap="(e) => toggleAsScrap(e.id, e.checked)"
+            @filtered-amount="filteredCount=$event"
           />
         </div>
       </ResizablePanel>

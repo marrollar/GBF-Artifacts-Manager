@@ -3,7 +3,7 @@ import type { ActiveFilters } from "@/app/filtering/filterConfig";
 import { elementSortOrder, weaponSortOrder, type ArtifactMap } from "@/app/types";
 import { getImage } from "@/app/utils";
 import ArtifactSkillColumn from "./ArtifactSkillColumn.vue";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 const props = defineProps<{
   artifacts: ArtifactMap;
@@ -12,6 +12,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: "idToScrap", payload: { id: string; checked: boolean }): void;
+  (e:"filteredAmount", amt:number):void
 }>();
 
 function regexFilter(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
@@ -97,7 +98,6 @@ function selectFiltersLogic(artifact: ArtifactMap[number], filterOpts: ActiveFil
     filterScrap ? artifact.is_scrap : true,
     search.trim().length === 0 || regexFilter(artifact, filterOpts),
   ];
-  console.log(everyPass, everyPass.every(Boolean));
 
   return everyPass.every(Boolean);
 }
@@ -166,6 +166,9 @@ function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
 const sortedArtifacts = computed(() => {
   return filterAndSort(props.artifacts, props.filterOpts);
 });
+watch(sortedArtifacts, (newVal) => {
+  emits("filteredAmount", newVal.length);
+}, {immediate:true})
 </script>
 
 <template>
