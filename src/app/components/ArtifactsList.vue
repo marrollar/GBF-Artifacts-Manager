@@ -110,9 +110,9 @@ function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
     const s1 = filteredArtifacts[i][1].s1;
     const s2 = filteredArtifacts[i][1].s2;
 
-    if (filterOpts.sk1Search.size > 0) {
-      const [first] = filterOpts.sk1Search;
+    const first = filterOpts.sk1Search.entries().next().value;
 
+    if (first !== undefined && first[1] !== false) {
       // NOTE: This is probably always true just because we should've filtered out all entries that aren't in the filter options already.
       if (s2.name === first[0]) {
         filteredArtifacts[i][1].s1 = s2;
