@@ -30,9 +30,9 @@ const __SIDEBAR = {
 const sidePanelRef = ref<InstanceType<typeof SplitterPanel>>();
 const filters = reactive<ActiveFilters>({
   search: "",
-  sk1Search: new Set<string>(),
-  sk2Search: new Set<string>(),
-  sk3Search: new Set<string>(),
+  sk1Search: new Map<string, boolean>(),
+  sk2Search: new Map<string, boolean>(),
+  sk3Search: new Map<string, boolean>(),
   element: new Set<Element>(),
   weapon: new Set<Weapon>(),
   filterFavorite: false,
@@ -50,24 +50,33 @@ const filterHandlers: FilterHandlers = {
     filters.search = value;
   },
   sk1Search: (value) => {
-    if (filters.sk1Search.has(value)) {
-      filters.sk1Search = updateSet(filters.sk1Search, (s) => s.delete(value));
+    const k = value[0]
+    const v = value[1]
+
+    if (filters.sk1Search.has(k)) {
+      filters.sk1Search.delete(k)
     } else {
-      filters.sk1Search = updateSet(filters.sk1Search, (s) => s.add(value));
+      filters.sk1Search.set(k, v)
     }
   },
   sk2Search: (value) => {
-    if (filters.sk2Search.has(value)) {
-      filters.sk2Search = updateSet(filters.sk2Search, (s) => s.delete(value));
+    const k = value[0]
+    const v = value[1]
+
+    if (filters.sk2Search.has(k)) {
+      filters.sk2Search.delete(k)
     } else {
-      filters.sk2Search = updateSet(filters.sk2Search, (s) => s.add(value));
+      filters.sk2Search.set(k, v)
     }
   },
   sk3Search: (value) => {
-    if (filters.sk3Search.has(value)) {
-      filters.sk3Search = updateSet(filters.sk3Search, (s) => s.delete(value));
+    const k = value[0]
+    const v = value[1]
+
+    if (filters.sk3Search.has(k)) {
+      filters.sk3Search.delete(k)
     } else {
-      filters.sk3Search = updateSet(filters.sk3Search, (s) => s.add(value));
+      filters.sk3Search.set(k, v)
     }
   },
   element: (value) => {
@@ -105,9 +114,9 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
   switch (key) {
     case "all":
       filters.search = "";
-      filters.sk1Search = new Set<string>();
-      filters.sk2Search = new Set<string>();
-      filters.sk3Search = new Set<string>();
+      filters.sk1Search = new Map<string, boolean>();
+      filters.sk2Search = new Map<string, boolean>();
+      filters.sk3Search = new Map<string, boolean>();
       filters.element = new Set<Element>();
       filters.weapon = new Set<Weapon>();
       filters.filterFavorite = false;
@@ -118,13 +127,13 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
       filters.search = "";
       break;
     case "sk1Search":
-      filters.sk1Search = new Set<string>();
+      filters.sk1Search = new Map<string, boolean>();
       break;
     case "sk2Search":
-      filters.sk2Search = new Set<string>();
+      filters.sk2Search = new Map<string, boolean>();
       break;
     case "sk3Search":
-      filters.sk3Search = new Set<string>();
+      filters.sk3Search = new Map<string, boolean>();
       break;
     case "element":
       filters.element = new Set<Element>();

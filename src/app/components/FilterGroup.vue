@@ -8,7 +8,7 @@ import FilterGroupButton from "./FilterGroupButton.vue";
 const props = defineProps<{
   readonly btnNames: FilterButtonData[];
   readonly groupName: string;
-  readonly currentFilters: Set<string>;
+  readonly currentFilters: Map<string, boolean>;
   selectedSkillsUpdater:
     | FilterHandlers["sk1Search"]
     | FilterHandlers["sk2Search"]
@@ -50,7 +50,7 @@ const filteredButtons = computed(() => {
         <FilterGroupButton
           :current-filters="currentFilters"
           :btn-name="btnData.name"
-          @update-filter="selectedSkillsUpdater(btnData.name)"
+          @update-filter="(emitArgs) => selectedSkillsUpdater(emitArgs)"
         />
       </div>
     </div>

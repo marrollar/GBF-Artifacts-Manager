@@ -14,11 +14,11 @@ const emits = defineEmits<{
   (e: "idToScrap", payload: { id: string; checked: boolean }): void;
 }>();
 
-function regexFilter(artifact: ArtifactMap[number], filterOpts:ActiveFilters) {
+function regexFilter(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
   // TODO: Make this more elaborate and/or accept the usual filters that can be selected.
   const search = filterOpts.search;
-  const nameText = artifact.s1.name + " " + artifact.s2.name + " " + artifact.s3.name + " " + artifact.s4.name
-  return new RegExp(search).test(nameText)
+  const nameText = artifact.s1.name + " " + artifact.s2.name + " " + artifact.s3.name + " " + artifact.s4.name;
+  return new RegExp(search).test(nameText);
 }
 
 function selectFiltersLogic(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
@@ -32,21 +32,74 @@ function selectFiltersLogic(artifact: ArtifactMap[number], filterOpts: ActiveFil
   const filterQuirk = filterOpts.filterQuirk;
   const filterScrap = filterOpts.filterScrap;
 
-  if (
-    (sk1Filter.size === 0 || sk1Filter.has(artifact.s1.name) || sk1Filter.has(artifact.s2.name)) &&
-    (sk2Filter.size === 0 || sk2Filter.has(artifact.s3.name)) &&
-    (sk3Filter.size === 0 || sk3Filter.has(artifact.s4.name)) &&
-    (eleFilter.size === 0 || eleFilter.has(artifact.element)) &&
-    (wepFilter.size === 0 || wepFilter.has(artifact.weapon)) &&
-    (filterFavorite ? artifact.is_locked : true) &&
-    (filterQuirk ? artifact.is_quirk : true) &&
-    (filterScrap ? artifact.is_scrap : true) &&
-    (search.trim().length === 0 || regexFilter(artifact, filterOpts))
-  ) {
+  function sk1_logic(): boolean {
+    const hasS1 = sk1Filter.has(artifact.s1.name);
+    const hasS2 = sk1Filter.has(artifact.s2.name);
+
+    const s1bool = sk1Filter.get(artifact.s1.name);
+    const s2bool = sk1Filter.get(artifact.s2.name);
+
+    if ((hasS1 && s1bool === false) || (hasS2 && s2bool === false)) {
+      return false;
+    }
+
+    if (hasS1 && hasS2) {
+      if (s1bool === false || s2bool === false) {
+        return false;
+      }
+    }
+
+    if ((hasS1 && s1bool === true) || (hasS2 && s2bool === true)) {
+      return true;
+    }
+
+    if (!hasS1 && !hasS2) {
+      if (sk1Filter.size === 0) {
+        return true;
+      }
+
+      for (const [_, v] of sk1Filter) {
+        if (v === true) {
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 
-  return false;
+  function sk23_logic(filter: Map<string, boolean>, name: string): boolean {
+    if (filter.size === 0) {
+      return true;
+    }
+
+    const hasSkill = filter.has(name);
+    if (hasSkill) {
+      return filter.get(name)!;
+    } else {
+      for (const [_, v] of filter) {
+        if (v === true) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  const everyPass: boolean[] = [
+    sk1_logic(),
+    sk23_logic(sk2Filter, artifact.s3.name),
+    sk23_logic(sk3Filter, artifact.s4.name),
+    eleFilter.size === 0 || eleFilter.has(artifact.element),
+    wepFilter.size === 0 || wepFilter.has(artifact.weapon),
+    filterFavorite ? artifact.is_locked : true,
+    filterQuirk ? artifact.is_quirk : true,
+    filterScrap ? artifact.is_scrap : true,
+    search.trim().length === 0 || regexFilter(artifact, filterOpts),
+  ];
+  console.log(everyPass, everyPass.every(Boolean));
+
+  return everyPass.every(Boolean);
 }
 
 function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
@@ -60,7 +113,7 @@ function filterAndSort(artifacts: ArtifactMap, filterOpts: ActiveFilters) {
       const [first] = filterOpts.sk1Search;
 
       // NOTE: This is probably always true just because we should've filtered out all entries that aren't in the filter options already.
-      if (s2.name === first) {
+      if (s2.name === first[0]) {
         filteredArtifacts[i][1].s1 = s2;
         filteredArtifacts[i][1].s2 = s1;
       }
@@ -133,8 +186,8 @@ const sortedArtifacts = computed(() => {
         className="flex-none w-[50px] h-auto object-contain"
       />
       <div className="flex h-full w-full">
-        <ArtifactSkillColumn :name="artifact[1].s1.name" :value="artifact[1].s1.value" class="max-w-[200px]"/>
-        <ArtifactSkillColumn :name="artifact[1].s2.name" :value="artifact[1].s2.value" class="max-w-[200px]"/>
+        <ArtifactSkillColumn :name="artifact[1].s1.name" :value="artifact[1].s1.value" class="max-w-[200px]" />
+        <ArtifactSkillColumn :name="artifact[1].s2.name" :value="artifact[1].s2.value" class="max-w-[200px]" />
         <ArtifactSkillColumn :name="artifact[1].s3.name" :value="artifact[1].s3.value" />
         <ArtifactSkillColumn :name="artifact[1].s4.name" :value="artifact[1].s4.value" />
       </div>

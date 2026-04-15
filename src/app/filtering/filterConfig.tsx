@@ -11,19 +11,19 @@ export const FILTERS = [
     type: "select",
     key: "sk1Search",
     label: "Skill Group 1",
-    options: new Set<string>(),
+    options: new Map<string, boolean>(),
   },
   {
     type: "select",
     key: "sk2Search",
     label: "Skill Group 2",
-    options: new Set<string>(),
+    options: new Map<string, boolean>(),
   },
   {
     type: "select",
     key: "sk3Search",
     label: "Skill Group 3",
-    options: new Set<string>(),
+    options: new Map<string, boolean>(),
   },
   {
     type: "select",
@@ -69,5 +69,9 @@ export type ActiveFilters = {
   [F in (typeof FILTERS)[number] as F["key"]]: FilterValue<F>;
 };
 export type FilterInputs = {
-  [K in keyof ActiveFilters]: ActiveFilters[K] extends Set<infer U> ? U : ActiveFilters[K];
+  [K in keyof ActiveFilters]: ActiveFilters[K] extends Map<infer U, infer V>
+    ? [U, V]
+    : ActiveFilters[K] extends Set<infer P>
+      ? P
+      : ActiveFilters[K];
 };

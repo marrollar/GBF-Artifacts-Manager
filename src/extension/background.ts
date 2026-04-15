@@ -43,11 +43,11 @@ async function loadTestData() {
   }
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.clear(() => {
-    console.log("Cleared local storage for testing purposes");
-  });
-});
+// chrome.runtime.onInstalled.addListener(() => {
+//   chrome.storage.local.clear(() => {
+//     console.log("Cleared local storage for testing purposes");
+//   });
+// });
 
 // chrome.runtime.onInstalled.addListener(() => {
 //   console.log("On Installed");
