@@ -2,10 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "types": [
-      "vite/client",
-      "chrome"
-    ],
+    "types": ["vite/client", "chrome"],
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -15,9 +12,7 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -26,6 +21,6 @@
     // "src/app/**/*.vue",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.vue",
+    "src/**/*.vue"
   ]
 }

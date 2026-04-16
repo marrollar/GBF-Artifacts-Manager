@@ -1,10 +1,5 @@
 import { type Network } from "../types/typedefs.ts";
 
-// export enum RequestTypes {
-//   ListPage = "ListPage",
-//   ArtifactsDestroyed = "ArtifactsDestroyed",
-// }
-
 export const RequestTypes = {
   ListPage: "ListPage",
   ArtifactsDestroyed: "ArtifactsDestroyed",
@@ -37,3 +32,11 @@ export const global_state: State = {
   },
   activeDebuggers: [],
 };
+
+export type ExtensionSettings = {
+  do_styles:boolean
+}
+
+export const DEFAULT_EXTENSION_SETTINGS:ExtensionSettings = {
+  do_styles:false
+}

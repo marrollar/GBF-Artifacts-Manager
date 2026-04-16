@@ -2,6 +2,7 @@
 
 // import browser from "webextension-polyfill";
 import { DebuggerManager } from "./src/DebuggerManager.ts";
+import { DEFAULT_EXTENSION_SETTINGS } from "./src/globals.ts";
 
 // /*******************************/
 // /* App communication functions */
@@ -29,19 +30,18 @@ chrome.action.onClicked.addListener(() => {
 // /*********************/
 
 // TODO: REMOVE after testing finishes
-// @ts-expect-error
-async function loadTestData() {
-  try {
-    const response = await fetch(chrome.runtime.getURL("artifacts_data.json"));
-    const data = await response.json();
+// async function loadTestData() {
+//   try {
+//     const response = await fetch(chrome.runtime.getURL("artifacts_data.json"));
+//     const data = await response.json();
 
-    console.log("Seeding storage with:", data);
+//     console.log("Seeding storage with:", data);
 
-    await chrome.storage.local.set({ artifactsData: data });
-  } catch (err) {
-    console.error("Failed to seed test data: ", err);
-  }
-}
+//     await chrome.storage.local.set({ artifactsData: data });
+//   } catch (err) {
+//     console.error("Failed to seed test data: ", err);
+//   }
+// }
 
 // chrome.runtime.onInstalled.addListener(() => {
 //   chrome.storage.local.clear(() => {
@@ -57,6 +57,21 @@ async function loadTestData() {
 /**********************************/
 /* Listener and support functions */
 /**********************************/
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.get("extension_settings", (fromStorage) => {
+    if (Object.entries(fromStorage).length > 0) {
+      console.log("%c[info]Previous extension settings found.", "color:coral;");
+    } else {
+      console.log("%c[info]Previous extension settings NOT found. Saving defaults.", "color:coral;");
+      try {
+        chrome.storage.local.set({ extension_settings: DEFAULT_EXTENSION_SETTINGS });
+      } catch (e) {
+        console.log("%c[error]Failed to save default extension settings to local storage.", "color:red;");
+      }
+    }
+  });
+});
 
 /** Handle messages from extension pages */
 // function handleMessage(

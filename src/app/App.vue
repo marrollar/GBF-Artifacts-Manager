@@ -8,6 +8,7 @@ import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
 import FilterGroup from "./components/FilterGroup.vue";
+import SettingsModal from "./components/SettingsModal.vue";
 import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
 import {
   elements,
@@ -156,7 +157,9 @@ async function fetchFromLocalStorage() {
   try {
     const data = (await GetAllArtifacts()).data;
     Object.entries(data).forEach(([id, value]) => {
-      artifacts.value[Number(id)] = value;
+      if (id !== "extension_settings") {
+        artifacts.value[Number(id)] = value;
+      }
     });
   } catch (err) {
     console.error("Failed to get data.");
@@ -225,7 +228,7 @@ onMounted(() => {
                 <label class="input">
                   <input v-model="filters.search" type="search" placeholder="Search" />
                 </label>
-                <!-- Extra filters button. Icon source: https://icons.getbootstrap.com/icons/funnel/ -->
+                <!-- Extra filters button -->
                 <ExtraFiltersMenu
                   :filter-favorite="filters.filterFavorite"
                   :filter-quirk="filters.filterQuirk"
@@ -314,14 +317,18 @@ onMounted(() => {
       <ResizableHandle />
       <ResizablePanel class="bg-base-300">
         <div class="flex flex-col w-full h-full overflow-auto">
-          <div class="flex flex-none bg-base-100 h-[44px] p-2 items-center text-[0.875rem] font-bold">
-            Filtered: {{ filteredCount }} / {{ Object.keys(artifacts).length }}
+          <div class="flex flex-none w-full bg-base-100 h-[44px] p-2">
+            <div class="flex flex-none items-center text-[0.875rem] font-bold">
+              Filtered: {{ filteredCount }} / {{ Object.keys(artifacts).length }}
+            </div>
+            <div class="w-full"></div>
+            <SettingsModal />
           </div>
           <ArtifactsList
             :artifacts="artifacts"
             :filter-opts="filters"
             @id-to-scrap="(e) => toggleAsScrap(e.id, e.checked)"
-            @filtered-amount="filteredCount=$event"
+            @filtered-amount="filteredCount = $event"
           />
         </div>
       </ResizablePanel>

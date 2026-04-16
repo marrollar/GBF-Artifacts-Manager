@@ -5,7 +5,7 @@ export async function getObjectFromLocalStorage(key: string | null) {
   return new Promise((resolve, reject) => {
     try {
       if (key !== null) {
-        chrome.storage.local.get(key, function (value) {
+        chrome.storage.local.get(key, (value) => {
           resolve(value);
         });
       } else {

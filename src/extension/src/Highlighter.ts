@@ -1,9 +1,18 @@
-import { GetArtifact } from "./StorageProxy";
-import { type ResultInfoRaw } from "../types/typedefs";
 import type { RawArtifact } from "@/app/types";
+import { type ResultInfoRaw } from "../types/typedefs";
+import type { ExtensionSettings } from "./globals";
+import { GetArtifact } from "./StorageProxy";
 
 export class HighLighter {
   static async HighlightTrashArtifacts(tabId: number | undefined, response: ResultInfoRaw) {
+    // TODO: Unsafe cast
+    const settingsFromStorage: ExtensionSettings = (await chrome.storage.local.get("extension_settings"))[
+      "extension_settings"
+    ] as ExtensionSettings;
+    if (settingsFromStorage.do_styles === false) {
+      return;
+    }
+
     console.log("%c[Step 3] HIGHLIGHT TRASH ARTIFACTS", "color:cornflowerblue;");
 
     // This should never happen as tabId should already be checked above when this should be called.
