@@ -5,7 +5,7 @@
   "description": "A more concise viewer for your artifacts.",
   "action": {
     "default_icon": {
-      "48": "Icon_Element_Plain.png"
+      "48": "ext_ico.png"
     }
   },
   "background": {
