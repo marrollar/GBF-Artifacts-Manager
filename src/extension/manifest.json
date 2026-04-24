@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "GBF Artifacts Viewer",
+  "name": "GBF Artifacts Manager",
   "version": "1.0",
   "description": "A more concise viewer for your artifacts.",
   "action": {
