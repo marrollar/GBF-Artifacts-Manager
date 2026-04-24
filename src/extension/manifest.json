@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "GBF Artifacts Manager",
+  "version": "1.0",
+  "description": "A more concise viewer for your artifacts.",
+  "action": {
+    "default_icon": {
+      "48": "ext_ico.png"
+    }
+  },
+  "background": {
+    "service_worker": "./background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "tabs",
+    "debugger",
+    "storage",
+    "unlimitedStorage",
+    "scripting"
+  ],
+  "host_permissions": ["*://*.granbluefantasy.jp/*"]
+}
