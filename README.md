@@ -11,15 +11,16 @@ This is a manifest v3 extension.
 
 ## ToS Notes
 > [!WARNING]
-> By default the extension WILL NOT affect anything related to the game. However there is a setting that can be toggled to draw an outline around artifacts ingame that have been marked to be disposed of from the extension. <br> <br>
+> By default the extension WILL NOT affect anything related to the game. However there is a setting that can be toggled to draw an outline around artifacts ingame that have been marked to be disposed of from the extension. This is OFF by default. <br> <br>
 > This is done by directly editing the css style of the relevant elements in game. <br> <br>
 > While this is detectable in theory, I am not aware, within the code that they have provided you within your browser, that there is a system that is doing so (notably, while there is an instance of MutationObserver within the GBF browser code, it is not linked to observe any changes in css styles, or anything html related in general). <br> <br>
-> This does not mean there might not be another method of detection in operation that I am not aware of, so this setting should be enabled at the user's discretion.
+> There MAY OR MAY NOT be some other process that is performing detection of this sort that I am not aware of, so this setting should be enabled at the user's discretion. <br> <br>
 
 ## Installation
 
 ## Features
 - Automatically store your artifact data into the extension as you page through the inventory
+- Automatically sync ingame artifact deletion to the extension's own storage
 - Multi-option select filters. Blacklist OK
 - REGEX searching
 - (Optional) Ingame outline visualizations
@@ -27,17 +28,44 @@ This is a manifest v3 extension.
   - Green outline for artifacts marked trash ingame BUT NOT in-extension
 
 > [!NOTE]
-> The extension will NEVER automatically mark an artifact to be trashed in game. The outline is only there to help you see which ones you've chosen to be trashed.
+> The extension will NEVER automatically mark an artifact to be trashed in game. The outline is only there to help you see which ones you've chosen to be trashed via the app.
 
 
 ## Usage
-Left click on the buttons to whitelist filter. <br>
-Right click to blacklist filter (only for the skill group boxes).
+### __(Basically) REQUIRED SETUP__:
+
+The only way the extension is able to acquire artifact data is by you manually paging through your inventory.
+
+> [!NOTE]
+> If the same artifact is seen by the extension again, nothing will happen to the local data (IE there is no way for game information to overwrite existing extension information).
+
+### User interactions
+- Left click on the buttons to whitelist filter.
+- Right click to blacklist filter (only for the skill group boxes).
+- The top most search bar searches the *currently* filtered subset. It is processed as a regex.
+- The skill group search bars take in *typical* user shorthands as well, such as "ta" for "Triple Attack Rate". It is also case-*insensitive*, and does not take regex.
+
+> [!WARNING]
+> If an artifact disappears from your ingame inventory while the extension isn't running (or if it didn't pick up that the artifact got removed), you will have to manually remove said artifact(s) from local storage to have this reflect within the extension. 
 
 ## Troubleshooting
-- Extension data not synchronized with in game inventory
-  - Try clicking the `Refresh` button at the top of the app. This should ask the app to re-fetch data from the extension's local storage. Otherwise, try re-opening or refreshing the app window.
+- App artifacts not synchronized with in game inventory
+  - Did you perform the setup process of paging through your whole artifact inventory? [See Usage](#usage).
+  - Try clicking the `Refresh` button at the top of the app. This should ask the app to re-fetch data from the extension's local storage. 
+  - Try re-opening or refreshing the app window.
 - Extension not storing any artifact data at all
-  - Check to see that the browser debugger is working
-  - OR go to your extensions, locate this extension's box and click the `service worker` link within. This should open a browser console. If the console contains atleast the entry `Active debuggers Refreshed:`, then atleast one tab is being tracked by the extension. If this line does not exist, try refreshing the game's tab.
+  - Check to see that the browser debugger is working OR
+  - Go to your extensions, locate this extension's box and click the `service worker` link within. This should open a browser console. If the console contains atleast the entry `Active debuggers Refreshed:`, then atleast one tab is being tracked by the extension. If this line does not exist, try refreshing the game's tab.
   ![alt text](./res/extension_page.png)
+
+
+## Privacy Policy
+Everything is stored in the extension local storage or within the extension itself. 
+
+The only information stored is a condensed form of the artifact information the game sends to your client as well as some miscellaneous extension related settings. All of this can be seen by going to the extension's local storage.
+
+The only network requests read (required for the extension to work) are:
+1. The network request which contains the response for the artifact information you get when you page through your artifact inventory
+2. The network request you get when you confirm artifact deletion.
+
+There are no remote calls and no analytics.
