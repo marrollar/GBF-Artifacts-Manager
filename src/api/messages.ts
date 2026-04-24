@@ -1,24 +1,36 @@
 import type { ArtifactMap } from "@/app/types";
+import type { ExtensionSettings } from "@/extension/src/globals";
 
+// TODO: All of the non-Getters blind return an ok-true. Maybe change this.
 export interface MessageMap {
   GET_ALL_DATA: {
     payload: undefined;
     response: { data: ArtifactMap };
   };
-
   GET_DATA: {
     payload: { id: string };
     response: { data: ArtifactMap };
   };
-
   SET_DATA: {
     payload: { data: ArtifactMap };
     response: { ok: true };
   };
   REMOVE_ARTIFACT: {
-    payload:{id:string};
-    response:{data:ArtifactMap | false}
-  }
+    payload: { id: string };
+    response: { data: ArtifactMap | false };
+  };
+  CLEAR_ALL_DATA: {
+    payload: undefined;
+    response: { ok: true };
+  };
+  GET_EXT_SETTINGS: {
+    payload: undefined;
+    response: { data: ExtensionSettings };
+  };
+  SET_EXT_SETTINGS: {
+    payload: { data: ExtensionSettings };
+    response: { ok: true };
+  };
 }
 
 export type MessageType = keyof MessageMap;

@@ -40,3 +40,4 @@ export type ExtensionSettings = {
 export const DEFAULT_EXTENSION_SETTINGS:ExtensionSettings = {
   do_styles:false
 }
+export const EXT_SETTINGS_KEY = "extension_settings"

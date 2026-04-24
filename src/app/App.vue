@@ -1,5 +1,6 @@
 <script setup lang="tsx">
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/app/components/ui/resizable";
+import { EXT_SETTINGS_KEY } from "@/extension/src/globals";
 import { GetAllArtifacts, SaveArtifact } from "@/extension/src/StorageProxy";
 import type { SplitterPanel } from "reka-ui";
 import { onMounted, reactive, ref } from "vue";
@@ -157,13 +158,17 @@ async function fetchFromLocalStorage() {
   try {
     const data = (await GetAllArtifacts()).data;
     Object.entries(data).forEach(([id, value]) => {
-      if (id !== "extension_settings") {
+      if (id !== EXT_SETTINGS_KEY) {
         artifacts.value[Number(id)] = value;
       }
     });
   } catch (err) {
     console.error("Failed to get data.");
   }
+}
+
+function handleDataCleared() {
+  artifacts.value = {};
 }
 
 onMounted(() => {
@@ -322,7 +327,7 @@ onMounted(() => {
               Filtered: {{ filteredCount }} / {{ Object.keys(artifacts).length }}
             </div>
             <div class="w-full"></div>
-            <SettingsModal />
+            <SettingsModal @cleared-data="handleDataCleared" />
           </div>
           <ArtifactsList
             :artifacts="artifacts"

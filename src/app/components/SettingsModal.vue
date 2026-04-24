@@ -1,22 +1,57 @@
 <script setup lang="tsx">
 import { type ExtensionSettings } from "@/extension/src/globals";
-import { onMounted, reactive, watch } from "vue";
-import browser from "webextension-polyfill";
+import { ClearAllArtifacts, GetExtensionSettings, SetExtensionSettings } from "@/extension/src/StorageProxy";
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 
 const local_ext_settings = reactive<ExtensionSettings>({
   do_styles: false,
 });
+const inConfirm = ref(false);
+const timerSeconds = ref(0);
+let interval: any = null;
+
+function confirmClearData() {
+  if (inConfirm.value) {
+    ClearAllArtifacts().then(() => {
+      timerSeconds.value = 0;
+      inConfirm.value = false;
+      clearInterval(interval);
+      emits("clearedData")
+    });
+  } else {
+    timerSeconds.value = 6;
+    inConfirm.value = true;
+
+    interval = setInterval(() => {
+      if (timerSeconds.value > 0) {
+        timerSeconds.value--;
+      } else {
+        inConfirm.value = false;
+        clearInterval(interval);
+      }
+    }, 1000);
+  }
+}
 
 onMounted(() => {
-  browser.storage.local.get("extension_settings").then((fromStorage) => {
-    const settings = fromStorage["extension_settings"];
+  GetExtensionSettings().then((fromStorage) => {
+    const settings = fromStorage.data;
     Object.assign(local_ext_settings, settings);
   });
 });
 
-watch(local_ext_settings, () => {
-  browser.storage.local.set({ extension_settings: local_ext_settings });
+onUnmounted(() => {
+  timerSeconds.value = 0;
+  inConfirm.value = false;
+  clearInterval(interval);
 });
+
+watch(local_ext_settings, () => {
+  SetExtensionSettings({ data: local_ext_settings });
+});
+
+const emits = defineEmits(["clearedData"])
+
 </script>
 <template>
   <label
@@ -38,7 +73,7 @@ watch(local_ext_settings, () => {
     <div class="modal-box overflow-visible">
       <h3 class="text-lg font-bold">Misc Extension Settings</h3>
 
-      <div class="flex flex-col pt-4">
+      <div class="flex flex-col gap-2 pt-4">
         <div class="flex gap-2">
           <input type="checkbox" class="toggle" v-model="local_ext_settings!['do_styles']" />
           <div class="content-center">Affect Game Styles</div>
@@ -58,6 +93,28 @@ watch(local_ext_settings, () => {
               </g>
             </svg>
           </div>
+        </div>
+        <div class="grid grid-flow-col grid-rows-1 grid-cols-3 justify-center pt-10">
+          <button class="col-start-2 col-end-3 btn btn-error btn-outline" 
+          :class="{'btn-disabled':timerSeconds > 5}"
+          @click="confirmClearData">
+            Reset ALL Data
+          </button>
+          <div class="col-start-3 tooltip w-[24px] h-[24px] self-center pl-2">
+            <div class="tooltip-content">
+              Clears all extension data EXCEPT settings. Does not affect anything in game.
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <g fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" />
+                <circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" />
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div v-if="timerSeconds > 0" class="text-center text-error">
+          Confirm clear all artifact data? {{ timerSeconds }}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { getObjectFromLocalStorage, saveObjectInLocalStorage } from "@/api/chrome_local_storage.ts";
 import { createMessageHandlerFn } from "@/api/messages.ts";
-import { global_state } from "./globals.ts";
+import { EXT_SETTINGS_KEY, global_state } from "./globals.ts";
 import type { ArtifactMap } from "@/app/types.ts";
 
 /**
@@ -32,7 +32,7 @@ class StorageProxy {
     this.writeProtectFlag = false;
   }
 
-  async get(key: string | null): Promise<unknown> {
+  async get(key: string | null): Promise<any> {
     if (key === null) {
       // If we want all data from storage...
       // Exhaust everything that is about to be written first.
@@ -112,4 +112,26 @@ export const RemoveArtifact = createMessageHandlerFn("REMOVE_ARTIFACT", async (p
     console.log("%c[error]Failed to remove artifact from local storage: ", payload.id, "color:red;");
   }
   return { data: false };
+});
+
+export const ClearAllArtifacts = createMessageHandlerFn("CLEAR_ALL_DATA", async () => {
+  const ext_settings = await GetExtensionSettings();
+  await storageProxy.processRequest();
+  await chrome.storage.local.clear();
+  await SetExtensionSettings(ext_settings);
+  return { ok: true };
+});
+
+export const GetExtensionSettings = createMessageHandlerFn("GET_EXT_SETTINGS", async () => {
+  const ret = await storageProxy.get(EXT_SETTINGS_KEY);
+
+  if (Object.entries(ret).length > 0) {
+    return { data: ret[EXT_SETTINGS_KEY] };
+  } else {
+    return { data: {} };
+  }
+});
+export const SetExtensionSettings = createMessageHandlerFn("SET_EXT_SETTINGS", async (payload) => {
+  storageProxy.save({ [EXT_SETTINGS_KEY]: payload.data });
+  return { ok: true };
 });

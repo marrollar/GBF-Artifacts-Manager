@@ -3,6 +3,7 @@
 // import browser from "webextension-polyfill";
 import { DebuggerManager } from "./src/DebuggerManager.ts";
 import { DEFAULT_EXTENSION_SETTINGS } from "./src/globals.ts";
+import { GetExtensionSettings, SetExtensionSettings } from "./src/StorageProxy.ts";
 
 // /*******************************/
 // /* App communication functions */
@@ -59,13 +60,13 @@ chrome.action.onClicked.addListener(() => {
 /**********************************/
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get("extension_settings", (fromStorage) => {
-    if (Object.entries(fromStorage).length > 0) {
+  GetExtensionSettings().then((fromStorage) => {
+    if (Object.entries(fromStorage.data).length > 0) {
       console.log("%c[info]Previous extension settings found.", "color:coral;");
     } else {
       console.log("%c[info]Previous extension settings NOT found. Saving defaults.", "color:coral;");
       try {
-        chrome.storage.local.set({ extension_settings: DEFAULT_EXTENSION_SETTINGS });
+        SetExtensionSettings({ data: DEFAULT_EXTENSION_SETTINGS });
       } catch (e) {
         console.log("%c[error]Failed to save default extension settings to local storage.", "color:red;");
       }
@@ -74,48 +75,12 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 /** Handle messages from extension pages */
-// function handleMessage(
-//   request: ApiMessage,
-//   _: chrome.runtime.MessageSender,
-//   sendResponse: (response?: ResponseMessage) => void,
-// ) {
-//   // console.log(request);
-//   // console.log("A content script sent a message: " + message);
-
-//   const action = request.action;
-//   const params = request.params;
-
-//   switch (action) {
-//     case "getData":
-//       if (params === undefined) {
-//         sendResponse({ response: "Message key was neither valid nor null" });
-//         return;
-//       }
-
-//       if (params.key === null) {
-//         storageProxy.get(null).then((result) => {
-//           sendResponse({ response: result as object });
-//         });
-//       } else {
-//         storageProxy.get(params.key).then((result) => {
-//           sendResponse({ response: result as object });
-//         });
-//       }
+// function handleMessage(msg: any, _: chrome.runtime.MessageSender, __: (response?: any) => any) {
+//   switch (msg.type) {
+//     case COMMS.REFETCH:
+//       triggerReFetch();
 //       break;
-
-//     case "setData":
-//       if (params.key === undefined) {
-//         sendResponse({ response: "Message was missing key" });
-//       }
-
-//       storageProxy.save(params);
-//       sendResponse({ response: "Save request received." });
-//       break;
-
-//     default:
-//       console.log("Request sent to background script was not recognized. Request received: " + request);
 //   }
-//   return true;
 // }
 
 async function InitializeServiceWorker() {

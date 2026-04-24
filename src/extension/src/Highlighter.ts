@@ -1,14 +1,11 @@
 import type { RawArtifact } from "@/app/types";
 import { type ResultInfoRaw } from "../types/typedefs";
 import type { ExtensionSettings } from "./globals";
-import { GetArtifact } from "./StorageProxy";
+import { GetArtifact, GetExtensionSettings } from "./StorageProxy";
 
 export class HighLighter {
   static async HighlightTrashArtifacts(tabId: number | undefined, response: ResultInfoRaw) {
-    // TODO: Unsafe cast
-    const settingsFromStorage: ExtensionSettings = (await chrome.storage.local.get("extension_settings"))[
-      "extension_settings"
-    ] as ExtensionSettings;
+    const settingsFromStorage: ExtensionSettings = (await GetExtensionSettings()).data
     if (settingsFromStorage.do_styles === false) {
       return;
     }

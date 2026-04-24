@@ -48,12 +48,12 @@ export class NetworkFilter {
         await NetworkFilter.sendCommandPromise(debuggeeId.tabId, params)
           .then(async (response) => {
             // console.log("%c[1.4]Succeeded in getting data!", "color: coral;");
-            console.log("%c[info]Message chain for retrieved file", "color:coral;", global_state.requestLog);
+            // console.log("%c[info]Message chain for retrieved file", "color:coral;", global_state.requestLog);
 
             switch (global_state.trackedRequest.requestType) {
               case RequestTypes.ListPage:
                 console.log("%c[info]ListPage hit", "color:coral;");
-                await DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw)
+                await DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw);
                 HighLighter.HighlightTrashArtifacts(debuggeeId.tabId, response as ResultInfoRaw);
                 break;
 
