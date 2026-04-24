@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "set NODE_ENV=development && vite",
-    "build": "vue-tsc -b && vite build && cp src/extension/ext_ico.png dist/ && cp testing/artifacts_data.json dist/ && cp -a src/extension/manifest.json dist/",
+    "build": "vue-tsc -b && vite build && cp -a src/extension/ext_ico.png dist/ && cp -a src/extension/manifest.json dist/",
     "preview": "vite preview"
   },
   "dependencies": {
