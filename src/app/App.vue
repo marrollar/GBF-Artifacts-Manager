@@ -4,7 +4,6 @@ import { EXT_SETTINGS_KEY } from "@/extension/src/globals";
 import { GetAllArtifacts, SaveArtifact } from "@/extension/src/StorageProxy";
 import type { SplitterPanel } from "reka-ui";
 import { onMounted, reactive, ref } from "vue";
-import browser from "webextension-polyfill";
 import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
@@ -174,7 +173,7 @@ function handleDataCleared() {
 onMounted(() => {
   fetchFromLocalStorage().then();
 
-  browser.storage.onChanged.addListener((_, area) => {
+  chrome.storage.onChanged.addListener((_, area) => {
     // TODO: This ends up being called 20 times per page because of how the extension end updates local storage. Find a way to debounce.
     if (area === "local") {
       fetchFromLocalStorage().then();
