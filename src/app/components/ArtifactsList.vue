@@ -12,8 +12,9 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: "idToScrap", payload: { id: string; checked: boolean }): void;
+  (e: "idsToScrap", payload: { ids: string[]; checked: boolean }): void;
   (e: "filteredAmount", amt: number): void;
+  // (e: "bulkToggleScrap", payload: { ids: string[]; checked: boolean }): void;
 }>();
 
 function regexFilter(artifact: ArtifactMap[number], filterOpts: ActiveFilters) {
@@ -175,7 +176,11 @@ watch(
   { immediate: true },
 );
 
-const { list, containerProps, wrapperProps } = useVirtualList(sortedArtifacts, {
+const {
+  list: artiList,
+  containerProps,
+  wrapperProps,
+} = useVirtualList(sortedArtifacts, {
   itemHeight: 40, // NOTE: This might not actually do anything because of how the css has been set...
 });
 </script>
@@ -183,12 +188,26 @@ const { list, containerProps, wrapperProps } = useVirtualList(sortedArtifacts, {
 <template>
   <div v-bind="containerProps" class="h-full p-2">
     <div v-bind="wrapperProps">
-      <div v-for="item in list" :key="item.data[0]" class="flex gap-1 h-[40px] items-center">
+      <div className="flex gap-2">
+        <button
+          className="btn bg-base-100 hover:bg-red-400 h-7"
+          @click="emits('idsToScrap', { ids: sortedArtifacts.map((row) => row[0]), checked: true })"
+        >
+          Trash Filtered
+        </button>
+        <button
+          className="btn bg-base-100 hover:bg-green-400 h-7"
+          @click="emits('idsToScrap', { ids: sortedArtifacts.map((row) => row[0]), checked: false })"
+        >
+          Untrash Filtered
+        </button>
+      </div>
+      <div v-for="item in artiList" :key="item.data[0]" class="flex gap-1 h-[40px] items-center">
         <input
           type="checkbox"
           className="checkbox checkbox-error"
           :checked="item.data[1].is_scrap"
-          @change="emits('idToScrap', {id:item.data[0], checked:($event.target as HTMLInputElement).checked})"
+          @change="emits('idsToScrap', {ids:[item.data[0]], checked:($event.target as HTMLInputElement).checked})"
         />
         <img
           :src="getImage(`Icon_Element_${item.data[1].element}.png`)"

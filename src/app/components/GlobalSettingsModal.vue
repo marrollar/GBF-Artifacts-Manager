@@ -79,11 +79,11 @@ const emits = defineEmits(["clearedData"])
           <div class="content-center">Affect Game Styles</div>
           <div class="tooltip">
             <div class="tooltip-content">
-              Setting artifacts to be trashed in this web application is reflected in the game by either a red outline
+              Setting artifacts to be trashed in this extension is reflected in the game by either a red outline
               or green outline. If you want to disable this functionality, make sure this is toggled OFF.
               <br />
               <br />
-              The game's webpage can theoretically detect changes in element styling. Enable at your own discretion.
+              The game's webpage can <i>theoretically</i> detect changes in element styling. See this extension's GitHub README for more details.
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <g fill="none">

@@ -8,7 +8,7 @@ import ArtifactsList from "./components/ArtifactsList.vue";
 import ClearFilterButton from "./components/ClearFilterButton.vue";
 import ExtraFiltersMenu from "./components/ExtraFiltersMenu.vue";
 import FilterGroup from "./components/FilterGroup.vue";
-import SettingsModal from "./components/SettingsModal.vue";
+import GlobalSettingsModal from "./components/GlobalSettingsModal.vue";
 import { type ActiveFilters, type FilterInputs } from "./filtering/filterConfig";
 import {
   elements,
@@ -21,6 +21,7 @@ import {
   type Weapon,
 } from "./types";
 import { getImage, updateSet } from "./utils";
+import { useDebounceFn } from "@vueuse/core";
 
 const __SIDEBAR = {
   collapsedSize: 4,
@@ -146,11 +147,14 @@ function clearFilter<K extends keyof ActiveFilters | "all">(key: K) {
   }
 }
 
-function toggleAsScrap(id: string, checked: boolean) {
-  artifacts.value[Number(id)].is_scrap = checked;
-  const arti: ArtifactMap = { [id]: artifacts.value[Number(id)] };
-  // console.log(artifacts.value[Number(id)])
-  SaveArtifact({ data: arti });
+function toggleAsScrap(ids: string[], checked: boolean) {
+  // TODO: Should batch this saving process.
+  for (const id of ids) {
+    artifacts.value[Number(id)].is_scrap = checked;
+    const arti: ArtifactMap = { [id]: artifacts.value[Number(id)] };
+    // console.log(artifacts.value[Number(id)])
+    SaveArtifact({ data: arti });
+  }
 }
 
 async function fetchFromLocalStorage() {
@@ -170,13 +174,16 @@ function handleDataCleared() {
   artifacts.value = {};
 }
 
+const debouncedLocalStorageFetch = useDebounceFn(async () => {
+  await fetchFromLocalStorage()
+}, 300)
+
 onMounted(() => {
   fetchFromLocalStorage().then();
 
   chrome.storage.onChanged.addListener((_, area) => {
-    // TODO: This ends up being called 20 times per page because of how the extension end updates local storage. Find a way to debounce.
     if (area === "local") {
-      fetchFromLocalStorage().then();
+      debouncedLocalStorageFetch()
     }
   });
 });
@@ -225,6 +232,9 @@ onMounted(() => {
 
                 <!-- Refresh data button -->
                 <button @click="fetchFromLocalStorage()" class="btn bg-base-100 hover:bg-green-400 h-7">Refresh</button>
+
+                <!-- Extra Settings button -->
+                <button className="btn bg-base-100 hover:bg-gray-500 h-7  p-1">⋮</button>
               </div>
 
               <div class="flex gap-2 items-center">
@@ -326,12 +336,12 @@ onMounted(() => {
               Filtered: {{ filteredCount }} / {{ Object.keys(artifacts).length }}
             </div>
             <div class="w-full"></div>
-            <SettingsModal @cleared-data="handleDataCleared" />
+            <GlobalSettingsModal @cleared-data="handleDataCleared" />
           </div>
           <ArtifactsList
             :artifacts="artifacts"
             :filter-opts="filters"
-            @id-to-scrap="(e) => toggleAsScrap(e.id, e.checked)"
+            @ids-to-scrap="(e) => toggleAsScrap(e.ids, e.checked)"
             @filtered-amount="filteredCount = $event"
           />
         </div>
