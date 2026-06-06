@@ -177,7 +177,7 @@ export const SK2_NAMES: FilterButtonData[] = [
 ];
 
 export const SK3_NAMES: FilterButtonData[] = [
-  { name: "Upon using a debuff skill: Amplify foe's DMG Taken (2 hits) by" },
+  { name: "Upon using a debuff skill: Amplify foe's DMG taken (2 hits) by" },
   {
     name: "Upon using a healing skill: Ally in the next position gains a 1-time Bonus Elemental DMG effect of",
     aliases: ["Upon using a healing skill: Ally in the next position gains a 1 time echo of"],
