@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lucide/vue": "^1.17.0",
     "@tailwindcss/vite": "4.2.2",
     "@types/chrome": "^0.1.40",
     "@vueuse/core": "^14.3.0",
     "clsx": "^2.1.1",
     "daisyui": "^5.5.19",
-    "lucide-vue-next": "^1.0.0",
     "reka-ui": "^2.9.6",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "4.2.2",
