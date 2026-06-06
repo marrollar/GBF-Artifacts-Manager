@@ -3,6 +3,7 @@ import { type Network } from "../types/typedefs.ts";
 export const RequestTypes = {
   ListPage: "ListPage",
   ArtifactsDestroyed: "ArtifactsDestroyed",
+  ArtifactSetUnnecessary: "ArtifactSetUnnecessary"
 } as const;
 
 export type RequestTypes = (typeof RequestTypes)[keyof typeof RequestTypes];

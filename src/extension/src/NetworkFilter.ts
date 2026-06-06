@@ -7,6 +7,8 @@ import { RemoveArtifact } from "./StorageProxy";
 
 /** This class receives chrome.debugger network events and filters them for data that would be recorded by the extension */
 export class NetworkFilter {
+  static lastArtifactPageLoaded: object;
+
   /**
    * Processes chrome.debugger network events
    */
@@ -20,6 +22,8 @@ export class NetworkFilter {
         requestType = RequestTypes.ListPage;
       } else if (urlFilter.artifactsDecomposeUrlRegex.test(params.request.url)) {
         requestType = RequestTypes.ArtifactsDestroyed;
+      } else if (urlFilter.artifactsSetUnnecessaryRegex.test(params.request.url)) {
+        requestType = RequestTypes.ArtifactSetUnnecessary;
       } else {
         console.log(
           "%c[error] Request passed global whitelist but failed to match any individual regex: " + params.request.url,
@@ -55,6 +59,12 @@ export class NetworkFilter {
                 console.log("%c[info]ListPage hit", "color:coral;");
                 await DataProcessor.ProcessInventoryJSON(response as ResultInfoRaw);
                 HighLighter.HighlightTrashArtifacts(debuggeeId.tabId, response as ResultInfoRaw);
+                this.lastArtifactPageLoaded = response;
+                break;
+
+              case RequestTypes.ArtifactSetUnnecessary:
+                console.log("%c[info]ArtifactSetUnnecessary hit", "color:coral;");
+                HighLighter.HighlightTrashArtifacts(debuggeeId.tabId, this.lastArtifactPageLoaded as ResultInfoRaw);
                 break;
 
               case RequestTypes.ArtifactsDestroyed:
